@@ -1,0 +1,7 @@
+/* You can add global styles to this file, and also import other style files */
+
+body {
+  min-width: 320px;
+  min-height: 480px;
+  background: linear-gradient(329deg, #1560bd, #76a8e7), #1560bd;
+}

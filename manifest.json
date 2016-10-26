@@ -1,21 +1,22 @@
 {
-   "background": {
-      "page": "background.html",
-      "persistent": false
+  "manifest_version": 2,
+  "name": "Cypherpunk Privacy Suite",
+  "short_name": "Cypherpunk",
+  "description": "Cypherpunk Privacy Suite",
+  "version": "1.0.0",
+  "author": "Cypherpunk",
+  "browser_action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "icons": {
+    "128": "assets/icon_128.png",
+    "16": "assets/icon_16.png"
    },
-   "default_locale": "en",
-   "description": "__MSG_NETLI_APPDESC__",
-   "icons": {
-      "128": "img/icon_128.png",
-      "16": "img/icon_16.png"
-   },
-   "manifest_version": 2,
-   "minimum_chrome_version": "42.0.2311.135",
-   "name": "__MSG_NETLI_APPNAME__",
-   "options_ui": {
-      "chrome_style": true,
-      "page": "options.html"
-   },
-   "permissions": [ "privacy" ],
-   "version": "0.0.1"
+
+  "permissions": ["privacy"]
 }

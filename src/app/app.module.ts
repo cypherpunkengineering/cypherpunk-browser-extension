@@ -6,13 +6,15 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { SmartRoutesComponent } from './smart-routes/smart-routes.component';
+import { AdvancedSettingsComponent } from './advanced-settings/advanced-settings.component';
 import { IndexComponent } from './index/index.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     IndexComponent,
-    SmartRoutesComponent
+    SmartRoutesComponent,
+    AdvancedSettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -20,6 +22,7 @@ import { IndexComponent } from './index/index.component';
     HttpModule,
     RouterModule.forRoot([
       { path: 'smart-routes', component: SmartRoutesComponent },
+      { path: 'advanced-settings', component: AdvancedSettingsComponent },
       { path: '', component: IndexComponent }
         // { path: '**', component: PageNotFoundComponent }
     ])

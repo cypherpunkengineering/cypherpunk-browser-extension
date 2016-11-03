@@ -1,0 +1,194 @@
+@import '~bourbon/app/assets/stylesheets/_bourbon';
+@import '~bourbon-neat/app/assets/stylesheets/_neat';
+@import '~bourbon-bitters/app/assets/stylesheets/_variables';
+@import '~bourbon-bitters/app/assets/stylesheets/_buttons';
+
+#index {
+  @include span-columns(12);
+  text-align: center;
+}
+
+#header-on-off {
+  @include span-columns(12);
+  @include pad(rem(8));
+  @include align-items(center);
+  @include display(flex);
+  background-color: #eee;
+
+  #enabled-label {
+    @include span-columns(9);
+    text-align: left;
+  }
+
+  #enabled-switch {
+    @include span-columns(3);
+    text-align: right;
+  }
+}
+
+#smart-routing-on-off {
+  @include span-columns(12);
+  @include pad(rem(8));
+  @include align-items(center);
+  @include display(flex);
+
+  #smart-routing-label {
+    @include span-columns(9);
+    text-align: left;
+  }
+
+  #smart-routing-enabled-switch {
+    @include span-columns(3);
+    text-align: right;
+  }
+}
+
+#smart-routing-info {
+  @include span-columns(12);
+  @include pad(rem(8));
+
+  #dest-site {
+    @include span-columns(12);
+    font-size: rem(24);
+    text-align: center;
+  }
+
+  #dest-site-routing-verbiage {
+    @include span-columns(12);
+    font-size: rem(12);
+    text-align: center;
+    margin: rem(12) 0;
+  }
+
+  #proxy-location {
+    @include span-columns(12);
+    @include align-items(center);
+    @include justify-content(center);
+    @include display(flex);
+
+    font-size: rem(18);
+    img {
+      @include margin(null rem(6) null null);
+      height: rem(18);
+    }
+  }
+
+  #edit-smart-route-button {
+    @include span-columns(12);
+    @include margin(rem(24) null rem(18) null);
+  }
+}
+
+#privacy-on-off {
+  @include span-columns(12);
+  @include pad(rem(8));
+  @include align-items(center);
+  @include display(flex);
+
+  #privacy-label {
+    @include span-columns(9);
+    text-align: left;
+  }
+
+  #privacy-enabled-switch {
+    @include span-columns(3);
+    text-align: right;
+  }
+}
+
+#actual-location {
+  @include span-columns(12);
+  @include align-items(center);
+  @include justify-content(center);
+  @include display(flex);
+
+  font-size: rem(18);
+  img {
+    @include margin(null rem(6) null null);
+    height: rem(18);
+  }
+}
+
+#footer {
+  @include span-columns(12);
+  @include pad(rem(8));
+  text-align: right;
+}
+
+
+.label-switch {
+  $action-color: #477DCA !default;
+  $base-background-color: white !default;
+  $switch-width: 52px;
+  $switch-padding: 2px;
+  $switch-height: 32px;
+  $switch-radius: $switch-height;
+  $knob-size: $switch-height - ($switch-padding * 2);
+  $knob-radius: $switch-height - ($switch-padding * 2);
+  $knob-width: $knob-size;
+  $switch-background: $base-background-color;
+  $switch-border-background: darken($base-background-color, 9%);
+  $switch-shadow: 0 2px 5px transparentize(black, 0.6);
+
+  border-radius: $switch-radius;
+  cursor: pointer;
+  display: inline-block;
+  height: $switch-height;
+  position: relative;
+  width: $switch-width;
+
+  input[type="checkbox"] {
+    display: none;
+
+    + .checkbox {
+      background: $switch-border-background;
+      border: 0;
+      border-radius: $switch-radius;
+      cursor: pointer;
+      height: $switch-height;
+      margin: 0;
+      padding: 0;
+      position: relative;
+      transition: all 0.3s ease;
+      width: $switch-width;
+      z-index: 0;
+
+      &::before {
+        @include position(absolute, 2px 0 0 2px);
+        background: $switch-background;
+        border-radius: $switch-radius;
+        content: "";
+        height: $knob-radius;
+        transform: scale(1);
+        transition: all 0.3s ease;
+        width: $switch-width - ($switch-padding * 2);
+        z-index: 1;
+      }
+
+      &::after {
+        @include position(absolute, 2px 0 0 2px);
+        @include size($knob-size);
+        background: $switch-background;
+        border-radius: $knob-radius;
+        box-shadow: $switch-shadow;
+        content: "";
+        transition: all 0.3s ease;
+        z-index: 2;
+      }
+    }
+
+    &:checked {
+      + .checkbox {
+        background: $action-color;
+
+        &::before {
+          transform: scale(0);
+        }
+
+        &::after {
+          left: $switch-width - $knob-width - ($switch-padding);
+        }
+      }
+    }
+  }
+}

@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { SmartRoutesComponent } from './smart-routes/smart-routes.component';
 import { AdvancedSettingsComponent } from './advanced-settings/advanced-settings.component';
 import { IndexComponent } from './index/index.component';
+import { HqService } from './hq.service';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import { IndexComponent } from './index/index.component';
         // { path: '**', component: PageNotFoundComponent }
     ])
   ],
-  providers: [],
+  providers: [ HqService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

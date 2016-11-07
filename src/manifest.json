@@ -14,5 +14,5 @@
     "16": "assets/icon_16.png"
    },
 
-  "permissions": ["privacy"]
+  "permissions": ["privacy", "proxy", "cookies", "<all_urls>"]
 }

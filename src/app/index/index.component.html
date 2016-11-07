@@ -3,7 +3,7 @@
     <div id="enabled-label">Cypherpunk is disabled</div>
     <div id="enabled-switch">
       <label class="label-switch">
-        <input type="checkbox" />
+        <input type="checkbox" (change)="switchOnChange()" />
         <div class="checkbox"></div>
       </label>
     </div>
@@ -13,7 +13,7 @@
     <div id="smart-routing-label">Smart Routing</div>
     <div id="smart-routing-enabled-switch">
       <label class="label-switch">
-        <input type="checkbox" checked/>
+        <input type="checkbox" (change)="applyTestProxy()"/>
         <div class="checkbox"></div>
       </label>
     </div>

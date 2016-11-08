@@ -8,7 +8,7 @@ export PATH=$PATH:/usr/local/bin
 
 # prepare nvm
 export NVM_DIR="$HOME/.nvm"
-source "$(brew --prefix nvm)/nvm.sh" v6.8.0
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 nvm install v6.8.0
 nvm alias default v6.8.0
 nvm use v6.8.0

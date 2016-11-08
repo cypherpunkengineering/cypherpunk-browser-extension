@@ -9,6 +9,7 @@ import { SmartRoutesComponent } from './smart-routes/smart-routes.component';
 import { AdvancedSettingsComponent } from './advanced-settings/advanced-settings.component';
 import { IndexComponent } from './index/index.component';
 import { HqService } from './hq.service';
+import { ProxySettingsService } from './proxy-settings.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,7 @@ import { HqService } from './hq.service';
         // { path: '**', component: PageNotFoundComponent }
     ])
   ],
-  providers: [ HqService ],
+  providers: [ HqService, ProxySettingsService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

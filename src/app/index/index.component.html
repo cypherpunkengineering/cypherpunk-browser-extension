@@ -1,9 +1,9 @@
 <div id="index">
   <div id="header-on-off">
-    <div id="enabled-label">Cypherpunk is disabled</div>
+    <div id="enabled-label">Cypherpunk is {{enableVpnSwitch.checked ? 'enabled' : 'disabled'}}</div>
     <div id="enabled-switch">
       <label class="label-switch">
-        <input type="checkbox" (change)="switchOnChange()" />
+        <input #enableVpnSwitch type="checkbox" (change)="enableVpn(enableVpnSwitch.checked)" />
         <div class="checkbox"></div>
       </label>
     </div>
@@ -13,14 +13,14 @@
     <div id="smart-routing-label">Smart Routing</div>
     <div id="smart-routing-enabled-switch">
       <label class="label-switch">
-        <input type="checkbox" (change)="applyTestProxy()"/>
+        <input #enableSmartRouting type="checkbox" (change)="getServerList(enableSmartRouting.checked)"/>
         <div class="checkbox"></div>
       </label>
     </div>
   </div>
 
   <div id="smart-routing-info">
-    <div id="dest-site">netflix.com</div>
+    <div id="dest-site">{{domain}}</div>
     <div id="dest-site-routing-verbiage">
       Your Smart Route to netflix.com<br/>
       makes you appear to be connecting from

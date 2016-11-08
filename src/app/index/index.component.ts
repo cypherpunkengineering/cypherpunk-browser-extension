@@ -1,16 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { HqService } from '../hq.service';
+import { ProxySettingsService } from '../proxy-settings.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss']
+  styleUrls: ['./index.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IndexComponent {
   serverList;
   title = 'Index';
+  @Input() domain = '';
 
-  constructor(private hqService: HqService) {
+  constructor(
+    private hqService: HqService,
+    private proxySettingsService: ProxySettingsService
+  ) {
     // chrome.proxy.settings.get({}, function(config) {
     //     console.log(config.value, config.value.host);
     // });
@@ -20,8 +26,14 @@ export class IndexComponent {
       ['blocking']
     );
   }
+  ngAfterViewChecked() {
+    chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
+      let uri = tabs[0].url
+      this.domain = uri.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
+    });
+  }
 
-  switchOnChange() {
+  getServerList(enable: boolean) {
     this.hqService.getServerList()
       .subscribe(
         serverList => {
@@ -32,22 +44,14 @@ export class IndexComponent {
       );
   }
 
-  applyTestProxy() {
-    console.log("apply test proxy");
-    var config = {
-      mode: "fixed_servers",
-      rules: {
-        singleProxy: {
-          scheme: "http",
-          host: "204.145.66.40",
-          port: 3128
-        },
-        bypassList: ["cypherpunk.engineering"]
-      }
-    };
-    chrome.proxy.settings.set(
-        {value: config, scope: 'regular'},
-        function() {});
+  enableVpn(enable: boolean) {
+    let config;
+    if (enable) {
+      this.proxySettingsService.enableProxy();
+    }
+    else {
+      this.proxySettingsService.disableProxy();
+    }
   }
 
   proxyAuth(details) {

@@ -14,5 +14,13 @@
     "16": "assets/icon_16.png"
    },
 
-  "permissions": ["privacy", "proxy", "cookies", "webRequest", "webRequestBlocking", "<all_urls>"]
+  "permissions": [
+    "privacy",
+    "proxy",
+    "cookies",
+    "activeTab",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ]
 }

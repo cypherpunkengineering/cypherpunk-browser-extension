@@ -9,9 +9,9 @@ export PATH=$PATH:/usr/local/bin
 # prepare nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-nvm install v6.8.0
-nvm alias default v6.8.0
-nvm use v6.8.0
+nvm install v7.0.0
+nvm alias default v7.0.0
+nvm use v7.0.0
 
 # install deps
 npm install

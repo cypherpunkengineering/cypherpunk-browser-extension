@@ -14,6 +14,7 @@ nvm alias default v7.0.0
 nvm use v7.0.0
 
 # install deps
+npm install -g angular-cli
 npm install
 
 # build extension

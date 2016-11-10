@@ -1,25 +1,21 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { HqService } from '../hq.service';
 import { ProxySettingsService } from '../proxy-settings.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./index.component.scss']
 })
 export class IndexComponent {
   serverList;
   title = 'Index';
-  @Input() domain = '';
+  domain = '';
 
   constructor(
     private hqService: HqService,
     private proxySettingsService: ProxySettingsService
   ) {
-    // chrome.proxy.settings.get({}, function(config) {
-    //     console.log(config.value, config.value.host);
-    // });
     chrome.webRequest.onAuthRequired.addListener(
       this.proxyAuth,
       {urls: ["<all_urls>"]},
@@ -28,8 +24,8 @@ export class IndexComponent {
   }
   ngAfterViewChecked() {
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
-      let uri = tabs[0].url
-      this.domain = uri.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
+      let url = tabs[0].url
+      this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
     });
   }
 
@@ -40,7 +36,7 @@ export class IndexComponent {
           this.serverList = serverList;
           console.log(this.serverList);
         },
-        error => console.log(<any>error)
+        error => console.log(error)
       );
   }
 

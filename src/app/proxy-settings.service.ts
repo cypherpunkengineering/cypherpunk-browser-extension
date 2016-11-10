@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
 
 @Injectable()
 export class ProxySettingsService {
-  constructor (private http: Http) {
-  }
+  constructor (private http: Http) {}
 
   enableProxy() {
-    console.log("apply test proxy");
+    console.log("applying proxy:");
     let config = {
       mode: "fixed_servers",
       rules: {
@@ -20,6 +18,7 @@ export class ProxySettingsService {
         bypassList: ["cypherpunk.engineering"]
       }
     };
+    console.log(config);
     chrome.proxy.settings.set(
       {value: config, scope: 'regular'},
       function() {});

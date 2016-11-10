@@ -8,14 +8,11 @@ export class ProxySettingsService {
   enableProxy() {
     console.log("applying proxy:");
     let config = {
-      mode: "fixed_servers",
-      rules: {
-        singleProxy: {
-          scheme: "http",
-          host: "204.145.66.40",
-          port: 3128
-        },
-        bypassList: ["cypherpunk.engineering"]
+      mode: "pac_script",
+      pacScript: {
+        data: "function FindProxyForURL(url, host) {\n" +
+              "  return 'PROXY 204.145.66.40:3128';\n" +
+              "}"
       }
     };
     console.log(config);

@@ -23,5 +23,11 @@ ng build --prod
 # package as zip
 npm run compress
 
+# archive package artifact
+PKG="*.zip"
+ARTIFACT="../`printf 'cypherpunk-browser-extension-%05d' ${BUILD_NUMBER}`.pkg"
+mv "${PKG}" "${ARTIFACT}"
+scp -P92 "${ARTIFACT}" upload@builds-upload.cypherpunk.engineering:/data/builds/
+
 # done
 exit 0

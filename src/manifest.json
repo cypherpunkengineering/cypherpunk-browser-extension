@@ -1,17 +1,25 @@
 {
   "manifest_version": 2,
-  "name": "Cypherpunk Privacy Suite",
+  "name": "Cypherpunk Privacy",
   "short_name": "Cypherpunk",
-  "description": "Cypherpunk Privacy Suite",
-  "version": "1.0.0",
-  "author": "Cypherpunk",
+  "version": "0.1.0",
+
+  "default_locale": "en",
+  "description": "Cypherpunk Privacy",
+
+  "author": "Cypherpunk Partners",
   "browser_action": {
     "default_popup": "index.html"
   },
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "icons": {
-    "128": "assets/icon_128.png",
-    "16": "assets/icon_16.png"
+    "128": "assets/cypherpunk_shaded_128.png",
+    "96": "assets/cypherpunk_shaded_96.png",
+    "64": "assets/cypherpunk_shaded_64.png",
+    "48": "assets/cypherpunk_shaded_48.png",
+    "32": "assets/cypherpunk_shaded_32.png",
+    "24": "assets/cypherpunk_shaded_24.png",
+    "16": "assets/cypherpunk_shaded_16.png"
    },
 
   "permissions": [

@@ -8,7 +8,7 @@ import { ProxySettingsService } from '../proxy-settings.service';
   styleUrls: ['./index.component.scss']
 })
 export class IndexComponent {
-  serverList;
+  servers;
   title = 'Index';
   domain = '';
 
@@ -29,12 +29,13 @@ export class IndexComponent {
     });
   }
 
-  getServerList(enable: boolean) {
-    this.hqService.getServerList()
+  loadServers(enable: boolean) {
+    this.hqService.findServers()
       .subscribe(
-        serverList => {
-          this.serverList = serverList;
-          console.log(this.serverList);
+        servers => {
+          this.servers = servers;
+          console.log(this.servers);
+          this.proxySettingsService.servers = servers;
         },
         error => console.log(error)
       );

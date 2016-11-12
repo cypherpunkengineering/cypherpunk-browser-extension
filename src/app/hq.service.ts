@@ -11,10 +11,10 @@ export class HqService {
     this.options = new RequestOptions({ headers: headers, withCredentials: true });
   }
 
-  getServerList(): Observable<any> {
+  findServers(): Observable<any> {
     return this.http.get('https://cypherpunk.engineering/api/v0/vpn/serverList', this.options)
       .map((res:Response) => res.json())
-      .catch((error:any) => Observable.throw(error || 'getServerList Error'));
+      .catch((error:any) => Observable.throw(error || 'findServers Error'));
   }
 
   login(): Observable<any>  {

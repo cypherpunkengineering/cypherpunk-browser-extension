@@ -3,7 +3,19 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 
 @Injectable()
 export class ProxySettingsService {
-  constructor (private http: Http) {}
+  private _servers;
+  get servers() {
+    return this._servers;
+  }
+  set servers(s) {
+    this._servers = s;
+  }
+  
+  options: RequestOptions;
+  constructor (private http: Http) {
+    let headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
+    this.options = new RequestOptions({ headers: headers, withCredentials: true });
+  }
 
   enableProxy() {
     console.log("applying proxy:");

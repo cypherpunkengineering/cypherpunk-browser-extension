@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output } from '@angular/core';
 import { HqService } from '../hq.service';
 import { ProxySettingsService } from '../proxy-settings.service';
+import { Subject } from 'rxjs/Subject'; 
 
 @Component({
   selector: 'app-root',
@@ -8,7 +9,8 @@ import { ProxySettingsService } from '../proxy-settings.service';
   styleUrls: ['./index.component.scss']
 })
 export class IndexComponent {
-  servers;
+  servers: Subject<any>;
+
   title = 'Index';
   domain = '';
 
@@ -16,6 +18,7 @@ export class IndexComponent {
     private hqService: HqService,
     private proxySettingsService: ProxySettingsService
   ) {
+    this.servers = new Subject();
     chrome.webRequest.onAuthRequired.addListener(
       this.proxyAuth,
       {urls: ["<all_urls>"]},
@@ -33,9 +36,7 @@ export class IndexComponent {
     this.hqService.findServers()
       .subscribe(
         servers => {
-          this.servers = servers;
-          console.log(this.servers);
-          this.proxySettingsService.servers = servers;
+          this.servers.next(servers);
         },
         error => console.log(error)
       );

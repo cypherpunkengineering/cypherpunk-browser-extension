@@ -19,7 +19,10 @@ export class HqService {
 
   login(): Observable<any>  {
     return this.http.post('https://cypherpunk.engineering/api/v0/account/authenticate/userpasswd', '{"login":"test@test.test","password":"test123"}', this.options)
-      .map((res:Response) => res.json())
+      .map((res:Response) => {
+           console.log(res);
+           res.json();
+      })
       .catch((error:any) => Observable.throw(error || 'login Error'));
   }
 

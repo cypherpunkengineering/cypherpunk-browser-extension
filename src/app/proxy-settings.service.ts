@@ -1,12 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { HqService } from './hq.service';
 
 @Injectable()
 export class ProxySettingsService {
   options: RequestOptions;
-  constructor (private http: Http) {
+  servers;
+
+  constructor (private http: Http, private hqService: HqService) {
     let headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
     this.options = new RequestOptions({ headers: headers, withCredentials: true });
+
+    this.hqService.login().subscribe(res => {
+      console.log(res);
+      this.hqService.findServers()
+        .subscribe(
+          servers => {
+            console.log('proxy settings load servers');
+            console.log(servers);
+            this.servers = servers;
+          },
+          error => console.log(error)
+        );
+    });
   }
 
   enableProxy() {
@@ -15,6 +31,7 @@ export class ProxySettingsService {
       mode: "pac_script",
       pacScript: {
         data: "function FindProxyForURL(url, host) {\n" +
+          // proxy for new york -> NA -> US -> Index: 1
               "  return 'PROXY 204.145.66.40:3128';\n" +
               "}"
       }

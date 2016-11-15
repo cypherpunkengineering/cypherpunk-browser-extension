@@ -6,46 +6,79 @@
 #index {
   @include span-columns(12);
   text-align: center;
+  background-image: linear-gradient(to bottom, #4c8ee1, #034698);
+  color: #fff;
+  font-size: rem(12);
+}
+
+.switch-row {
+  @include row;
+  clear: both;
+  height: rem(40);
+  .label {
+    @include span-columns(9);
+    @include pad(0 0 0 rem(20));
+    height: rem(40);
+    line-height: rem(40);
+    text-align: left;
+    div { @include display(inline-block); }
+  }
+  .switch {
+    @include span-columns(3);
+    @include omega;
+    @include pad(rem(8) rem(20) rem(8) 0);
+    height: rem(24);
+    line-height: rem(24);
+    text-align: right;
+  }
+}
+
+.bottom-separator {
+  border-bottom: solid 1px rgba(255, 255, 255, 0.2);
+}
+
+.top-separator {
+  border-top: solid 1px rgba(255, 255, 255, 0.2);
 }
 
 #header-on-off {
-  @include span-columns(12);
-  @include pad(rem(8));
-  @include align-items(center);
-  @include display(flex);
-  background-color: #eee;
-
+  @include row;
+  clear: both;
+  height: rem(56);
+  #logo {
+    @include span-columns(1.75);
+    @include pad(18px 0 18px 20px);
+    text-align: left;
+    height: rem(56);
+    line-height: rem(56);
+    div {
+      background: #f4f4f4;
+      border-radius: rem(20);
+      width: rem(20);
+      height: rem(20);
+    }
+  }
   #enabled-label {
-    @include span-columns(9);
+    @include span-columns(7.25);
+    height: rem(56);
+    line-height: rem(56);
     text-align: left;
   }
-
   #enabled-switch {
     @include span-columns(3);
-    text-align: right;
-  }
-}
-
-#smart-routing-on-off {
-  @include span-columns(12);
-  @include pad(rem(8));
-  @include align-items(center);
-  @include display(flex);
-
-  #smart-routing-label {
-    @include span-columns(9);
-    text-align: left;
-  }
-
-  #smart-routing-enabled-switch {
-    @include span-columns(3);
-    text-align: right;
+    @include omega;
+    height: rem(56);
+    line-height: rem(56);
+    text-align: center;
   }
 }
 
 #smart-routing-info {
   @include span-columns(12);
-  @include pad(rem(8));
+  @include pad(rem(20));
+  height: rem(330);
+  opacity: 0.6;
+  background-color: #666666;
 
   #dest-site {
     @include span-columns(12);
@@ -79,23 +112,6 @@
   }
 }
 
-#privacy-on-off {
-  @include span-columns(12);
-  @include pad(rem(8));
-  @include align-items(center);
-  @include display(flex);
-
-  #privacy-label {
-    @include span-columns(9);
-    text-align: left;
-  }
-
-  #privacy-enabled-switch {
-    @include span-columns(3);
-    text-align: right;
-  }
-}
-
 #actual-location {
   @include span-columns(12);
   @include align-items(center);
@@ -115,20 +131,38 @@
   text-align: right;
 }
 
+.key-switch {
+  input[type="checkbox"] {
+    display: none;
+
+    + .checkbox {
+      @include display(inline-block);
+      background: url('/assets/switches/icon-power.png') no-repeat 50%;
+      height: 100%;
+      width: rem(34);
+    }
+
+    &:checked + .checkbox {
+      background: url('/assets/switches/icon-key.png') no-repeat 50%;
+      height: 100%;
+      background-position-y: 35%;
+    }
+  }
+}
 
 .label-switch {
   $action-color: #477DCA !default;
-  $base-background-color: white !default;
-  $switch-width: 52px;
+  $switch-width: 43px;
   $switch-padding: 2px;
-  $switch-height: 32px;
+  $switch-height: 24px;
   $switch-radius: $switch-height;
   $knob-size: $switch-height - ($switch-padding * 2);
   $knob-radius: $switch-height - ($switch-padding * 2);
   $knob-width: $knob-size;
-  $switch-background: $base-background-color;
-  $switch-border-background: darken($base-background-color, 9%);
-  $switch-shadow: 0 2px 5px transparentize(black, 0.6);
+  $knob-color: #fff;
+  $switch-background: rgba(255, 255, 255, 0.9);
+  $knob-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  $switch-shadow: inset 2px 2px 2px 0 rgba(0, 0, 0, 0.3);
 
   border-radius: $switch-radius;
   cursor: pointer;
@@ -141,7 +175,7 @@
     display: none;
 
     + .checkbox {
-      background: $switch-border-background;
+      background: $switch-background;
       border: 0;
       border-radius: $switch-radius;
       cursor: pointer;
@@ -152,10 +186,10 @@
       transition: all 0.3s ease;
       width: $switch-width;
       z-index: 0;
+      box-shadow: $switch-shadow;
 
       &::before {
         @include position(absolute, 2px 0 0 2px);
-        background: $switch-background;
         border-radius: $switch-radius;
         content: "";
         height: $knob-radius;
@@ -168,9 +202,9 @@
       &::after {
         @include position(absolute, 2px 0 0 2px);
         @include size($knob-size);
-        background: $switch-background;
+        background: $knob-color;
         border-radius: $knob-radius;
-        box-shadow: $switch-shadow;
+        box-shadow: $knob-shadow;
         content: "";
         transition: all 0.3s ease;
         z-index: 2;
@@ -179,13 +213,13 @@
 
     &:checked {
       + .checkbox {
-        background: $action-color;
 
         &::before {
           transform: scale(0);
         }
 
         &::after {
+          background: $action-color;
           left: $switch-width - $knob-width - ($switch-padding);
         }
       }

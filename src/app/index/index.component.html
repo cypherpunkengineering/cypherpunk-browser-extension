@@ -1,17 +1,18 @@
 <div id="index">
-  <div id="header-on-off">
-    <div id="enabled-label">Cypherpunk is {{enableVpnSwitch.checked ? 'enabled' : 'disabled'}}</div>
+  <div id="header-on-off" class="bottom-separator">
+    <div id="logo"><div></div></div>
+    <div id="enabled-label">Cypherpunk is {{enableVpnSwitch.checked ? 'ON' : 'OFF'}}</div>
     <div id="enabled-switch">
-      <label class="label-switch">
+      <label class="key-switch">
         <input #enableVpnSwitch type="checkbox" (change)="enableVpn(enableVpnSwitch.checked)" />
         <div class="checkbox"></div>
       </label>
     </div>
   </div>
 
-  <div id="smart-routing-on-off">
-    <div id="smart-routing-label">Smart Routing</div>
-    <div id="smart-routing-enabled-switch">
+  <div id="smart-routing-on-off" class="switch-row bottom-separator">
+    <div id="smart-routing-label" class="label">Smart Routing is {{enableSmartRouting.checked ? 'ON' : 'OFF'}}</div>
+    <div id="smart-routing-enabled-switch" class="switch">
       <label class="label-switch">
         <input #enableSmartRouting type="checkbox" (change)="loadServers(enableSmartRouting.checked)"/>
         <div class="checkbox"></div>
@@ -30,9 +31,9 @@
 
   </div>
 
-  <div id="privacy-on-off">
-    <div id="privacy-label">Privacy filter for netflix.com</div>
-    <div id="privacy-enabled-switch">
+  <div id="privacy-on-off" class="switch-row top-separator bottom-separator">
+    <div id="privacy-label" class="label">Privacy filter for netflix.com</div>
+    <div id="privacy-enabled-switch" class="switch">
       <label class="label-switch">
         <input type="checkbox" checked/>
         <div class="checkbox"></div>

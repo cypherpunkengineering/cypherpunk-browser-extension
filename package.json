@@ -23,6 +23,7 @@
     "@angular/router": "~3.0.0",
     "@types/chai": "^3.4.34",
     "@types/chrome": "0.0.35",
+    "@types/webrtc": "0.0.21",
     "angular-2-local-storage": "0.0.22",
     "bourbon": "^4.2.7",
     "bourbon-bitters": "^1.2.1",

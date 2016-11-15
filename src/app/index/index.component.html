@@ -4,7 +4,7 @@
     <div id="enabled-label">Cypherpunk is {{enableVpnSwitch.checked ? 'ON' : 'OFF'}}</div>
     <div id="enabled-switch">
       <label class="key-switch">
-        <input #enableVpnSwitch type="checkbox" (change)="enableVpn(enableVpnSwitch.checked)" />
+        <input #enableVpnSwitch type="checkbox" [checked]="localStorageService.get('proxy.enabled')" (change)="enableProxy(enableVpnSwitch.checked)" />
         <div class="checkbox"></div>
       </label>
     </div>

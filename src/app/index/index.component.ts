@@ -1,5 +1,6 @@
 import { Component, Input, Output } from '@angular/core';
 import { ProxySettingsService } from '../proxy-settings.service';
+import { LocalStorageService } from 'angular-2-local-storage';
 import { Subject } from 'rxjs/Subject'; 
 
 @Component({
@@ -11,7 +12,10 @@ export class IndexComponent {
   title = 'Index';
   domain = '';
 
-  constructor(private proxySettingsService: ProxySettingsService) {
+  constructor(
+    private localStorageService: LocalStorageService,
+    private proxySettingsService: ProxySettingsService
+  ) {
     chrome.webRequest.onAuthRequired.addListener(
       this.proxyAuth,
       {urls: ["<all_urls>"]},
@@ -25,7 +29,7 @@ export class IndexComponent {
     });
   }
 
-  enableVpn(enable: boolean) {
+  enableProxy(enable: boolean) {
     let config;
     if (enable) {
       this.proxySettingsService.enableProxy();

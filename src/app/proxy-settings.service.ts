@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { LocalStorageService } from 'angular-2-local-storage';
 import { HqService } from './hq.service';
 
 @Injectable()
@@ -7,7 +8,11 @@ export class ProxySettingsService {
   options: RequestOptions;
   servers;
 
-  constructor (private http: Http, private hqService: HqService) {
+  constructor (
+    private http: Http,
+    private localStorageService: LocalStorageService,
+    private hqService: HqService
+  ) {
     let headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
     this.options = new RequestOptions({ headers: headers, withCredentials: true });
 
@@ -37,9 +42,9 @@ export class ProxySettingsService {
       }
     };
     console.log(config);
-    chrome.proxy.settings.set(
-      {value: config, scope: 'regular'},
-      function() {});
+    chrome.proxy.settings.set({value: config, scope: 'regular'}, () => {
+      this.localStorageService.set('proxy.enabled', true);
+    });
   }
 
   disableProxy() {
@@ -47,9 +52,9 @@ export class ProxySettingsService {
     let config = {
       mode: "system"
     }
-    chrome.proxy.settings.set(
-      {value: config, scope: 'regular'},
-      function() {});
+    chrome.proxy.settings.set({value: config, scope: 'regular'}, () => {
+      this.localStorageService.set('proxy.enabled', false);
+    });
   }
 }
 

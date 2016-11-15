@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
+import { LocalStorageService, LOCAL_STORAGE_SERVICE_CONFIG } from 'angular-2-local-storage';
 
 import { AppComponent } from './app.component';
 import { SmartRoutesComponent } from './smart-routes/smart-routes.component';
@@ -10,6 +11,11 @@ import { AdvancedSettingsComponent } from './advanced-settings/advanced-settings
 import { IndexComponent } from './index/index.component';
 import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
+
+let localStorageServiceConfig = {
+    prefix: 'cypherpunk',
+    storageType: 'localStorage'
+};
 
 @NgModule({
   declarations: [
@@ -27,9 +33,14 @@ import { ProxySettingsService } from './proxy-settings.service';
       { path: 'advanced-settings', component: AdvancedSettingsComponent },
       { path: '', component: IndexComponent }
         // { path: '**', component: PageNotFoundComponent }
-    ])
+    ]),
   ],
-  providers: [ HqService, ProxySettingsService ],
+  providers: [
+    HqService,
+    ProxySettingsService,
+    LocalStorageService,
+    { provide: LOCAL_STORAGE_SERVICE_CONFIG, useValue: localStorageServiceConfig }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

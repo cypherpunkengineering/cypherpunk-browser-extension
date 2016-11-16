@@ -156,6 +156,35 @@ a {
   }
 }
 
+.flag-container {
+  width: rem(70);
+  height: rem(70);
+  border-radius: 4px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  margin: 0 auto;
+  margin-top: rem(20);
+  line-height: rem(100);
+
+  img {
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.5);
+    width: rem(50);
+  }
+
+  &.small {
+    width: rem(50);
+    height: rem(50);
+    line-height: rem(67);
+    margin-top: rem(30);
+
+    &.square { line-height: rem(75); }
+
+    img {
+      width: rem(35);
+    }
+  }
+}
+
 /* Main View Styles */
 #index {
   @include span-columns(12);
@@ -235,24 +264,10 @@ a {
     font-size: 18px;
     text-align: center;
   }
-  .flag-container {
-    width: rem(70);
-    height: rem(70);
-    border-radius: 4px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-    margin: 0 auto;
-    margin-top: rem(20);
-    line-height: rem(100);
-
-    img {
-      box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.5);
-      width: rem(50);
-    }
-  }
-  .subtitle {
+  .location {
     margin-top: rem(10);
     text-align: center;
+
     label {
       font-weight: 400;
       display: block;
@@ -260,40 +275,26 @@ a {
   }
 }
 
-#smart-routing-info {
-  @include span-columns(12);
+#smart-routing-on {
   @include pad(rem(20));
   height: rem(330);
-
-  #dest-site {
+  .title {
     @include span-columns(12);
-    font-size: rem(24);
-    text-align: center;
-  }
-
-  #dest-site-routing-verbiage {
-    @include span-columns(12);
-    font-size: rem(12);
-    text-align: center;
-    margin: rem(12) 0;
-  }
-
-  #proxy-location {
-    @include span-columns(12);
-    @include align-items(center);
-    @include justify-content(center);
-    @include display(flex);
-
     font-size: rem(18);
-    img {
-      @include margin(null rem(6) null null);
-      height: rem(18);
-    }
+    text-align: center;
+    margin-top: rem(35);
   }
 
-  #edit-smart-route-button {
-    @include span-columns(12);
-    @include margin(rem(24) null rem(18) null);
+  .location {
+    @include span-columns(4);
+    text-align: center;
+    &:last-child { @include omega; }
+    .subtitle {
+      margin-top: rem(10);
+      text-align: center;
+
+      a { line-height: 1.35rem; }
+    }
   }
 }
 

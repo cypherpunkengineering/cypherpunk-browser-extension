@@ -1,7 +1,7 @@
 import { Component, Input, Output } from '@angular/core';
 import { ProxySettingsService } from '../proxy-settings.service';
 import { LocalStorageService } from 'angular-2-local-storage';
-import { Subject } from 'rxjs/Subject'; 
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +10,9 @@ import { Subject } from 'rxjs/Subject';
 })
 export class IndexComponent {
   title = 'Index';
-  domain = '';
+  domain = '(Loading...)';
+  cypherpunkEnabled = undefined;
+  smartRoutingEnabled = undefined;
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -21,12 +23,21 @@ export class IndexComponent {
       {urls: ["<all_urls>"]},
       ['blocking']
     );
+    this.cypherpunkEnabled = this.localStorageService.get('cypherpunk.enabled');
+    this.smartRoutingEnabled = this.proxySettingsService.getProxyStatus();
   }
+
   ngAfterViewChecked() {
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
       let url = tabs[0].url
       this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
     });
+  }
+
+  toggleCypherpunk(state: boolean) {
+    console.log(state);
+    this.localStorageService.set('cypherpunk.enabled', state);
+    this.cypherpunkEnabled = state;
   }
 
   enableProxy(enable: boolean) {

@@ -3,14 +3,7 @@
 @import '~bourbon-bitters/app/assets/stylesheets/_variables';
 @import '~bourbon-bitters/app/assets/stylesheets/_buttons';
 
-#index {
-  @include span-columns(12);
-  text-align: center;
-  background-image: linear-gradient(to bottom, #4c8ee1, #034698);
-  color: #fff;
-  font-size: rem(12);
-}
-
+/* Reuseable Components */
 .switch-row {
   @include row;
   clear: both;
@@ -33,103 +26,9 @@
   }
 }
 
-.bottom-separator {
-  border-bottom: solid 1px rgba(255, 255, 255, 0.2);
-}
+.bottom-separator { border-bottom: solid 1px rgba(255, 255, 255, 0.2); }
 
-.top-separator {
-  border-top: solid 1px rgba(255, 255, 255, 0.2);
-}
-
-#header-on-off {
-  @include row;
-  clear: both;
-  height: rem(56);
-  #logo {
-    @include span-columns(1.75);
-    @include pad(18px 0 18px 20px);
-    text-align: left;
-    height: rem(56);
-    line-height: rem(56);
-    div {
-      background: #f4f4f4;
-      border-radius: rem(20);
-      width: rem(20);
-      height: rem(20);
-    }
-  }
-  #enabled-label {
-    @include span-columns(7.25);
-    height: rem(56);
-    line-height: rem(56);
-    text-align: left;
-  }
-  #enabled-switch {
-    @include span-columns(3);
-    @include omega;
-    height: rem(56);
-    line-height: rem(56);
-    text-align: center;
-  }
-}
-
-#smart-routing-info {
-  @include span-columns(12);
-  @include pad(rem(20));
-  height: rem(330);
-  opacity: 0.6;
-  background-color: #666666;
-
-  #dest-site {
-    @include span-columns(12);
-    font-size: rem(24);
-    text-align: center;
-  }
-
-  #dest-site-routing-verbiage {
-    @include span-columns(12);
-    font-size: rem(12);
-    text-align: center;
-    margin: rem(12) 0;
-  }
-
-  #proxy-location {
-    @include span-columns(12);
-    @include align-items(center);
-    @include justify-content(center);
-    @include display(flex);
-
-    font-size: rem(18);
-    img {
-      @include margin(null rem(6) null null);
-      height: rem(18);
-    }
-  }
-
-  #edit-smart-route-button {
-    @include span-columns(12);
-    @include margin(rem(24) null rem(18) null);
-  }
-}
-
-#actual-location {
-  @include span-columns(12);
-  @include align-items(center);
-  @include justify-content(center);
-  @include display(flex);
-
-  font-size: rem(18);
-  img {
-    @include margin(null rem(6) null null);
-    height: rem(18);
-  }
-}
-
-#footer {
-  @include span-columns(12);
-  @include pad(rem(8));
-  text-align: right;
-}
+.top-separator { border-top: solid 1px rgba(255, 255, 255, 0.2); }
 
 .key-switch {
   input[type="checkbox"] {
@@ -139,30 +38,43 @@
       @include display(inline-block);
       background: url('/assets/switches/icon-power.png') no-repeat 50%;
       height: 100%;
+      cursor: pointer;
       width: rem(34);
+      &.large {
+        background: url('/assets/switches/icon-power@2x.png') no-repeat 50%;
+        width: rem(48);
+        height: rem(60);
+      }
     }
 
     &:checked + .checkbox {
       background: url('/assets/switches/icon-key.png') no-repeat 50%;
       height: 100%;
       background-position-y: 35%;
+      &.large {
+        background: url('/assets/switches/icon-key@2x.png') no-repeat 50%;
+        width: rem(48);
+        height: rem(60);
+      }
     }
   }
 }
 
 .label-switch {
-  $action-color: #477DCA !default;
   $switch-width: 43px;
   $switch-padding: 2px;
   $switch-height: 24px;
   $switch-radius: $switch-height;
+  $switch-background: rgba(255, 255, 255, 0.9);
+  $switch-disabled-background: #cccccc;
+  $switch-shadow: inset 2px 2px 2px 0 rgba(0, 0, 0, 0.3);
+
   $knob-size: $switch-height - ($switch-padding * 2);
   $knob-radius: $switch-height - ($switch-padding * 2);
   $knob-width: $knob-size;
   $knob-color: #fff;
-  $switch-background: rgba(255, 255, 255, 0.9);
+  $knob-active-color: #477DCA;
   $knob-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  $switch-shadow: inset 2px 2px 2px 0 rgba(0, 0, 0, 0.3);
 
   border-radius: $switch-radius;
   cursor: pointer;
@@ -211,18 +123,195 @@
       }
     }
 
+    &:disabled, &:disabled:checked {
+      + .checkbox {
+        background: $switch-disabled-background;
+        &::after { background: $knob-color; }
+      }
+    }
+
     &:checked {
       + .checkbox {
-
-        &::before {
-          transform: scale(0);
-        }
-
+        &::before { transform: scale(0); }
         &::after {
-          background: $action-color;
+          background: $knob-active-color;
           left: $switch-width - $knob-width - ($switch-padding);
         }
       }
     }
   }
+}
+
+a {
+  color: rgb(255, 255, 255);
+  outline: none;
+  text-decoration: none;
+  font-size: rem(12);
+
+  &:hover, &:active, &:visited {
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.6);
+    outline: none;
+    text-decoration: none;
+  }
+}
+
+/* Main View Styles */
+#index {
+  @include span-columns(12);
+  text-align: center;
+  color: #fff;
+}
+
+.cypherpunk-on { background-image: linear-gradient(to bottom, #4c8ee1, #034698); }
+
+.cypherpunk-off {
+  background-image: none;
+  background-color: #999999;
+}
+
+#header-on-off {
+  @include row;
+  clear: both;
+  height: rem(56);
+  &.header-off { background-color: #ff3b30; }
+  #logo {
+    @include span-columns(1.75);
+    @include pad(18px 0 18px 20px);
+    text-align: left;
+    height: rem(56);
+    line-height: rem(56);
+    div {
+      background: #f4f4f4;
+      border-radius: rem(20);
+      width: rem(20);
+      height: rem(20);
+    }
+  }
+  #enabled-label {
+    @include span-columns(7.25);
+    height: rem(56);
+    line-height: rem(56);
+    text-align: left;
+  }
+  #enabled-switch {
+    @include span-columns(3);
+    @include omega;
+    height: rem(56);
+    line-height: rem(56);
+    text-align: center;
+  }
+}
+
+#info-disconnected {
+  height: rem(370);
+  .title {
+    padding-top: rem(60);
+    font-size: rem(32);
+    font-weight: 500;
+    text-align: center;
+    margin: 0 rem(75);
+  }
+  .button {
+    padding-top: rem(30);
+    text-align: center;
+  }
+  .subtitle {
+    padding-top: rem(10);
+    font-size: rem(18);
+    text-align: center;
+    cursor: pointer;
+  }
+}
+
+#smart-routing-off {
+  @include span-columns(12);
+  @include pad(rem(20));
+  background-color: rgba(102, 102, 102, 0.6);
+  height: rem(330);
+
+  .title {
+    margin-top: rem(40);
+    font-size: 18px;
+    text-align: center;
+  }
+  .flag-container {
+    width: rem(70);
+    height: rem(70);
+    border-radius: 4px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+    margin: 0 auto;
+    margin-top: rem(20);
+    line-height: rem(100);
+
+    img {
+      box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.5);
+      width: rem(50);
+    }
+  }
+  .subtitle {
+    margin-top: rem(10);
+    text-align: center;
+    label {
+      font-weight: 400;
+      display: block;
+    }
+  }
+}
+
+#smart-routing-info {
+  @include span-columns(12);
+  @include pad(rem(20));
+  height: rem(330);
+
+  #dest-site {
+    @include span-columns(12);
+    font-size: rem(24);
+    text-align: center;
+  }
+
+  #dest-site-routing-verbiage {
+    @include span-columns(12);
+    font-size: rem(12);
+    text-align: center;
+    margin: rem(12) 0;
+  }
+
+  #proxy-location {
+    @include span-columns(12);
+    @include align-items(center);
+    @include justify-content(center);
+    @include display(flex);
+
+    font-size: rem(18);
+    img {
+      @include margin(null rem(6) null null);
+      height: rem(18);
+    }
+  }
+
+  #edit-smart-route-button {
+    @include span-columns(12);
+    @include margin(rem(24) null rem(18) null);
+  }
+}
+
+#actual-location {
+  @include span-columns(12);
+  @include align-items(center);
+  @include justify-content(center);
+  @include display(flex);
+  font-size: rem(18);
+
+  img {
+    @include margin(null rem(6) null null);
+    height: rem(18);
+  }
+}
+
+#footer {
+  @include span-columns(12);
+  @include pad(rem(8) rem(20));
+  text-align: right;
 }

@@ -1,11 +1,13 @@
 @import '~bourbon/app/assets/stylesheets/_bourbon';
 @import '~bourbon-neat/app/assets/stylesheets/_neat';
+@import url('https://fonts.googleapis.com/css?family=Dosis:300,400,500');
 /* You can add global styles to this file, and also import other style files */
 
 body {
   background-color: #f7f7f7;
-  font-family: Lato, sans-serif;
+  font-family: 'Dosis', sans-serif;
   font-size: rem(14);
+  font-weight: 300;
   min-width: 360px;
   margin: 0;
   padding: 0;

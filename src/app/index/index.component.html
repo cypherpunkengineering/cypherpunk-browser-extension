@@ -1,55 +1,82 @@
-<div id="index">
-  <div id="header-on-off" class="bottom-separator">
+<div id="index" [ngClass]="{'cypherpunk-on': cypherpunkEnabled, 'cypherpunk-off': !cypherpunkEnabled}">
+  <div id="header-on-off" class="bottom-separator" [ngClass]="{'header-off': !cypherpunkEnabled}">
     <div id="logo"><div></div></div>
-    <div id="enabled-label">Cypherpunk is {{enableVpnSwitch.checked ? 'ON' : 'OFF'}}</div>
+    <div id="enabled-label">Cypherpunk is {{cypherpunkEnabled ? 'ON' : 'OFF'}}</div>
     <div id="enabled-switch">
       <label class="key-switch">
-        <input #enableVpnSwitch type="checkbox" [checked]="localStorageService.get('proxy.enabled')" (change)="enableProxy(enableVpnSwitch.checked)" />
+        <input #enableVpnSwitch [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
         <div class="checkbox"></div>
       </label>
     </div>
   </div>
 
-  <div id="smart-routing-on-off" class="switch-row bottom-separator">
-    <div id="smart-routing-label" class="label">Smart Routing is {{enableSmartRouting.checked ? 'ON' : 'OFF'}}</div>
-    <div id="smart-routing-enabled-switch" class="switch">
-      <label class="label-switch">
-        <input #enableSmartRouting type="checkbox" (change)="loadServers(enableSmartRouting.checked)"/>
-        <div class="checkbox"></div>
-      </label>
+  <!-- Cypherpunk is enabled -->
+  <div id="info-connected" *ngIf="cypherpunkEnabled">
+
+    <div id="smart-routing-on-off" class="switch-row bottom-separator">
+      <div id="smart-routing-label" class="label">Smart Routing is {{enableSmartRouting.checked ? 'ON' : 'OFF'}}</div>
+      <div id="smart-routing-enabled-switch" class="switch">
+        <label class="label-switch">
+          <input #enableSmartRouting type="checkbox" [(ngModel)]="smartRoutingEnabled" (ngModelChange)="enableProxy($event)" [disabled]="!cypherpunkEnabled" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
     </div>
+
+    <!-- Smart routing off -->
+    <div id="smart-routing-off" class="info-section" *ngIf="!enableSmartRouting.checked">
+      <div class="title">Your<br>Actual Location</div>
+      <div class="flag-container">
+        <img src="/assets/flags/jp.svg" />
+      </div>
+      <div class="subtitle">
+        <label>Japan</label>
+        IP Address: 78.12.34.567
+      </div>
+    </div>
+
+    <!-- Smart routing on -->
+    <div id="smart-routing-info" *ngIf="enableSmartRouting.checked">
+      <div id="dest-site" [innerHTML]="domain"></div>
+      <div id="dest-site-routing-verbiage">
+        Your Smart Route to netflix.com<br/>
+        makes you appear to be connecting from
+      </div>
+      <div id="proxy-location"><img src="/assets/flags/us.svg" />United States of America</div>
+      <button id="edit-smart-route-button" type="button" routerLink="/smart-routes" routerLinkActive="active" [disabled]="!cypherpunkEnabled">Edit Smart Route</button>
+      <div id="actual-location-verbiage">
+        Your actual location is
+      </div>
+      <div id="actual-location">
+        <img src="/assets/flags/jp.svg" />Japan (78.12.34.567)
+      </div>
+    </div>
+
   </div>
 
-  <div id="smart-routing-info">
-    <div id="dest-site">{{domain}}</div>
-    <div id="dest-site-routing-verbiage">
-      Your Smart Route to netflix.com<br/>
-      makes you appear to be connecting from
+  <!-- Cypherpunk is disabled -->
+  <div id="info-disconnected" *ngIf="!cypherpunkEnabled">
+    <div class="title">Cypherpunk is Off</div>
+    <div class="button">
+      <label class="key-switch">
+        <input #enableVpnSwitchLarge type="checkbox" (change)="cypherpunkEnabled=enableVpnSwitchLarge.checked" />
+        <div class="checkbox large"></div>
+      </label>
     </div>
-    <div id="proxy-location"><img src="/assets/flags/us.svg" />United States of America</div>
-    <button id="edit-smart-route-button" type="button" routerLink="/smart-routes" routerLinkActive="active">Edit Smart Route</button>
-
+    <div class="subtitle" (click)="cypherpunkEnabled=true">Enable browser protection</div>
   </div>
 
   <div id="privacy-on-off" class="switch-row top-separator bottom-separator">
-    <div id="privacy-label" class="label">Privacy filter for netflix.com</div>
+    <div id="privacy-label" class="label">Privacy filter for <span [innerHTML]="domain"></span></div>
     <div id="privacy-enabled-switch" class="switch">
       <label class="label-switch">
-        <input type="checkbox" checked/>
+        <input type="checkbox" checked [disabled]="!cypherpunkEnabled" />
         <div class="checkbox"></div>
       </label>
     </div>
   </div>
 
-  <div id="actual-location-verbiage">
-    Your actual location is
-  </div>
-
-  <div id="actual-location">
-    <img src="/assets/flags/jp.svg" />Japan (78.12.34.567)
-  </div>
-
   <div id="footer">
-    <a routerLink="/advanced-settings" routerLinkActive="active">advanced-settings</a>
+    <a routerLink="/advanced-settings" routerLinkActive="active">Advanced Settings</a>
   </div>
 </div>

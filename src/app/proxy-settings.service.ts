@@ -30,6 +30,10 @@ export class ProxySettingsService {
     });
   }
 
+  getProxyStatus() {
+    return this.localStorageService.get('proxy.enabled');
+  }
+
   enableProxy() {
     console.log("applying proxy:");
     let config = {

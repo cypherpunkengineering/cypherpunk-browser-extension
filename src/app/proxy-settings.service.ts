@@ -40,8 +40,9 @@ export class ProxySettingsService {
       mode: "pac_script",
       pacScript: {
         data: "function FindProxyForURL(url, host) {\n" +
-          // proxy for new york -> NA -> US -> Index: 1
-              "  return 'PROXY 204.145.66.40:3128';\n" +
+              "  if (shExpMatch(host, \"*.com\")) return 'PROXY 204.145.66.40:3128';\n" +
+              "  if (shExpMatch(host, \"*.jp\")) return 'PROXY 204.145.66.40:3128';\n" +
+              "  else return 'PROXY 204.145.66.40:3128';\n" +
               "}"
       }
     };

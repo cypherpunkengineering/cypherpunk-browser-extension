@@ -48,18 +48,29 @@
         <div class="flag-container">
           <img src="/assets/flags/us.svg" />
         </div>
-        <div class="subtitle">
+        <div class="subtitle bold">
           United States
           <br>
-          <a href="#">(Select Country)<br>╲╱</a>
+          <a href="#">
+            (Selected Country)
+            <div>╲╱</div>
+          </a>
         </div>
       </div>
-      <div class="location">
+      <div class="location last">
         <div class="flag-container small square">
           <img src="/assets/cypherpunk_shaded_32.png" />
         </div>
         <div class="subtitle" [innerHTML]="domain"></div>
       </div>
+
+      <div class="scrolling-binary">
+        <div class="right">
+          01101111 01110010 01101001 01100111 01101001 01101110 01101111 01110010 01101001 01100111
+        </div>
+        <div class="left">
+          01100001 01101100 00100000 01100110 01101111 01110010 01100001 01101100 00100000 01100110
+        </div>
     </div>
 
       <!--<div id="dest-site" [innerHTML]="domain"></div>
@@ -75,7 +86,7 @@
       <div id="actual-location">
         <img src="/assets/flags/jp.svg" />Japan (78.12.34.567)
       </div>-->
-
+    </div>
   </div>
 
   <!-- Cypherpunk is disabled -->

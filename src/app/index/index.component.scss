@@ -211,10 +211,9 @@ a {
     height: rem(56);
     line-height: rem(56);
     div {
-      background: #f4f4f4;
-      border-radius: rem(20);
-      width: rem(20);
-      height: rem(20);
+      background: url('/assets/cypherpunk_shaded_24.png');
+      width: rem(24);
+      height: rem(24);
     }
   }
   #enabled-label {
@@ -282,19 +281,73 @@ a {
     @include span-columns(12);
     font-size: rem(18);
     text-align: center;
-    margin-top: rem(35);
+    margin-top: rem(40);
   }
 
   .location {
     @include span-columns(4);
     text-align: center;
-    &:last-child { @include omega; }
+    position: relative;
+    z-index: 2;
+    &.last { @include omega; }
     .subtitle {
       margin-top: rem(10);
       text-align: center;
+      font-weight: 200;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
-      a { line-height: 1.35rem; }
+      &.bold {font-weight: 400; }
+      a {
+        @include display(block);
+        line-height: 1.35rem;
+        font-weight: 200;
+        div {
+          -webkit-text-stroke: 1px rgba(169, 169, 169, 0.6);
+          color: rgba(169, 169, 169, 0.6);
+          margin-top: rem(-4px);
+          font-size: 5px;
+        }
+        &:hover div {
+          -webkit-text-stroke: 1px rgba(169, 169, 169, 0.4);
+          color: rgba(169, 169, 169, 0.4);
+
+        }
+      }
     }
+  }
+}
+
+.scrolling-binary {
+  position: absolute;
+  top: rem(240);
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.4);
+  left: 0;
+  right: 0;
+  margin: 0 50px;
+  overflow: hidden;
+  font-size: rem(12);
+  .right {
+    width: rem(275);
+    white-space: nowrap;
+    animation: rscroll 15s linear infinite;
+  }
+  .left {
+    width: rem(275);
+    white-space: nowrap;
+    animation: lscroll 15s linear infinite;
+  }
+
+  @keyframes lscroll {
+    0%   { transform: translate(0, 0); }
+    100% { transform: translate(-50%, 0); }
+  }
+  @keyframes rscroll {
+    0%   { transform: translate(-50%, 0); }
+    100% { transform: translate(0, 0); }
   }
 }
 
@@ -309,6 +362,13 @@ a {
     @include margin(null rem(6) null null);
     height: rem(18);
   }
+}
+
+#privacy-label {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #footer {

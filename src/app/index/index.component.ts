@@ -35,9 +35,12 @@ export class IndexComponent {
   }
 
   toggleCypherpunk(state: boolean) {
-    console.log(state);
     this.localStorageService.set('cypherpunk.enabled', state);
     this.cypherpunkEnabled = state;
+    if (!this.cypherpunkEnabled) {
+      this.smartRoutingEnabled = false;
+      this.proxySettingsService.disableProxy();
+    }
   }
 
   enableProxy(enable: boolean) {

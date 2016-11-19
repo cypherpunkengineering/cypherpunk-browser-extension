@@ -12,13 +12,13 @@ export class HqService {
   }
 
   findServers(): Observable<any> {
-    return this.http.get('https://cypherpunk.engineering/api/v0/vpn/serverList', this.options)
+    return this.http.get('https://cypherpunk.com/api/v0/vpn/serverList', this.options)
       .map((res:Response) => res.json())
       .catch((error:any) => Observable.throw(error || 'findServers Error'));
   }
 
   login(): Observable<any>  {
-    return this.http.post('https://cypherpunk.engineering/api/v0/account/authenticate/userpasswd', '{"login":"test@test.test","password":"test123"}', this.options)
+    return this.http.post('https://cypherpunk.com/api/v0/account/authenticate/userpasswd', '{"login":"test@test.test","password":"test123"}', this.options)
       .map((res:Response) => {
            console.log(res);
            res.json();
@@ -28,7 +28,7 @@ export class HqService {
 
   debugCheckSession(): void {
     // Debug: get this header to check consistency with session token
-    chrome.cookies.get({url:'https://cypherpunk.engineering', name: 'cypherpunk.session'}, (cookie) => { 
+    chrome.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'}, (cookie) => { 
       console.log(cookie);
     }); 
   }

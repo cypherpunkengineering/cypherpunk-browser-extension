@@ -1,3 +1,58 @@
-<h1>
-  {{title}}
-</h1>
+<div id="advanced-settings">
+  <div id="header" class="bottom-separator">
+    <a routerLink="/" routerLinkActive="active"><span class="back-icon">&#x3008;</span>{{title}}</a>
+  </div>
+
+  <!-- Default Routing -->
+  <div class="switch-row bottom-separator">
+    <div class="label half">Default Routing</div>
+    <div class="switch half">
+      Use Smart Routing
+      <span class="forward-icon">&#x3009;</span>
+    </div>
+  </div>
+
+  <!-- Force HTTPS -->
+  <div class="switch-row bottom-separator">
+    <div class="label">Force HTTPS</div>
+    <div class="switch">
+      <label class="label-switch">
+        <input #forceHttps type="checkbox" />
+        <div class="checkbox"></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- WebRTC Leak Protection -->
+  <div class="switch-row bottom-separator">
+    <div class="label">WebRTC Leak Protection</div>
+    <div class="switch">
+      <label class="label-switch">
+        <input #webRtcLeakProtection type="checkbox" />
+        <div class="checkbox"></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Privacy Filter Settings -->
+  <div class="switch-row bottom-separator">
+    <div class="label half">Privacy Filter Settings</div>
+    <div class="switch half">
+      <span class="forward-icon">&#x3009;</span>
+    </div>
+  </div>
+
+  <!-- User Agent -->
+  <div class="switch-row bottom-separator">
+    <div class="label half">User Agent</div>
+    <div class="switch half">
+      PRIVATE
+      <span class="forward-icon">&#x3009;</span>
+    </div>
+  </div>
+
+  <!-- Logout -->
+  <div class="switch-row bottom-separator">
+    <div class="label full">Logout</div>
+  </div>
+</div>

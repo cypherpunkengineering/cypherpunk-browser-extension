@@ -37,31 +37,33 @@
 
     <!-- Smart routing on -->
     <div id="smart-routing-on" *ngIf="enableSmartRouting.checked">
-      <div class="title">Your<br>Public Location</div>
-      <div class="location">
-        <div class="flag-container small">
-          <img src="/assets/flags/jp.svg" />
+      <div class="flags-wrap">
+        <div class="title">Your<br>Public Location</div>
+        <div class="location">
+          <div class="flag-container small">
+            <img src="/assets/flags/jp.svg" />
+          </div>
+          <div class="subtitle">Japan</div>
         </div>
-        <div class="subtitle">Japan</div>
-      </div>
-      <div class="location">
-        <div class="flag-container">
-          <img src="/assets/flags/us.svg" />
+        <div class="location">
+          <div class="flag-container">
+            <img src="/assets/flags/us.svg" />
+          </div>
+          <div class="subtitle bold">
+            Silicon Valley, USA
+            <br>
+            <a href="#" (click)="toggleRoutingDropdown()">
+              (Selected Country)
+              <div>╲╱</div>
+            </a>
+          </div>
         </div>
-        <div class="subtitle bold">
-          United States
-          <br>
-          <a href="#">
-            (Selected Country)
-            <div>╲╱</div>
-          </a>
+        <div class="location last">
+          <div class="flag-container small square">
+            <img src="/assets/cypherpunk_shaded_32.png" />
+          </div>
+          <div class="subtitle" [innerHTML]="domain"></div>
         </div>
-      </div>
-      <div class="location last">
-        <div class="flag-container small square">
-          <img src="/assets/cypherpunk_shaded_32.png" />
-        </div>
-        <div class="subtitle" [innerHTML]="domain"></div>
       </div>
 
       <div class="scrolling-binary">
@@ -71,6 +73,17 @@
         <div class="left">
           01100001 01101100 00100000 01100110 01101111 01110010 01100001 01101100 00100000 01100110
         </div>
+      </div>
+
+      <div class="routing-dd" [ngClass]="{'open': showRoutingDropdown, 'closed': !showRoutingDropdown}">
+        <div class="row">Auto: USA</div>
+        <div class="row checked">Silicon Valley, USA (Recommended)</div>
+        <div class="row">Japan (Closest)</div>
+        <div class="row">
+          Selected country: Silicon Valley, USA
+          <span class="forward-icon">&#x3009;</span>
+        </div>
+        <div class="row">Do not proxy</div>
       </div>
 
     </div>

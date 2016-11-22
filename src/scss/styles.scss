@@ -47,6 +47,23 @@ body {
   }
 }
 
+.back-icon {
+  @include transform(scale(2,1));
+  @include display(inline-block);
+  margin-right: rem(12);
+  margin-left: rem(-10);
+  font-size: rem(11);
+}
+
+.forward-icon {
+  @include transform(scale(2,1));
+  @include display(inline-block);
+  margin-right: rem(-10);
+  margin-left: rem(12);
+  color: rgba(169, 169, 169, 0.5);
+  font-size: rem(11);
+}
+
 .bottom-separator { border-bottom: solid 1px rgba(255, 255, 255, 0.2); }
 
 .top-separator { border-top: solid 1px rgba(255, 255, 255, 0.2); }
@@ -88,13 +105,13 @@ body {
   $switch-radius: $switch-height;
   $switch-background: rgba(255, 255, 255, 0.9);
   $switch-disabled-background: #cccccc;
-  $switch-shadow: inset 2px 2px 2px 0 rgba(0, 0, 0, 0.3);
+  $switch-shadow: inset 0px 1px 2px 1px rgba(0, 0, 0, 0.1);
+  $switch-active-color: #0088ff;
 
   $knob-size: $switch-height - ($switch-padding * 2);
   $knob-radius: $switch-height - ($switch-padding * 2);
   $knob-width: $knob-size;
   $knob-color: #fff;
-  $knob-active-color: #477DCA;
   $knob-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
 
   border-radius: $switch-radius;
@@ -153,9 +170,10 @@ body {
 
     &:checked {
       + .checkbox {
+        background: $switch-active-color;
+
         &::before { transform: scale(0); }
         &::after {
-          background: $knob-active-color;
           left: $switch-width - $knob-width - ($switch-padding);
         }
       }

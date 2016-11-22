@@ -8,18 +8,3 @@
   height: 100%;
   background-color: #0f3c75;
 }
-
-.back-icon {
-  @include transform(scale(2,1));
-  @include display(inline-block);
-  margin-right: rem(12);
-  margin-left: rem(-10);
-}
-
-.forward-icon {
-  @include transform(scale(2,1));
-  @include display(inline-block);
-  margin-right: rem(-10);
-  margin-left: rem(12);
-  color: rgba(169, 169, 169, 0.4);
-}

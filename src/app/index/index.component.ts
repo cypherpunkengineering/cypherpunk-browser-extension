@@ -13,6 +13,7 @@ export class IndexComponent {
   domain = '(Loading...)';
   cypherpunkEnabled = undefined;
   smartRoutingEnabled = undefined;
+  showRoutingDropdown = false;
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -34,11 +35,16 @@ export class IndexComponent {
     });
   }
 
+  toggleRoutingDropdown() {
+    this.showRoutingDropdown = !this.showRoutingDropdown;
+  }
+
   toggleCypherpunk(state: boolean) {
     this.localStorageService.set('cypherpunk.enabled', state);
     this.cypherpunkEnabled = state;
     if (!this.cypherpunkEnabled) {
       this.smartRoutingEnabled = false;
+      this.showRoutingDropdown = false;
       this.proxySettingsService.disableProxy();
     }
   }
@@ -50,6 +56,7 @@ export class IndexComponent {
     }
     else {
       this.proxySettingsService.disableProxy();
+      this.showRoutingDropdown = false;
     }
   }
 

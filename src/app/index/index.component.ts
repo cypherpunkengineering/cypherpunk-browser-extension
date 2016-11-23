@@ -14,25 +14,42 @@ export class IndexComponent {
   cypherpunkEnabled = undefined;
   smartRoutingEnabled = undefined;
   showRoutingDropdown = false;
+  privacyFilter = true;
+  privacyFilterWhitelist = this.localStorageService.get('privacyFilterWhitelist') || {};
+  smartRouteOpts = {
+    auto: 'Auto: USA',
+    recommended: 'Silicon Valley, USA (Recommended)',
+    closest: 'Japan (Closest)',
+    selected: 'Selected Country: Silicon Valley, USA',
+    none: 'Do not proxy'
+  };
+  selectedSmartRouteOpt = this.smartRouteOpts.selected;
 
   constructor(
     private localStorageService: LocalStorageService,
     private proxySettingsService: ProxySettingsService
   ) {
+
     chrome.webRequest.onAuthRequired.addListener(
       this.proxyAuth,
       {urls: ["<all_urls>"]},
       ['blocking']
     );
-    this.cypherpunkEnabled = this.localStorageService.get('cypherpunk.enabled');
-    this.smartRoutingEnabled = this.proxySettingsService.getProxyStatus();
-  }
 
-  ngAfterViewChecked() {
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
       let url = tabs[0].url
       this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
+
+      if (this.privacyFilterWhitelist[this.domain] === undefined) {
+        this.privacyFilter = true;
+      }
+      else if (this.privacyFilterWhitelist[this.domain] === false) {
+        this.privacyFilter = false;
+      }
     });
+
+    this.cypherpunkEnabled = this.localStorageService.get('cypherpunk.enabled');
+    this.smartRoutingEnabled = this.proxySettingsService.getProxyStatus();
   }
 
   toggleRoutingDropdown() {
@@ -49,6 +66,10 @@ export class IndexComponent {
     }
   }
 
+  selectSmartRoute(selection: string) {
+    this.selectedSmartRouteOpt = selection;
+  }
+
   enableProxy(enable: boolean) {
     let config;
     if (enable) {
@@ -58,6 +79,19 @@ export class IndexComponent {
       this.proxySettingsService.disableProxy();
       this.showRoutingDropdown = false;
     }
+  }
+
+  togglePrivacyFilter(state: boolean) {
+    console.log('Toggling privacy for', this.domain, state);
+    this.privacyFilter = state;
+    if (this.privacyFilter) {
+       this.privacyFilterWhitelist[this.domain] = undefined;
+    }
+    else {
+      this.privacyFilterWhitelist[this.domain] = false;
+    }
+    this.localStorageService.set('privacyFilterWhitelist', this.privacyFilterWhitelist);
+    console.log(this.privacyFilterWhitelist);
   }
 
   proxyAuth(details) {

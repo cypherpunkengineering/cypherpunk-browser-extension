@@ -75,15 +75,16 @@
         </div>
       </div>
 
+      <!-- Smart Routing Dropdown -->
       <div class="routing-dd" [ngClass]="{'open': showRoutingDropdown, 'closed': !showRoutingDropdown}">
-        <div class="row">Auto: USA</div>
-        <div class="row checked">Silicon Valley, USA (Recommended)</div>
-        <div class="row">Japan (Closest)</div>
-        <div class="row">
-          Selected country: Silicon Valley, USA
+        <div class="row" (click)="selectSmartRoute(smartRouteOpts.auto)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.auto }">{{smartRouteOpts.auto}}</div>
+        <div class="row" (click)="selectSmartRoute(smartRouteOpts.recommended)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.recommended }">{{smartRouteOpts.recommended}}</div>
+        <div class="row" (click)="selectSmartRoute(smartRouteOpts.closest)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.closest }">{{smartRouteOpts.closest}}</div>
+        <div class="row" (click)="selectSmartRoute(smartRouteOpts.selected)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.selected}">
+          {{smartRouteOpts.selected}}
           <span class="forward-icon">&#x3009;</span>
         </div>
-        <div class="row">Do not proxy</div>
+        <div class="row" (click)="selectSmartRoute(smartRouteOpts.none)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.none }">{{smartRouteOpts.none}}</div>
       </div>
 
     </div>
@@ -105,7 +106,7 @@
     <div id="privacy-label" class="label">Privacy filter for <span [innerHTML]="domain"></span></div>
     <div id="privacy-enabled-switch" class="switch">
       <label class="label-switch">
-        <input type="checkbox" checked [disabled]="!cypherpunkEnabled" />
+        <input type="checkbox" [(ngModel)]="privacyFilter" (ngModelChange)="togglePrivacyFilter($event)" [disabled]="!cypherpunkEnabled" />
         <div class="checkbox"></div>
       </label>
     </div>

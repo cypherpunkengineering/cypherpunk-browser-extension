@@ -28,6 +28,14 @@
     "activeTab",
     "webRequest",
     "webRequestBlocking",
+    "background",
+    "storage",
     "<all_urls>"
-  ]
+  ],
+
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  }
 }

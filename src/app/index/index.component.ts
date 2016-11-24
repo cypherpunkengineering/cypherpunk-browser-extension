@@ -82,7 +82,6 @@ export class IndexComponent {
   }
 
   togglePrivacyFilter(state: boolean) {
-    console.log('Toggling privacy for', this.domain, state);
     this.privacyFilter = state;
     if (this.privacyFilter) {
        this.privacyFilterWhitelist[this.domain] = undefined;
@@ -91,7 +90,6 @@ export class IndexComponent {
       this.privacyFilterWhitelist[this.domain] = false;
     }
     this.localStorageService.set('privacyFilterWhitelist', this.privacyFilterWhitelist);
-    console.log(this.privacyFilterWhitelist);
   }
 
   proxyAuth(details) {

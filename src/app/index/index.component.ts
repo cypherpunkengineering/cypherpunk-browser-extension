@@ -2,6 +2,7 @@ import { Component, Input, Output } from '@angular/core';
 import { ProxySettingsService } from '../proxy-settings.service';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Subject } from 'rxjs/Subject';
+import { HqService } from '../hq.service';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ export class IndexComponent {
   cypherpunkEnabled = undefined;
   smartRoutingEnabled = undefined;
   showRoutingDropdown = false;
+  faviconUrl = undefined;
   privacyFilter = true;
   privacyFilterWhitelist = this.localStorageService.get('privacyFilterWhitelist') || {};
   smartRouteOpts = {
@@ -24,11 +26,19 @@ export class IndexComponent {
     none: 'Do not proxy'
   };
   selectedSmartRouteOpt = this.smartRouteOpts.selected;
+  proxyUsername = undefined;
+  proxyPassword = undefined;
 
   constructor(
     private localStorageService: LocalStorageService,
-    private proxySettingsService: ProxySettingsService
+    private proxySettingsService: ProxySettingsService,
+    private hqService: HqService
   ) {
+
+    this.hqService.fetchUserStatus().subscribe(res => {
+      this.proxyUsername = res.privacy.username;
+      this.proxyPassword = res.privacy.password;
+    });
 
     chrome.webRequest.onAuthRequired.addListener(
       this.proxyAuth,
@@ -37,7 +47,8 @@ export class IndexComponent {
     );
 
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
-      let url = tabs[0].url
+      let curTab = tabs[0];
+      let url = curTab.url
       this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
 
       if (this.privacyFilterWhitelist[this.domain] === undefined) {
@@ -45,6 +56,13 @@ export class IndexComponent {
       }
       else if (this.privacyFilterWhitelist[this.domain] === false) {
         this.privacyFilter = false;
+      }
+
+      let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
+
+      // favicon appears to be a normal url
+      if (curTab.favIconUrl && curTab.favIconUrl != '' && curTab.favIconUrl.indexOf('chrome://favicon/') == -1) {
+        this.faviconUrl = curTab.favIconUrl;
       }
     });
 
@@ -97,8 +115,8 @@ export class IndexComponent {
   proxyAuth(details) {
     return {
       authCredentials: {
-        username: "test@test.test",
-        password: "test123"
+        username: this.proxyUsername,
+        password: this.proxyPassword
       }
     };
   }

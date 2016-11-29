@@ -60,7 +60,7 @@
         </div>
         <div class="location last">
           <div class="flag-container small square">
-            <img src="/assets/cypherpunk_shaded_32.png" />
+            <img *ngIf="faviconUrl" src="{{faviconUrl}}" />
           </div>
           <div class="subtitle" [innerHTML]="domain"></div>
         </div>

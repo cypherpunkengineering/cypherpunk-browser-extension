@@ -80,7 +80,7 @@
         <div class="row" (click)="selectSmartRoute(smartRouteOpts.auto)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.auto }">{{smartRouteOpts.auto}}</div>
         <div class="row" (click)="selectSmartRoute(smartRouteOpts.recommended)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.recommended }">{{smartRouteOpts.recommended}}</div>
         <div class="row" (click)="selectSmartRoute(smartRouteOpts.closest)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.closest }">{{smartRouteOpts.closest}}</div>
-        <div class="row" (click)="selectSmartRoute(smartRouteOpts.selected)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.selected}">
+        <div class="row" (click)="selectSmartRoute(smartRouteOpts.selected)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.selected}" routerLink="/selected-country" routerLinkActive="active">
           {{smartRouteOpts.selected}}
           <span class="forward-icon">&#x3009;</span>
         </div>

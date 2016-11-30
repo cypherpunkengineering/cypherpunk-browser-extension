@@ -7,6 +7,7 @@ import { HqService } from './hq.service';
 export class ProxySettingsService {
   options: RequestOptions;
   servers;
+  premiumProxyAccount;
 
   constructor (
     private http: Http,
@@ -17,12 +18,14 @@ export class ProxySettingsService {
     this.options = new RequestOptions({ headers: headers, withCredentials: true });
 
     this.hqService.login().subscribe(res => {
-      console.log(res);
-      this.hqService.findServers()
+      let accountType = res.account.type;
+      this.premiumProxyAccount = accountType === 'premium';
+      console.log('Login Successful for', accountType, 'account');
+      this.hqService.findServers(accountType)
         .subscribe(
           servers => {
-            console.log('proxy settings load servers');
-            console.log(servers);
+            // console.log('proxy settings load servers for', accountType, 'account');
+            // console.log(servers);
             this.servers = servers;
           },
           error => console.log(error)
@@ -34,12 +37,21 @@ export class ProxySettingsService {
     return this.localStorageService.get('proxy.enabled');
   }
 
+  getServerList() {
+    return this.servers;
+  }
+
+  isPremiumProxyAccount() {
+    return this.premiumProxyAccount;
+  }
+
   enableProxy() {
     console.log("applying proxy:");
     let config = {
       mode: "pac_script",
       pacScript: {
         data: "function FindProxyForURL(url, host) {\n" +
+              "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n" +
               "  if (shExpMatch(host, \"*.com\")) return 'PROXY 204.145.66.40:3128';\n" +
               "  if (shExpMatch(host, \"*.jp\")) return 'PROXY 204.145.66.40:3128';\n" +
               "  else return 'PROXY 204.145.66.40:3128';\n" +

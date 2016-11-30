@@ -12,18 +12,15 @@ export class HqService {
     this.options = new RequestOptions({ headers: headers, withCredentials: true });
   }
 
-  findServers(): Observable<any> {
-    return this.http.get(this.apiPrefix + '/vpn/serverList', this.options)
-      .map((res:Response) => res.json())
-      .catch((error:any) => Observable.throw(error || 'findServers Error'));
+  findServers(accountType:string): Observable<any> {
+    return this.http.get(this.apiPrefix + '/location/list/' + accountType, this.options)
+    .map((res:Response) => res.json())
+    .catch((error:any) => Observable.throw(error || 'findServers Error'));
   }
 
   login(): Observable<any>  {
     return this.http.post(this.apiPrefix + '/account/authenticate/userpasswd', '{"login":"test@test.test","password":"test123"}', this.options)
-      .map((res:Response) => {
-           console.log(res);
-           res.json();
-      })
+      .map((res:Response) => res.json())
       .catch((error:any) => Observable.throw(error || 'login Error'));
   }
 

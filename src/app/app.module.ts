@@ -8,6 +8,7 @@ import { LocalStorageService, LOCAL_STORAGE_SERVICE_CONFIG } from 'angular-2-loc
 import { AppComponent } from './app.component';
 import { SmartRoutesComponent } from './smart-routes/smart-routes.component';
 import { AdvancedSettingsComponent } from './advanced-settings/advanced-settings.component';
+import { SelectedCountryComponent } from './selected-country/selected-country.component';
 import { IndexComponent } from './index/index.component';
 import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
@@ -22,7 +23,8 @@ let localStorageServiceConfig = {
     AppComponent,
     IndexComponent,
     SmartRoutesComponent,
-    AdvancedSettingsComponent
+    AdvancedSettingsComponent,
+    SelectedCountryComponent
   ],
   imports: [
     BrowserModule,
@@ -31,6 +33,7 @@ let localStorageServiceConfig = {
     RouterModule.forRoot([
       { path: 'smart-routes', component: SmartRoutesComponent },
       { path: 'advanced-settings', component: AdvancedSettingsComponent },
+      { path: 'selected-country', component: SelectedCountryComponent },
       { path: '', component: IndexComponent }
         // { path: '**', component: PageNotFoundComponent }
     ]),

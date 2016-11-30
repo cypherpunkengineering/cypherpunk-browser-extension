@@ -1,0 +1,53 @@
+@import '~bourbon/app/assets/stylesheets/_bourbon';
+@import '~bourbon-neat/app/assets/stylesheets/_neat';
+
+.country-select {
+  height: rem(444);
+  width: 100%;
+  overflow-y: scroll;
+  color: #fff;
+  font-weight: 200;
+
+  .region {
+    @include pad(0 rem(30));
+    @include span-columns(12);
+    background-color: rgb(10,48,95);
+    height: rem(32);
+    line-height: rem(32);
+    font-size: rem(12);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .location-row {
+    @include pad(0 rem(10) 0 rem(30));
+    @include span-columns(12);
+    height: rem(35);
+    line-height: rem(35);
+    text-align: left;
+    font-weight: 200;
+    cursor: pointer;
+    .flag, .name {
+      @include display(block);
+      display: block;
+      float: left;
+    }
+    .flag { padding-top: rem(6); }
+    .name { margin-left: rem(8); }
+    .premium {
+      background: linear-gradient(329deg, #f8cf1c, #f8e71c, #f8cf1c);
+      border-radius: rem(5) 0 rem(5) 0;
+      padding: rem(1) rem(3);
+      color: darken(#f8cf1c, 40%);
+      font-weight: 800;
+      position: relative;
+      top: rem(-1);
+      font-size: rem(10);
+      margin-left: rem(10);
+    }
+    &.disabled .flag, &.disabled .name, &.disabled .premium { opacity: 0.45; }
+    &:hover, &.checked:hover { background-color: lighten(#0f3c75, 10%); }
+    &.checked {
+      background: url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
+    }
+  }
+}

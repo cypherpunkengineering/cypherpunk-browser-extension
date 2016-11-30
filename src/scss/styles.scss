@@ -1,6 +1,6 @@
 @import '~bourbon/app/assets/stylesheets/_bourbon';
 @import '~bourbon-neat/app/assets/stylesheets/_neat';
-@import url('https://fonts.googleapis.com/css?family=Dosis:200,300,400,500');
+@import url('https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,800');
 /* You can add global styles to this file, and also import other style files */
 
 body {
@@ -12,6 +12,12 @@ body {
   height: rem(500);
   margin: 0;
   padding: 0;
+}
+
+#sub-menu {
+  width: 100%;
+  height: 100%;
+  background-color: #0f3c75;
 }
 
 /* Reuseable Components */

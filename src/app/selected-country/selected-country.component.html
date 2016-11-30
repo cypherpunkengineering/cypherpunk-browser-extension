@@ -1,0 +1,23 @@
+<div id="sub-menu">
+  <div id="header" class="bottom-separator">
+    <a routerLink="/" routerLinkActive="active"><span class="back-icon">&#x3008;</span>{{title}}</a>
+  </div>
+
+  <div class="country-select">
+    <div *ngFor="let server of serverArr; let i = index; trackBy: trackByFn">
+
+      <div class="region" *ngIf="i === 0 || (!(i === 0) && serverArr[i-1].region !== server.region)">
+        {{regions[server.region]}}
+      </div>
+
+      <div class="location-row" (click)="selectProxy(server)" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled }">
+        <span class="flag">
+          <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
+        </span>
+        <span class="name">{{server.name}}</span>
+        <span *ngIf="server.level === 'premium'" class="premium">PREMIUM</span>
+      </div>
+
+    </div>
+  </div>
+</div>

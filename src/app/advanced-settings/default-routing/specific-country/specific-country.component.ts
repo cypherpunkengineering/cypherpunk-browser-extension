@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { ProxySettingsService } from '../proxy-settings.service';
+import { ProxySettingsService } from '../../../proxy-settings.service';
 import { LocalStorageService } from 'angular-2-local-storage';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './selected-country.component.html'
+  templateUrl: './specific-country.component.html'
 })
-export class SelectedCountryComponent {
-  title = 'Selected Country';
+export class SpecificCountryComponent {
+  title = 'Use a specific country';
   serverObj;
   premiumAccount;
   serverKeys;

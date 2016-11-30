@@ -1,0 +1,31 @@
+<div id="sub-menu">
+  <div id="header" routerLink="/advanced-settings" routerLinkActive="active" class="bottom-separator">
+    <span class="back-icon">&#x3008;</span>{{title}}
+  </div>
+
+  <!-- Private User Agent -->
+  <div (click)="selectedUserAgent = 0" [ngClass]="{'checked': selectedUserAgent === 0}" class="switch-row selectable bottom-separator">
+    <div class="label">Private User Agent</div>
+  </div>
+
+  <!-- iOS User Agent -->
+  <div (click)="selectedUserAgent = 1" [ngClass]="{'checked': selectedUserAgent === 1}" class="switch-row selectable bottom-separator">
+    <div class="label">iOS User Agent</div>
+  </div>
+
+  <!-- Android User Agent -->
+  <div (click)="selectedUserAgent = 2" [ngClass]="{'checked': selectedUserAgent === 2}" class="switch-row selectable bottom-separator">
+    <div class="label">Android User Agent</div>
+  </div>
+
+  <!-- Mozilla User Agent -->
+  <div (click)="selectedUserAgent = 3" [ngClass]="{'checked': selectedUserAgent === 3}" class="switch-row selectable bottom-separator">
+    <div class="label">Mozilla User Agent</div>
+  </div>
+
+  <!-- Opera User Agent -->
+  <div (click)="selectedUserAgent = 4" [ngClass]="{'checked': selectedUserAgent === 4}" class="switch-row selectable bottom-separator">
+    <div class="label">Opera User Agent</div>
+  </div>
+
+</div>

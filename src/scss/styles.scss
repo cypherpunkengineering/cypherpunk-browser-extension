@@ -25,6 +25,9 @@ body {
   @include pad(0 rem(20));
   height: rem(56);
   line-height: rem(56);
+  cursor: pointer;
+  color: #fff;
+  font-size: rem(12);
 }
 
 .switch-row {
@@ -32,6 +35,18 @@ body {
   clear: both;
   height: rem(40);
   color: #fff;
+  &.clickable {
+    cursor: pointer;
+    &:hover { background-color: lighten(#0f3c75, 10%); }
+  }
+  &.selectable {
+    @include pad(0 0 0 rem(10));
+    cursor: pointer;
+    &:hover, &.checked:hover { background-color: lighten(#0f3c75, 10%); }
+    &.checked {
+      background: url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
+    }
+  }
   .label {
     @include span-columns(9);
     @include pad(0 0 0 rem(20));

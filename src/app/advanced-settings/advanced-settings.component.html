@@ -1,10 +1,10 @@
 <div id="sub-menu">
-  <div id="header" class="bottom-separator">
-    <a routerLink="/" routerLinkActive="active"><span class="back-icon">&#x3008;</span>{{title}}</a>
+  <div id="header" routerLink="/" routerLinkActive="active" class="bottom-separator">
+    <span class="back-icon">&#x3008;</span>{{title}}
   </div>
 
   <!-- Default Routing -->
-  <div class="switch-row bottom-separator">
+  <div routerLink="/default-routing" routerLinkActive="active" class="switch-row clickable bottom-separator">
     <div class="label half">Default Routing</div>
     <div class="switch half">
       Use Smart Routing
@@ -35,7 +35,7 @@
   </div>
 
   <!-- Privacy Filter Settings -->
-  <div class="switch-row bottom-separator">
+  <div routerLink="/privacy-filter" routerLinkActive="active" class="switch-row clickable bottom-separator">
     <div class="label half">Privacy Filter Settings</div>
     <div class="switch half">
       <span class="forward-icon">&#x3009;</span>
@@ -43,7 +43,7 @@
   </div>
 
   <!-- User Agent -->
-  <div class="switch-row bottom-separator">
+  <div routerLink="/user-agent" routerLinkActive="active" class="switch-row clickable bottom-separator">
     <div class="label half">User Agent</div>
     <div class="switch half">
       PRIVATE
@@ -52,7 +52,7 @@
   </div>
 
   <!-- Logout -->
-  <div class="switch-row bottom-separator">
+  <div class="switch-row clickable bottom-separator">
     <div class="label full">Logout</div>
   </div>
 </div>

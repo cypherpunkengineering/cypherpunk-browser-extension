@@ -8,6 +8,9 @@ import { LocalStorageService, LOCAL_STORAGE_SERVICE_CONFIG } from 'angular-2-loc
 import { AppComponent } from './app.component';
 import { SmartRoutesComponent } from './smart-routes/smart-routes.component';
 import { AdvancedSettingsComponent } from './advanced-settings/advanced-settings.component';
+import { PrivacyFilterComponent } from './advanced-settings/privacy-filter/privacy-filter.component';
+import { UserAgentComponent } from './advanced-settings/user-agent/user-agent.component';
+import { DefaultRoutingComponent } from './advanced-settings/default-routing/default-routing.component';
 import { SelectedCountryComponent } from './selected-country/selected-country.component';
 import { IndexComponent } from './index/index.component';
 import { HqService } from './hq.service';
@@ -24,6 +27,9 @@ let localStorageServiceConfig = {
     IndexComponent,
     SmartRoutesComponent,
     AdvancedSettingsComponent,
+    PrivacyFilterComponent,
+    UserAgentComponent,
+    DefaultRoutingComponent,
     SelectedCountryComponent
   ],
   imports: [
@@ -33,6 +39,9 @@ let localStorageServiceConfig = {
     RouterModule.forRoot([
       { path: 'smart-routes', component: SmartRoutesComponent },
       { path: 'advanced-settings', component: AdvancedSettingsComponent },
+      { path: 'privacy-filter', component: PrivacyFilterComponent },
+      { path: 'user-agent', component: UserAgentComponent },
+      { path: 'default-routing', component: DefaultRoutingComponent },
       { path: 'selected-country', component: SelectedCountryComponent },
       { path: '', component: IndexComponent }
         // { path: '**', component: PageNotFoundComponent }

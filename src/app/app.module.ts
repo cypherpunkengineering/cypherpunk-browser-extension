@@ -16,6 +16,7 @@ import { SelectedCountryComponent } from './selected-country/selected-country.co
 import { IndexComponent } from './index/index.component';
 import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
+import { SettingsService } from './settings.service';
 
 let localStorageServiceConfig = {
     prefix: 'cypherpunk',
@@ -53,6 +54,7 @@ let localStorageServiceConfig = {
   providers: [
     HqService,
     ProxySettingsService,
+    SettingsService,
     LocalStorageService,
     { provide: LOCAL_STORAGE_SERVICE_CONFIG, useValue: localStorageServiceConfig }
   ],

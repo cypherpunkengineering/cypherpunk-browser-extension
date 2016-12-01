@@ -47,14 +47,16 @@ export class ProxySettingsService {
 
   enableProxy() {
     console.log("applying proxy:");
+    let proxyIP = this.servers.losangeles.httpDefault[0];
+    console.log(proxyIP);
     let config = {
       mode: "pac_script",
       pacScript: {
         data: "function FindProxyForURL(url, host) {\n" +
               "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n" +
-              "  if (shExpMatch(host, \"*.com\")) return 'PROXY 204.145.66.40:3128';\n" +
-              "  if (shExpMatch(host, \"*.jp\")) return 'PROXY 204.145.66.40:3128';\n" +
-              "  else return 'PROXY 204.145.66.40:3128';\n" +
+              "  if (shExpMatch(host, \"*.com\")) return 'PROXY " + proxyIP + ":3128';\n" +
+              "  if (shExpMatch(host, \"*.jp\")) return 'PROXY " + proxyIP + ":3128';\n" +
+              "  else return 'PROXY " + proxyIP + ":3128';\n" +
               "}"
       }
     };

@@ -3,6 +3,7 @@ import { ProxySettingsService } from '../proxy-settings.service';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Subject } from 'rxjs/Subject';
 import { HqService } from '../hq.service';
+import { SettingsService } from '../settings.service';
 
 @Component({
   selector: 'app-root',
@@ -26,19 +27,19 @@ export class IndexComponent {
     none: 'Do not proxy'
   };
   selectedSmartRouteOpt = this.smartRouteOpts.selected;
-  proxyUsername = undefined;
-  proxyPassword = undefined;
 
   constructor(
     private localStorageService: LocalStorageService,
+    private settingsService: SettingsService,
     private proxySettingsService: ProxySettingsService,
     private hqService: HqService
   ) {
 
+    // saves proxy creds to local storage
     this.hqService.fetchUserStatus().subscribe(res => {
-      this.proxyUsername = res.privacy.username;
-      this.proxyPassword = res.privacy.password;
+      this.settingsService.saveProxyCredentials(res.privacy.username, res.privacy.password);
     });
+    console.log(this.settingsService.proxyCredentials());
 
     chrome.webRequest.onAuthRequired.addListener(
       this.proxyAuth,
@@ -113,10 +114,11 @@ export class IndexComponent {
   }
 
   proxyAuth(details) {
+    var credentials = this.settingsService.proxyCredentials();
     return {
       authCredentials: {
-        username: this.proxyUsername,
-        password: this.proxyPassword
+        username: credentials.username,
+        password: credentials.password
       }
     };
   }

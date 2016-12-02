@@ -9,7 +9,7 @@ function enablePrivacyFilter() {
   disablePrivacyFilter();
   chrome.webRequest.onBeforeRequest.addListener(
     cancelRequest,
-    {urls: ["<all_urls>"]},
+    { urls: ["<all_urls>"] },
     ["blocking"]
   );
 };
@@ -32,3 +32,20 @@ chrome.tabs.onActivated.addListener(function (tab) {
 
   });
 });
+
+
+function redirectRequest(requestDetails) {
+  return { redirectUrl: requestDetails.url.replace(/^http:\/\//i, 'https://') };
+}
+
+function disableForceHttps() {
+  chrome.webRequest.onBeforeRequest.removeListener(redirectRequest);
+}
+
+function enableForceHttps() {
+  chrome.webRequest.onBeforeRequest.addListener(
+    redirectRequest,
+    { urls:['http://*/*'] },
+    ['blocking']
+  );
+}

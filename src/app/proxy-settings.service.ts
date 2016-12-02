@@ -33,10 +33,6 @@ export class ProxySettingsService {
     });
   }
 
-  getProxyStatus() {
-    return this.localStorageService.get('proxy.enabled');
-  }
-
   getServerList() {
     return this.servers;
   }

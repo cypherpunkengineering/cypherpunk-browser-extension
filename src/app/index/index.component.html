@@ -17,14 +17,14 @@
       <div id="smart-routing-label" class="label">Smart Routing is {{enableSmartRouting.checked ? 'ON' : 'OFF'}}</div>
       <div id="smart-routing-enabled-switch" class="switch">
         <label class="label-switch">
-          <input #enableSmartRouting type="checkbox" [(ngModel)]="smartRoutingEnabled" (ngModelChange)="enableProxy($event)" [disabled]="!cypherpunkEnabled" />
+          <input #enableSmartRouting type="checkbox" [(ngModel)]="smartRoutingEnabled" (ngModelChange)="toggleSmartRouting($event)" [disabled]="!cypherpunkEnabled" />
           <div class="checkbox"></div>
         </label>
       </div>
     </div>
 
     <!-- Smart routing off -->
-    <div id="smart-routing-off" *ngIf="!enableSmartRouting.checked">
+    <div id="smart-routing-off" *ngIf="!smartRoutingEnabled">
       <div class="title">Your<br>Actual Location</div>
       <div class="flag-container">
         <img src="/assets/flags/jp.svg" />
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Smart routing on -->
-    <div id="smart-routing-on" *ngIf="enableSmartRouting.checked">
+    <div id="smart-routing-on" *ngIf="smartRoutingEnabled">
       <div class="flags-wrap">
         <div class="title">Your<br>Public Location</div>
         <div class="location">
@@ -106,7 +106,7 @@
     <div id="privacy-label" class="label">Privacy filter for <span [innerHTML]="domain"></span></div>
     <div id="privacy-enabled-switch" class="switch">
       <label class="label-switch">
-        <input type="checkbox" [(ngModel)]="privacyFilter" (ngModelChange)="togglePrivacyFilter($event)" [disabled]="!cypherpunkEnabled" />
+        <input type="checkbox" [(ngModel)]="privacyFilterSwitch" (ngModelChange)="togglePrivacyFilter($event)" [disabled]="!cypherpunkEnabled" />
         <div class="checkbox"></div>
       </label>
     </div>

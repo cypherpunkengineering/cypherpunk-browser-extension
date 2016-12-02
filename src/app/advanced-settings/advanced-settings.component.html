@@ -7,7 +7,7 @@
   <div routerLink="default-routing" routerLinkActive="active" class="switch-row clickable bottom-separator">
     <div class="label half">Default Routing</div>
     <div class="switch half">
-      Use Smart Routing
+      {{defaultRouting()}}
       <span class="forward-icon">&#x3009;</span>
     </div>
   </div>
@@ -17,7 +17,7 @@
     <div class="label">Force HTTPS</div>
     <div class="switch">
       <label class="label-switch">
-        <input #forceHttps type="checkbox" />
+        <input #forceHttps type="checkbox" [(ngModel)]="forceHttpsEnabled" (ngModelChange)="toggleForceHttps($event)"  />
         <div class="checkbox"></div>
       </label>
     </div>
@@ -28,7 +28,7 @@
     <div class="label">WebRTC Leak Protection</div>
     <div class="switch">
       <label class="label-switch">
-        <input #webRtcLeakProtection type="checkbox" />
+        <input #webRtcLeakProtection type="checkbox" [(ngModel)]="webRtcLeakProtectionEnabled" (ngModelChange)="toggleWebRtcLeakProtection($event)" />
         <div class="checkbox"></div>
       </label>
     </div>
@@ -46,7 +46,7 @@
   <div routerLink="user-agent" routerLinkActive="active" class="switch-row clickable bottom-separator">
     <div class="label half">User Agent</div>
     <div class="switch half">
-      PRIVATE
+      {{userAgent()}}
       <span class="forward-icon">&#x3009;</span>
     </div>
   </div>

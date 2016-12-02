@@ -7,7 +7,7 @@ import { LocalStorageService } from 'angular-2-local-storage';
   templateUrl: './specific-country.component.html'
 })
 export class SpecificCountryComponent {
-  title = 'Use a specific country';
+  title = 'Use specific server';
   serverObj;
   premiumAccount;
   serverKeys;

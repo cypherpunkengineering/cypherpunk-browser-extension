@@ -1,6 +1,5 @@
 import { Component, Input, Output } from '@angular/core';
 import { ProxySettingsService } from '../proxy-settings.service';
-import { LocalStorageService } from 'angular-2-local-storage';
 import { Subject } from 'rxjs/Subject';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
@@ -13,12 +12,16 @@ import { SettingsService } from '../settings.service';
 export class IndexComponent {
   title = 'Index';
   domain = '(Loading...)';
-  cypherpunkEnabled = undefined;
-  smartRoutingEnabled = undefined;
   showRoutingDropdown = false;
   faviconUrl = undefined;
-  privacyFilter = true;
-  privacyFilterWhitelist = this.localStorageService.get('privacyFilterWhitelist') || {};
+  privacyFilterSwitch = true;
+
+  indexSettings = this.settingsService.indexSettings();
+  proxyCredentials = this.indexSettings.proxyCredentials;
+  privacyFilterWhitelist = this.indexSettings.privacyFilter.whitelist;
+  cypherpunkEnabled = this.indexSettings.cypherpunkEnabled;
+  smartRoutingEnabled = this.indexSettings.smartRoutingEnabled;
+
   smartRouteOpts = {
     auto: 'Auto: USA',
     recommended: 'Silicon Valley, USA (Recommended)',
@@ -29,7 +32,6 @@ export class IndexComponent {
   selectedSmartRouteOpt = this.smartRouteOpts.selected;
 
   constructor(
-    private localStorageService: LocalStorageService,
     private settingsService: SettingsService,
     private proxySettingsService: ProxySettingsService,
     private hqService: HqService
@@ -39,10 +41,16 @@ export class IndexComponent {
     this.hqService.fetchUserStatus().subscribe(res => {
       this.settingsService.saveProxyCredentials(res.privacy.username, res.privacy.password);
     });
-    console.log(this.settingsService.proxyCredentials());
 
     chrome.webRequest.onAuthRequired.addListener(
-      this.proxyAuth,
+      () => {
+        return {
+          authCredentials: {
+            username: this.proxyCredentials.username,
+            password:  this.proxyCredentials.password
+          }
+        };
+      },
       {urls: ["<all_urls>"]},
       ['blocking']
     );
@@ -53,10 +61,10 @@ export class IndexComponent {
       this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
 
       if (this.privacyFilterWhitelist[this.domain] === undefined) {
-        this.privacyFilter = true;
+        this.privacyFilterSwitch = true;
       }
       else if (this.privacyFilterWhitelist[this.domain] === false) {
-        this.privacyFilter = false;
+        this.privacyFilterSwitch = false;
       }
 
       let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
@@ -66,61 +74,48 @@ export class IndexComponent {
         this.faviconUrl = curTab.favIconUrl;
       }
     });
+  }
 
-    this.cypherpunkEnabled = this.localStorageService.get('cypherpunk.enabled');
-    this.smartRoutingEnabled = this.proxySettingsService.getProxyStatus();
+  toggleCypherpunk(enabled: boolean) {
+    this.settingsService.saveCypherpunkEnabled(enabled);
+    if (enabled) {
+      this.proxySettingsService.enableProxy();
+    }
+    else {
+      this.showRoutingDropdown = false;
+      this.proxySettingsService.disableProxy();
+    }
+  }
+
+  toggleSmartRouting(enabled: boolean) {
+    this.settingsService.saveSmartRoutingEnabled(enabled);
+    this.smartRoutingEnabled = enabled;
+    if (enabled) {
+      console.log('Smart Routing Enabled');
+    }
+    else {
+      console.log('Smart Routing Disabled');
+    }
+  }
+
+  togglePrivacyFilter(enabled: boolean) {
+    this.privacyFilterSwitch = enabled;
+    if (this.privacyFilterSwitch) {
+       this.privacyFilterWhitelist[this.domain] = undefined;
+    }
+    else {
+      this.privacyFilterWhitelist[this.domain] = false;
+    }
+    this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
   }
 
   toggleRoutingDropdown() {
     this.showRoutingDropdown = !this.showRoutingDropdown;
   }
 
-  toggleCypherpunk(state: boolean) {
-    this.localStorageService.set('cypherpunk.enabled', state);
-    this.cypherpunkEnabled = state;
-    if (!this.cypherpunkEnabled) {
-      this.smartRoutingEnabled = false;
-      this.showRoutingDropdown = false;
-      this.proxySettingsService.disableProxy();
-    }
-  }
-
   selectSmartRoute(selection: string) {
     this.selectedSmartRouteOpt = selection;
   }
 
-  enableProxy(enable: boolean) {
-    let config;
-    if (enable) {
-      this.proxySettingsService.enableProxy();
-    }
-    else {
-      this.proxySettingsService.disableProxy();
-      this.showRoutingDropdown = false;
-    }
-  }
-
-  togglePrivacyFilter(state: boolean) {
-    console.log('Toggling privacy for', this.domain, state);
-    this.privacyFilter = state;
-    if (this.privacyFilter) {
-       this.privacyFilterWhitelist[this.domain] = undefined;
-    }
-    else {
-      this.privacyFilterWhitelist[this.domain] = false;
-    }
-    this.localStorageService.set('privacyFilterWhitelist', this.privacyFilterWhitelist);
-    console.log(this.privacyFilterWhitelist);
-  }
-
-  proxyAuth(details) {
-    var credentials = this.settingsService.proxyCredentials();
-    return {
-      authCredentials: {
-        username: credentials.username,
-        password: credentials.password
-      }
-    };
-  }
 }
 

@@ -11,7 +11,7 @@ import { AdvancedSettingsComponent } from './advanced-settings/advanced-settings
 import { PrivacyFilterComponent } from './advanced-settings/privacy-filter/privacy-filter.component';
 import { UserAgentComponent } from './advanced-settings/user-agent/user-agent.component';
 import { DefaultRoutingComponent } from './advanced-settings/default-routing/default-routing.component';
-import { SpecificCountryComponent } from './advanced-settings/default-routing/specific-country/specific-country.component';
+import { SpecificServerComponent } from './advanced-settings/default-routing/specific-server/specific-server.component';
 import { SelectedCountryComponent } from './selected-country/selected-country.component';
 import { IndexComponent } from './index/index.component';
 import { HqService } from './hq.service';
@@ -32,7 +32,7 @@ let localStorageServiceConfig = {
     PrivacyFilterComponent,
     UserAgentComponent,
     DefaultRoutingComponent,
-    SpecificCountryComponent,
+    SpecificServerComponent,
     SelectedCountryComponent
   ],
   imports: [
@@ -45,7 +45,7 @@ let localStorageServiceConfig = {
       { path: 'advanced-settings/privacy-filter', component: PrivacyFilterComponent },
       { path: 'advanced-settings/user-agent', component: UserAgentComponent },
       { path: 'advanced-settings/default-routing', component: DefaultRoutingComponent },
-      { path: 'advanced-settings/default-routing/specific-country', component: SpecificCountryComponent },
+      { path: 'advanced-settings/default-routing/specific-server', component: SpecificServerComponent },
       { path: 'selected-country', component: SelectedCountryComponent },
       { path: '', component: IndexComponent }
         // { path: '**', component: PageNotFoundComponent }

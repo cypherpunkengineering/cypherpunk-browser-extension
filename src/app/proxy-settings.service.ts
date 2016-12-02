@@ -37,6 +37,11 @@ export class ProxySettingsService {
     return this.servers;
   }
 
+  getServer(serverId: any) {
+    if (!serverId) return {};
+    return this.servers[serverId];
+  }
+
   isPremiumProxyAccount() {
     return this.premiumProxyAccount;
   }

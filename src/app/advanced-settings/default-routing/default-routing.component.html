@@ -4,29 +4,29 @@
   </div>
 
   <!-- Smart Routing -->
-  <div (click)="defaultRoutingSelection = 0" [ngClass]="{'checked': defaultRoutingSelection === 0}" class="double-row bottom-separator">
+  <div (click)="selectRoutingType('SMART')" [ngClass]="{'checked': defaultRoutingType === 'SMART'}" class="double-row bottom-separator">
     <div class="label">Use Smart Routing</div>
     <div class="desc">Use the server closest to the site.</div>
   </div>
 
   <!-- Fastest Server -->
-  <div (click)="defaultRoutingSelection = 1" [ngClass]="{'checked': defaultRoutingSelection === 1}" class="double-row bottom-separator">
+  <div (click)="selectRoutingType('FASTEST')" [ngClass]="{'checked': defaultRoutingType === 'FASTEST'}" class="double-row bottom-separator">
     <div class="label">Use the fastest server</div>
     <div class="desc">Use the server closest to me.</div>
   </div>
 
   <!-- Specific Country -->
-  <div routerLink="specific-country" routerLinkActive="active" (click)="defaultRoutingSelection = 2" [ngClass]="{'checked': defaultRoutingSelection === 2}" class="double-row bottom-separator" >
+  <div routerLink="specific-server" routerLinkActive="active" [ngClass]="{'checked': defaultRoutingType === 'SPECIFIC'}" class="double-row bottom-separator" >
     <div class="label half">Use specific server</div>
     <div class="action">
-      {{selectedCountry}}
+      {{defaultRoutingSelected}}
       <span class="forward-icon">&#x3009;</span>
     </div>
     <div class="desc">Select a country you would like to use.</div>
   </div>
 
   <!-- Do Not Proxy -->
-  <div  (click)="defaultRoutingSelection = 3" [ngClass]="{'checked': defaultRoutingSelection === 3}" class="double-row bottom-separator">
+  <div  (click)="selectRoutingType('NONE')" [ngClass]="{'checked': defaultRoutingType === 'NONE'}" class="double-row bottom-separator">
     <div class="label">Do not proxy my web traffic</div>
     <div class="desc">Disable the proxy for all sites.</div>
   </div>

@@ -28,17 +28,25 @@ class Keys {
   public static PROXY_USERNAME: string = "proxy.username";
   public static PROXY_PASSWORD: string = "proxy.password";
 
+  // Index vivew
   public static INITIALIZED: string = "intialized";
   public static ENABLED: string = "enabled";
   public static SMART_ROUTING_ENABLED: string = "smartRoutingEnabled";
   public static PRIVACY_FILTER_WHITELIST: string = "privacyFilterWhitelist";
 
-  public static ROUTING_TYPE: string = "advanced.routingType";
+  // Advanced Settings
   public static FORCE_HTTPS: string = "advanced.forceHttps";
   public static WEB_RTC_LEAK_PROTECTION: string = "advanced.webRTCLeakProtection";
+
+  // Default Routing
+  public static ROUTING_TYPE: string = "advanced.defaultRouting.type";
+  public static ROUTING_SELECTED_SERVER: string = "advanced.defaultRouting.selected";
+
+  // User Agent
   public static USER_AGENT_TYPE: string = "advanced.userAgent.type";
   public static USER_AGENT_STRING: string = "advanced.userAgent.string";
 
+  // Privacy Filter
   public static PRIVACY_FILTER_ENABLED: string = "advanced.privacyFilter.enabled";
   public static PRIVACY_FILTER_ADS: string = "advanced.privacyFilter.blockAds";
   public static PRIVACY_FILTER_TRACKERS: string = "advanced.privacyFilter.blockTrackers";
@@ -52,9 +60,12 @@ class Defaults {
     smartRoutingEnabled: false,
     privacyFilterWhitelist: {},
     advanced: {
-      routingType: "smart",
       forceHttps: true,
       webRTCLeakProtection: true,
+      defaultRouting: {
+        type: "SMART",
+        selected: null
+      },
       privacyFilter: {
         enabled: true,
         blockAds: true,
@@ -87,6 +98,7 @@ export class SettingsService {
       this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, Defaults.getVal(Keys.SMART_ROUTING_ENABLED));
       this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, Defaults.getVal(Keys.PRIVACY_FILTER_WHITELIST));
       this.localStorageService.set(Keys.ROUTING_TYPE, Defaults.getVal(Keys.ROUTING_TYPE));
+      this.localStorageService.set(Keys.ROUTING_SELECTED_SERVER, Defaults.getVal(Keys.ROUTING_SELECTED_SERVER));
       this.localStorageService.set(Keys.FORCE_HTTPS, Defaults.getVal(Keys.FORCE_HTTPS));
       this.localStorageService.set(Keys.WEB_RTC_LEAK_PROTECTION, Defaults.getVal(Keys.WEB_RTC_LEAK_PROTECTION));
       this.localStorageService.set(Keys.PRIVACY_FILTER_ENABLED, Defaults.getVal(Keys.PRIVACY_FILTER_ENABLED));
@@ -135,7 +147,10 @@ export class SettingsService {
   /** Advanced Settings **/
   advancedSettings() {
     return {
-      defaultRouting: this.localStorageService.get(Keys.ROUTING_TYPE),
+      defaultRouting: {
+        type: this.localStorageService.get(Keys.ROUTING_TYPE),
+        selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
+      },
       forceHttps: this.localStorageService.get(Keys.FORCE_HTTPS),
       webRtcLeakProtection: this.localStorageService.get(Keys.WEB_RTC_LEAK_PROTECTION),
       userAgentType: this.localStorageService.get(Keys.USER_AGENT_TYPE)
@@ -148,20 +163,6 @@ export class SettingsService {
 
   saveWebRtcLeakProtection(enabled: boolean) {
     this.localStorageService.set(Keys.WEB_RTC_LEAK_PROTECTION, enabled);
-  }
-
-
-  /** Advanced Settings > User Agent **/
-  userAgentSettings() {
-    return {
-      userAgentType: this.localStorageService.get(Keys.USER_AGENT_TYPE),
-      userAgentString: this.localStorageService.get(Keys.USER_AGENT_STRING)
-    }
-  }
-
-  saveUserAgent(type: string, agentString: string) {
-    this.localStorageService.set(Keys.USER_AGENT_TYPE, type);
-    this.localStorageService.set(Keys.USER_AGENT_STRING, agentString);
   }
 
 
@@ -189,6 +190,34 @@ export class SettingsService {
 
   savePrivacyFilterMalware(enabled: boolean) {
     this.localStorageService.set(Keys.PRIVACY_FILTER_MALWARE, enabled);
+  }
+
+
+  /** Advanced Settings > User Agent **/
+  userAgentSettings() {
+    return {
+      userAgentType: this.localStorageService.get(Keys.USER_AGENT_TYPE),
+      userAgentString: this.localStorageService.get(Keys.USER_AGENT_STRING)
+    }
+  }
+
+  saveUserAgent(type: string, agentString: string) {
+    this.localStorageService.set(Keys.USER_AGENT_TYPE, type);
+    this.localStorageService.set(Keys.USER_AGENT_STRING, agentString);
+  }
+
+
+  /** Advanced Settings > Default Routing/Specific Server **/
+  defaultRoutingSettings() {
+    return {
+      type: this.localStorageService.get(Keys.ROUTING_TYPE),
+      selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
+    }
+  }
+
+  saveRoutingInfo(type: any, selected: string) {
+    this.localStorageService.set(Keys.ROUTING_TYPE, type);
+    this.localStorageService.set(Keys.ROUTING_SELECTED_SERVER, selected);
   }
 
 }

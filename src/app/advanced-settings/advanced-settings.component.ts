@@ -9,10 +9,10 @@ export class AdvancedSettingsComponent {
   title = 'Advanced Settings';
   advancedSettings = this.settingsService.advancedSettings();
   defaultRouting = () => {
-    let type = this.advancedSettings.defaultRouting;
-    if (type === 'smart') { return 'Smart Routing'; }
-    else if (type === 'fastest') { return 'Fastest Routing'; }
-    else if (type === 'specific') { return 'Specific Server'; }
+    let type = this.advancedSettings.defaultRouting.type;
+    if (type === 'SMART') { return 'Smart Routing'; }
+    else if (type === 'FASTEST') { return 'Fastest Server'; }
+    else if (type === 'SPECIFIC') { return 'Specific Server'; }
     else { return 'No Proxy'; }
   };
   forceHttpsEnabled = this.advancedSettings.forceHttps;

@@ -95,7 +95,7 @@
     <div class="title">Cypherpunk is Off</div>
     <div class="button">
       <label class="key-switch">
-        <input #enableVpnSwitchLarge type="checkbox" (change)="cypherpunkEnabled=enableVpnSwitchLarge.checked" />
+        <input #enableVpnSwitchLarge type="checkbox" (change)="cypherpunkEnabled=enableVpnSwitchLarge.checked; toggleCypherpunk(true)" />
         <div class="checkbox large"></div>
       </label>
     </div>

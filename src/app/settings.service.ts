@@ -36,7 +36,8 @@ class Keys {
   public static ROUTING_TYPE: string = "advanced.routingType";
   public static FORCE_HTTPS: string = "advanced.forceHttps";
   public static WEB_RTC_LEAK_PROTECTION: string = "advanced.webRTCLeakProtection";
-  public static USER_AGENT: string = "advanced.userAgent";
+  public static USER_AGENT_TYPE: string = "advanced.userAgent.type";
+  public static USER_AGENT_STRING: string = "advanced.userAgent.string";
 
   public static PRIVACY_FILTER_ENABLED: string = "advanced.privacyFilter.enabled";
   public static PRIVACY_FILTER_ADS: string = "advanced.privacyFilter.blockAds";
@@ -60,7 +61,10 @@ class Defaults {
         blockTrackers: true,
         blockMalware: true
       },
-      userAgent: ""
+      userAgent: {
+        type: "PRIVATE",
+        string: ""
+      }
     }
   };
 
@@ -89,7 +93,8 @@ export class SettingsService {
       this.localStorageService.set(Keys.PRIVACY_FILTER_ADS, Defaults.getVal(Keys.PRIVACY_FILTER_ADS));
       this.localStorageService.set(Keys.PRIVACY_FILTER_TRACKERS, Defaults.getVal(Keys.PRIVACY_FILTER_TRACKERS));
       this.localStorageService.set(Keys.PRIVACY_FILTER_MALWARE, Defaults.getVal(Keys.PRIVACY_FILTER_MALWARE));
-      this.localStorageService.set(Keys.USER_AGENT, Defaults.getVal(Keys.USER_AGENT));
+      this.localStorageService.set(Keys.USER_AGENT_TYPE, Defaults.getVal(Keys.USER_AGENT_TYPE));
+      this.localStorageService.set(Keys.USER_AGENT_STRING, Defaults.getVal(Keys.USER_AGENT_STRING));
     }
   }
 
@@ -126,13 +131,14 @@ export class SettingsService {
     this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, list)
   }
 
+
   /** Advanced Settings **/
   advancedSettings() {
     return {
       defaultRouting: this.localStorageService.get(Keys.ROUTING_TYPE),
       forceHttps: this.localStorageService.get(Keys.FORCE_HTTPS),
       webRtcLeakProtection: this.localStorageService.get(Keys.WEB_RTC_LEAK_PROTECTION),
-      userAgent: this.localStorageService.get(Keys.USER_AGENT)
+      userAgentType: this.localStorageService.get(Keys.USER_AGENT_TYPE)
     }
   }
 
@@ -144,6 +150,21 @@ export class SettingsService {
     this.localStorageService.set(Keys.WEB_RTC_LEAK_PROTECTION, enabled);
   }
 
+
+  /** Advanced Settings > User Agent **/
+  userAgentSettings() {
+    return {
+      userAgentType: this.localStorageService.get(Keys.USER_AGENT_TYPE),
+      userAgentString: this.localStorageService.get(Keys.USER_AGENT_STRING)
+    }
+  }
+
+  saveUserAgent(type: string, agentString: string) {
+    this.localStorageService.set(Keys.USER_AGENT_TYPE, type);
+    this.localStorageService.set(Keys.USER_AGENT_STRING, agentString);
+  }
+
+
   /** Advanced Settings > Privacy Filter **/
   privacyFilterSettings() {
     return {
@@ -153,4 +174,21 @@ export class SettingsService {
       blockMalware: this.localStorageService.get(Keys.PRIVACY_FILTER_MALWARE)
     }
   }
+
+  savePrivacyFilterEnabled(enabled: boolean) {
+    this.localStorageService.set(Keys.PRIVACY_FILTER_ENABLED, enabled);
+  }
+
+  savePrivacyFilterAds(enabled: boolean) {
+    this.localStorageService.set(Keys.PRIVACY_FILTER_ADS, enabled);
+  }
+
+  savePrivacyFilterTrackers(enabled: boolean) {
+    this.localStorageService.set(Keys.PRIVACY_FILTER_TRACKERS, enabled);
+  }
+
+  savePrivacyFilterMalware(enabled: boolean) {
+    this.localStorageService.set(Keys.PRIVACY_FILTER_MALWARE, enabled);
+  }
+
 }

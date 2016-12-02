@@ -8,7 +8,7 @@
     <div class="label">Enable Privacy Filter</div>
     <div class="switch">
       <label class="label-switch">
-        <input #forceHttps type="checkbox" />
+        <input #forceHttps type="checkbox" [(ngModel)]="privacyFilterEnabled" (ngModelChange)="togglePrivacyFilterEnabled($event)" />
         <div class="checkbox"></div>
       </label>
     </div>
@@ -19,7 +19,7 @@
     <div class="label">Block Ads</div>
     <div class="switch">
       <label class="label-switch">
-        <input #forceHttps type="checkbox" />
+        <input #forceHttps type="checkbox" [(ngModel)]="blockAds" (ngModelChange)="toggleBlockAds($event)" />
         <div class="checkbox"></div>
       </label>
     </div>
@@ -30,7 +30,7 @@
     <div class="label">Block Trackers</div>
     <div class="switch">
       <label class="label-switch">
-        <input #forceHttps type="checkbox" />
+        <input #forceHttps type="checkbox" [(ngModel)]="blockTrackers" (ngModelChange)="toggleBlockTrackers($event)" />
         <div class="checkbox"></div>
       </label>
     </div>
@@ -41,7 +41,7 @@
     <div class="label">Block Malware</div>
     <div class="switch">
       <label class="label-switch">
-        <input #forceHttps type="checkbox" />
+        <input #forceHttps type="checkbox" [(ngModel)]="blockMalware" (ngModelChange)="toggleBlockMalware($event)" />
         <div class="checkbox"></div>
       </label>
     </div>

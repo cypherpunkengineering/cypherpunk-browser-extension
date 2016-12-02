@@ -17,12 +17,7 @@ export class AdvancedSettingsComponent {
   };
   forceHttpsEnabled = this.advancedSettings.forceHttps;
   webRtcLeakProtectionEnabled = this.advancedSettings.webRtcLeakProtection;
-
-  userAgent = () => {
-    let agent = this.advancedSettings.userAgent;
-    if (!agent) { return 'PRIVATE'; }
-    else { return agent; }
-  };
+  userAgentType = this.advancedSettings.userAgentType;
 
   constructor(private settingsService: SettingsService) {}
 

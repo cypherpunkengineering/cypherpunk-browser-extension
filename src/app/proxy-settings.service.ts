@@ -8,6 +8,7 @@ export class ProxySettingsService {
   options: RequestOptions;
   servers;
   premiumProxyAccount;
+  accountType;
 
   constructor (
     private http: Http,
@@ -19,6 +20,7 @@ export class ProxySettingsService {
 
     this.hqService.login().subscribe(res => {
       let accountType = res.account.type;
+      this.accountType = accountType;
       this.premiumProxyAccount = accountType === 'premium';
       console.log('Login Successful for', accountType, 'account');
       this.hqService.findServers(accountType)
@@ -38,7 +40,7 @@ export class ProxySettingsService {
   }
 
   getServer(serverId: any) {
-    if (!serverId) return {};
+    if (!serverId || !this.servers) return {};
     return this.servers[serverId];
   }
 

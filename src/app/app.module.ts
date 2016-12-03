@@ -12,7 +12,7 @@ import { PrivacyFilterComponent } from './advanced-settings/privacy-filter/priva
 import { UserAgentComponent } from './advanced-settings/user-agent/user-agent.component';
 import { DefaultRoutingComponent } from './advanced-settings/default-routing/default-routing.component';
 import { SpecificServerComponent } from './advanced-settings/default-routing/specific-server/specific-server.component';
-import { SelectedCountryComponent } from './selected-country/selected-country.component';
+import { SelectedServerComponent } from './selected-server/selected-server.component';
 import { IndexComponent } from './index/index.component';
 import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
@@ -33,7 +33,7 @@ let localStorageServiceConfig = {
     UserAgentComponent,
     DefaultRoutingComponent,
     SpecificServerComponent,
-    SelectedCountryComponent
+    SelectedServerComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +46,7 @@ let localStorageServiceConfig = {
       { path: 'advanced-settings/user-agent', component: UserAgentComponent },
       { path: 'advanced-settings/default-routing', component: DefaultRoutingComponent },
       { path: 'advanced-settings/default-routing/specific-server', component: SpecificServerComponent },
-      { path: 'selected-country', component: SelectedCountryComponent },
+      { path: 'selected-server', component: SelectedServerComponent },
       { path: '', component: IndexComponent }
         // { path: '**', component: PageNotFoundComponent }
     ]),

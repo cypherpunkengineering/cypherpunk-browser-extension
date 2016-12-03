@@ -15,13 +15,16 @@ export class IndexComponent {
   showRoutingDropdown = false;
   faviconUrl = undefined;
   privacyFilterSwitch = true;
+  servers;
 
   indexSettings = this.settingsService.indexSettings();
   proxyCredentials = this.indexSettings.proxyCredentials;
   privacyFilterWhitelist = this.indexSettings.privacyFilter.whitelist;
   cypherpunkEnabled = this.indexSettings.cypherpunkEnabled;
   smartRoutingEnabled = this.indexSettings.smartRoutingEnabled;
-
+  smartRouting = this.indexSettings.smartRouting;
+  selectedSmartRouteOpt;
+  selectedSmartRouteServer;
   smartRouteOpts = {
     auto: 'Auto: USA',
     recommended: 'Silicon Valley, USA (Recommended)',
@@ -29,7 +32,6 @@ export class IndexComponent {
     selected: 'Selected Country: Silicon Valley, USA',
     none: 'Do not proxy'
   };
-  selectedSmartRouteOpt = this.smartRouteOpts.selected;
 
   constructor(
     private settingsService: SettingsService,
@@ -40,6 +42,17 @@ export class IndexComponent {
     // saves proxy creds to local storage
     this.hqService.fetchUserStatus().subscribe(res => {
       this.settingsService.saveProxyCredentials(res.privacy.username, res.privacy.password);
+    });
+
+    this.hqService.findServers(this.proxySettingsService.isPremiumProxyAccount ? 'premium' : 'free').subscribe(res => {
+      this.servers = res;
+      let curSmartRoute = this.smartRouting[this.domain];
+      if (curSmartRoute) {
+        this.selectedSmartRouteOpt = curSmartRoute.type;
+        if (curSmartRoute.serverId) {
+          this.selectedSmartRouteServer = this.servers[curSmartRoute.serverId].name;
+        }
+      }
     });
 
     chrome.webRequest.onAuthRequired.addListener(
@@ -78,6 +91,10 @@ export class IndexComponent {
 
   toggleCypherpunk(enabled: boolean) {
     this.settingsService.saveCypherpunkEnabled(enabled);
+    // Triggers boolean change when large switch is hit
+    if (this.cypherpunkEnabled !== enabled) {
+      this.cypherpunkEnabled = enabled;
+    }
     if (enabled) {
       this.proxySettingsService.enableProxy();
     }
@@ -113,8 +130,18 @@ export class IndexComponent {
     this.showRoutingDropdown = !this.showRoutingDropdown;
   }
 
-  selectSmartRoute(selection: string) {
-    this.selectedSmartRouteOpt = selection;
+  selectSmartRoute(type: string) {
+    if (type === 'SELECTED') { return; }
+    this.selectedSmartRouteOpt = type;
+    // Don't store smart routing info if on auto
+    if (this.smartRouting[this.domain] && type === 'AUTO') {
+      delete this.smartRouting[this.domain];
+    }
+    else {
+      this.smartRouting[this.domain] = { type: type }
+    }
+
+    this.settingsService.saveSmartRouting(this.smartRouting);
   }
 
 }

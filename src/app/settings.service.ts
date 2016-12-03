@@ -33,6 +33,7 @@ class Keys {
   public static ENABLED: string = "enabled";
   public static SMART_ROUTING_ENABLED: string = "smartRoutingEnabled";
   public static PRIVACY_FILTER_WHITELIST: string = "privacyFilterWhitelist";
+  public static SMART_ROUTING: string = "smartRouting";
 
   // Advanced Settings
   public static FORCE_HTTPS: string = "advanced.forceHttps";
@@ -59,6 +60,7 @@ class Defaults {
     enabled: false,
     smartRoutingEnabled: false,
     privacyFilterWhitelist: {},
+    smartRouting: {},
     advanced: {
       forceHttps: true,
       webRTCLeakProtection: true,
@@ -97,6 +99,7 @@ export class SettingsService {
       this.localStorageService.set(Keys.ENABLED, Defaults.getVal(Keys.ENABLED));
       this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, Defaults.getVal(Keys.SMART_ROUTING_ENABLED));
       this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, Defaults.getVal(Keys.PRIVACY_FILTER_WHITELIST));
+      this.localStorageService.set(Keys.SMART_ROUTING, Defaults.getVal(Keys.SMART_ROUTING));
       this.localStorageService.set(Keys.ROUTING_TYPE, Defaults.getVal(Keys.ROUTING_TYPE));
       this.localStorageService.set(Keys.ROUTING_SELECTED_SERVER, Defaults.getVal(Keys.ROUTING_SELECTED_SERVER));
       this.localStorageService.set(Keys.FORCE_HTTPS, Defaults.getVal(Keys.FORCE_HTTPS));
@@ -115,6 +118,7 @@ export class SettingsService {
     return {
       cypherpunkEnabled: this.localStorageService.get(Keys.ENABLED),
       smartRoutingEnabled: this.localStorageService.get(Keys.SMART_ROUTING_ENABLED),
+      smartRouting: this.localStorageService.get(Keys.SMART_ROUTING),
       proxyCredentials: {
         username: this.localStorageService.get(Keys.PROXY_USERNAME),
         password: this.localStorageService.get(Keys.PROXY_PASSWORD)
@@ -143,6 +147,16 @@ export class SettingsService {
     this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, list)
   }
 
+  saveSmartRouting(smartRoutes: Object) {
+    this.localStorageService.set(Keys.SMART_ROUTING, smartRoutes);
+  }
+
+  /** Smart Routing Selected Server Settings **/
+  selectedServerSettings() {
+    return {
+      smartRouting: this.localStorageService.get(Keys.SMART_ROUTING)
+    }
+  }
 
   /** Advanced Settings **/
   advancedSettings() {

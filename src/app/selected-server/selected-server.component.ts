@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { ProxySettingsService } from '../proxy-settings.service';
 import { LocalStorageService } from 'angular-2-local-storage';
+import { SettingsService } from '../settings.service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './selected-country.component.html'
+  templateUrl: './selected-server.component.html'
 })
-export class SelectedCountryComponent {
-  title = 'Selected Country';
+export class SelectedServerComponent {
+  title = 'Selected Server';
+  domain;
   serverObj;
   premiumAccount;
   serverKeys;
@@ -20,10 +22,17 @@ export class SelectedCountryComponent {
     'AS': 'ASIA & INDIA'
   };
 
+  selectedServerSettings = this.settingsService.selectedServerSettings();
+  smartRouting = this.selectedServerSettings.smartRouting;
+  smartRoutingType = 'SELECTED';
+
   constructor(
+    private zone: NgZone,
+    private settingsService: SettingsService,
     private localStorageService: LocalStorageService,
-    private proxySettingsService: ProxySettingsService,
+    private proxySettingsService: ProxySettingsService
   ) {
+
     this.premiumAccount = this.proxySettingsService.isPremiumProxyAccount();
     this.serverObj = this.proxySettingsService.getServerList();
     this.serverKeys = Object.keys(this.serverObj);
@@ -39,12 +48,35 @@ export class SelectedCountryComponent {
       if (a.name > b.name) return 1;
       return 0;
     });
-    this.selectedServerId = this.serverArr[0].id;
+
+    chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
+      let curTab = tabs[0];
+      let url = curTab.url
+      this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
+
+      let curSmartRoute = this.smartRouting[this.domain];
+      if (curSmartRoute) {
+        this.zone.run(() => {
+          this.selectedServerId = curSmartRoute.serverId;
+        });
+      }
+    });
+
+
   }
 
   selectProxy(server) {
+    console.log(server);
     if (server.level === 'premium' && !this.premiumAccount) { return; }
-    else { this.selectedServerId = server.id; }
+    else {
+      this.selectedServerId = server.id;
+       this.smartRouting[this.domain] = {
+         type: this.smartRoutingType,
+         serverId: server.id
+       }
+      this.settingsService.saveSmartRouting(this.smartRouting);
+    }
+
   }
 }
 

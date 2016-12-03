@@ -50,10 +50,10 @@
             <img src="/assets/flags/us.svg" />
           </div>
           <div class="subtitle bold">
-            Silicon Valley, USA
+            {{ selectedSmartRouteServer || 'Silicon Valley, USA' }}
             <br>
             <a href="#" (click)="toggleRoutingDropdown()">
-              (Selected Country)
+              (Selected Server)
               <div>╲╱</div>
             </a>
           </div>
@@ -77,14 +77,14 @@
 
       <!-- Smart Routing Dropdown -->
       <div class="routing-dd" [ngClass]="{'open': showRoutingDropdown, 'closed': !showRoutingDropdown}">
-        <div class="row" (click)="selectSmartRoute(smartRouteOpts.auto)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.auto }">{{smartRouteOpts.auto}}</div>
-        <div class="row" (click)="selectSmartRoute(smartRouteOpts.recommended)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.recommended }">{{smartRouteOpts.recommended}}</div>
-        <div class="row" (click)="selectSmartRoute(smartRouteOpts.closest)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.closest }">{{smartRouteOpts.closest}}</div>
-        <div class="row" (click)="selectSmartRoute(smartRouteOpts.selected)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.selected}" routerLink="/selected-country" routerLinkActive="active">
-          {{smartRouteOpts.selected}}
+        <div class="row" (click)="selectSmartRoute('AUTO')" [ngClass]="{'checked': selectedSmartRouteOpt === 'AUTO' || !selectedSmartRouteOpt }">{{smartRouteOpts.auto}}</div>
+        <div class="row" (click)="selectSmartRoute('RECOMMENDED')" [ngClass]="{'checked': selectedSmartRouteOpt === 'RECOMMENDED' }">{{smartRouteOpts.recommended}}</div>
+        <div class="row" (click)="selectSmartRoute('CLOSEST')" [ngClass]="{'checked': selectedSmartRouteOpt === 'CLOSEST' }">{{smartRouteOpts.closest}}</div>
+        <div class="row" (click)="selectSmartRoute('SELECTED')" [ngClass]="{'checked': selectedSmartRouteOpt === 'SELECTED' }" routerLink="/selected-server" routerLinkActive="active">
+          {{ selectedSmartRouteOpt === 'SELECTED' ? 'Selected Server: ' + selectedSmartRouteServer : 'Selected Server'}}
           <span class="forward-icon">&#x3009;</span>
         </div>
-        <div class="row" (click)="selectSmartRoute(smartRouteOpts.none)" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.none }">{{smartRouteOpts.none}}</div>
+        <div class="row" (click)="selectSmartRoute('NONE')" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.none }">{{smartRouteOpts.none}}</div>
       </div>
 
     </div>
@@ -95,7 +95,7 @@
     <div class="title">Cypherpunk is Off</div>
     <div class="button">
       <label class="key-switch">
-        <input #enableVpnSwitchLarge type="checkbox" (change)="cypherpunkEnabled=enableVpnSwitchLarge.checked; toggleCypherpunk(true)" />
+        <input #enableVpnSwitchLarge type="checkbox" (change)="toggleCypherpunk($event)" />
         <div class="checkbox large"></div>
       </label>
     </div>

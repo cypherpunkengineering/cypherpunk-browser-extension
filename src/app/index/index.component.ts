@@ -64,6 +64,7 @@ export class IndexComponent {
       this.serverArr = this.proxySettingsService.serverArr;
 
       if (this.cypherpunkEnabled) { this.proxySettingsService.enableProxy(); }
+      else { this.proxySettingsService.disableProxy(); }
 
       let curSmartRoute = this.smartRouting[this.domain];
       if (curSmartRoute) {

@@ -72,6 +72,7 @@ export class ProxySettingsService {
   }
 
   enableProxy() {
+    if (!this.servers) return;
     console.log("applying proxy:");
     let proxyIP = this.servers.losangeles.httpDefault[0];
     console.log(proxyIP);

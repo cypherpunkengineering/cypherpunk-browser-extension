@@ -17,6 +17,18 @@
   background-color: #999999;
 }
 
+#header__main {
+  // background-color: #4c8ee1;
+  padding: 10px 0;
+
+  .btn__settings {
+    opacity: 0.75;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+  }
+}
+
 #header-on-off {
   @include row;
   clear: both;

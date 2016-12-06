@@ -1,5 +1,9 @@
 <div id="index" [ngClass]="{'cypherpunk-on': cypherpunkEnabled, 'cypherpunk-off': !cypherpunkEnabled}">
-  <div id="header-on-off" class="bottom-separator" [ngClass]="{'header-off': !cypherpunkEnabled}">
+  <div id="header__main">
+    <img src="/assets/header-logo-big.svg" alt="">
+    <a routerLink="/advanced-settings" routerLinkActive="active" class="btn__settings"><img src="/assets/icon_settings.svg" alt=""></a>
+  </div>
+  <!-- <div id="header-on-off" class="bottom-separator" [ngClass]="{'header-off': !cypherpunkEnabled}">
     <div id="logo"><div></div></div>
     <div id="enabled-label">Cypherpunk is {{cypherpunkEnabled ? 'ON' : 'OFF'}}</div>
     <div id="enabled-switch">
@@ -8,7 +12,7 @@
         <div class="checkbox"></div>
       </label>
     </div>
-  </div>
+  </div> -->
 
   <!-- Cypherpunk is enabled -->
   <div id="info-connected" *ngIf="cypherpunkEnabled">
@@ -131,7 +135,20 @@
     </div>
   </div>
 
-  <div id="footer">
-    <a routerLink="/advanced-settings" routerLinkActive="active">Advanced Settings</a>
+
+  <div id="header-on-off" class="bottom-separator" [ngClass]="{'header-off': !cypherpunkEnabled}">
+    <div id="logo"><div></div></div>
+    <div id="enabled-label">Cypherpunk is {{cypherpunkEnabled ? 'ON' : 'OFF'}}</div>
+    <div id="enabled-switch">
+      <label class="key-switch">
+        <input #enableVpnSwitch [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
+        <div class="checkbox"></div>
+      </label>
+    </div>
   </div>
+
+
+  <!-- <div id="footer">
+    <a routerLink="/advanced-settings" routerLinkActive="active">Advanced Settings</a>
+  </div> -->
 </div>

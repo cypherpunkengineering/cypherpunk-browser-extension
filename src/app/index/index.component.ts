@@ -16,6 +16,9 @@ export class IndexComponent {
   faviconUrl = undefined;
   privacyFilterSwitch = true;
   servers;
+  serverArr;
+  regions = this.proxySettingsService.regions;
+
 
   indexSettings = this.settingsService.indexSettings();
   proxyCredentials = this.indexSettings.proxyCredentials;
@@ -23,14 +26,13 @@ export class IndexComponent {
   cypherpunkEnabled = this.indexSettings.cypherpunkEnabled;
   smartRoutingEnabled = this.indexSettings.smartRoutingEnabled;
   smartRouting = this.indexSettings.smartRouting;
-  selectedSmartRouteOpt;
+  selectedSmartRouteOpt = 'Loading...';
   selectedSmartRouteServer;
   smartRouteOpts = {
-    auto: 'Auto: USA',
-    recommended: 'Silicon Valley, USA (Recommended)',
-    closest: 'Japan (Closest)',
-    selected: 'Selected Country: Silicon Valley, USA',
-    none: 'Do not proxy'
+    recommended: { title: 'Silicon Valley, USA (Recommended)', type: 'Recommended' },
+    closest: { title: 'Japan (Closest)', type: 'Closest' },
+    selected: { title: 'Selected Server: Silicon Valley, USA', type: 'Selected Server' },
+    none: { title: 'Do not proxy', type: 'No Proxy' }
   };
 
   constructor(
@@ -42,10 +44,27 @@ export class IndexComponent {
     // saves proxy creds to local storage
     this.hqService.fetchUserStatus().subscribe(res => {
       this.settingsService.saveProxyCredentials(res.privacy.username, res.privacy.password);
+      chrome.webRequest.onAuthRequired.addListener(
+        () => {
+          return {
+            authCredentials: {
+              username: this.proxyCredentials.username,
+              password:  this.proxyCredentials.password
+            }
+          };
+        },
+        {urls: ["<all_urls>"]},
+        ['blocking']
+      );
     });
 
-    this.hqService.findServers(this.proxySettingsService.isPremiumProxyAccount ? 'premium' : 'free').subscribe(res => {
-      this.servers = res;
+    // Initialize proxy servers
+    this.proxySettingsService.loadServers().then(res => {
+      this.servers = this.proxySettingsService.servers;
+      this.serverArr = this.proxySettingsService.serverArr;
+
+      if (this.cypherpunkEnabled) { this.proxySettingsService.enableProxy(); }
+
       let curSmartRoute = this.smartRouting[this.domain];
       if (curSmartRoute) {
         this.selectedSmartRouteOpt = curSmartRoute.type;
@@ -53,21 +72,10 @@ export class IndexComponent {
           this.selectedSmartRouteServer = this.servers[curSmartRoute.serverId].name;
         }
       }
+      else { this.selectedSmartRouteOpt = 'RECOMMENDED'; }
     });
 
-    chrome.webRequest.onAuthRequired.addListener(
-      () => {
-        return {
-          authCredentials: {
-            username: this.proxyCredentials.username,
-            password:  this.proxyCredentials.password
-          }
-        };
-      },
-      {urls: ["<all_urls>"]},
-      ['blocking']
-    );
-
+    // Grab domain name, favicon and privacy filter settings
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
       let curTab = tabs[0];
       let url = curTab.url
@@ -130,11 +138,17 @@ export class IndexComponent {
     this.showRoutingDropdown = !this.showRoutingDropdown;
   }
 
+  smartRouteType() {
+    if (this.selectedSmartRouteOpt === 'Loading...') { return this.selectedSmartRouteOpt; }
+    return this.smartRouteOpts[this.selectedSmartRouteOpt.toLowerCase()].type;
+  }
+
   selectSmartRoute(type: string) {
     if (type === 'SELECTED') { return; }
+    this.selectedSmartRouteServer = undefined;
     this.selectedSmartRouteOpt = type;
-    // Don't store smart routing info if on auto
-    if (this.smartRouting[this.domain] && type === 'AUTO') {
+    // Don't store smart routing info if on recommended
+    if (this.smartRouting[this.domain] && type === 'RECOMMENDED') {
       delete this.smartRouting[this.domain];
     }
     else {

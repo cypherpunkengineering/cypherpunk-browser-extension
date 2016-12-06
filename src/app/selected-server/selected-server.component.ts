@@ -10,17 +10,10 @@ import { SettingsService } from '../settings.service';
 export class SelectedServerComponent {
   title = 'Selected Server';
   domain;
-  serverObj;
-  premiumAccount;
-  serverKeys;
-  serverArr = [];
+  premiumAccount = this.proxySettingsService.premiumProxyAccount;
+  serverArr = this.proxySettingsService.serverArr;
   selectedServerId;
-  regions = {
-    'NA': 'NORTH AMERICA',
-    'SA': 'CENTRAL & SOUTH AMERICA',
-    'EU': 'EUROPE',
-    'AS': 'ASIA & INDIA'
-  };
+  regions = this.proxySettingsService.regions;
 
   selectedServerSettings = this.settingsService.selectedServerSettings();
   smartRouting = this.selectedServerSettings.smartRouting;
@@ -32,22 +25,6 @@ export class SelectedServerComponent {
     private localStorageService: LocalStorageService,
     private proxySettingsService: ProxySettingsService
   ) {
-
-    this.premiumAccount = this.proxySettingsService.isPremiumProxyAccount();
-    this.serverObj = this.proxySettingsService.getServerList();
-    this.serverKeys = Object.keys(this.serverObj);
-    this.serverKeys.forEach((key: any) => { this.serverArr.push(this.serverObj[key]); });
-    // Sort By Region, Country, Name
-    this.serverArr.sort(function(a,b) {
-      let regionOrder = { 'NA': 1, 'SA': 2, 'EU': 3, 'AS': 4 };
-      if (regionOrder[a.region] < regionOrder[b.region]) return -1;
-      if (regionOrder[a.region] > regionOrder[b.region]) return 1;
-      if (a.country < b.country) return -1;
-      if (a.country > b.country) return 1;
-      if (a.name < b.name) return -1;
-      if (a.name > b.name) return 1;
-      return 0;
-    });
 
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
       let curTab = tabs[0];
@@ -61,7 +38,6 @@ export class SelectedServerComponent {
         });
       }
     });
-
 
   }
 

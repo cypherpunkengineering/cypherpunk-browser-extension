@@ -288,6 +288,12 @@ a {
       font-size: rem(10);
       margin-left: rem(10);
     }
+    .unavailable {
+      font-weight: 400;
+      font-size: rem(10);
+      margin-left: rem(10);
+      opacity: 0.45;
+    }
     &.disabled .flag, &.disabled .name, &.disabled .premium { opacity: 0.45; }
     &:hover, &.checked:hover { background-color: lighten(#0f3c75, 10%); }
     &.checked {

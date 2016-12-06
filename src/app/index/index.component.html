@@ -25,13 +25,33 @@
 
     <!-- Smart routing off -->
     <div id="smart-routing-off" *ngIf="!smartRoutingEnabled">
-      <div class="title">Your<br>Actual Location</div>
-      <div class="flag-container">
-        <img src="/assets/flags/jp.svg" />
+      <div class="location-info">
+        <div class="title">Your<br>Actual Location</div>
+        <div class="flag-container">
+          <img src="/assets/flags/jp.svg" />
+        </div>
+        <div class="location">
+          <label>Japan</label>
+          IP Address: 78.12.34.567
+        </div>
       </div>
-      <div class="location">
-        <label>Japan</label>
-        IP Address: 78.12.34.567
+
+      <!-- Smart Routing Dropdown -->
+      <div class="country-select">
+        <div *ngFor="let server of proxySettingsService.serverArr; let i = index; trackBy: trackByFn">
+          <div class="region" *ngIf="i === 0 || (!(i === 0) && proxySettingsService.serverArr[i-1].region !== server.region)">
+            {{proxySettingsService.regions[server.region]}}
+          </div>
+
+          <div class="location-row" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
+            <span class="flag">
+              <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
+            </span>
+            <span class="name">{{server.name}}</span>
+            <span *ngIf="server.level === 'premium'" class="premium">PREMIUM</span>
+            <span *ngIf="!server.httpDefault.length" class="unavailable">UNAVAILABLE</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -53,7 +73,7 @@
             {{ selectedSmartRouteServer || 'Silicon Valley, USA' }}
             <br>
             <a href="#" (click)="toggleRoutingDropdown()">
-              (Selected Server)
+              ( {{smartRouteType()}} )
               <div>╲╱</div>
             </a>
           </div>
@@ -77,14 +97,13 @@
 
       <!-- Smart Routing Dropdown -->
       <div class="routing-dd" [ngClass]="{'open': showRoutingDropdown, 'closed': !showRoutingDropdown}">
-        <div class="row" (click)="selectSmartRoute('AUTO')" [ngClass]="{'checked': selectedSmartRouteOpt === 'AUTO' || !selectedSmartRouteOpt }">{{smartRouteOpts.auto}}</div>
-        <div class="row" (click)="selectSmartRoute('RECOMMENDED')" [ngClass]="{'checked': selectedSmartRouteOpt === 'RECOMMENDED' }">{{smartRouteOpts.recommended}}</div>
-        <div class="row" (click)="selectSmartRoute('CLOSEST')" [ngClass]="{'checked': selectedSmartRouteOpt === 'CLOSEST' }">{{smartRouteOpts.closest}}</div>
+        <div class="row" (click)="selectSmartRoute('RECOMMENDED')" [ngClass]="{'checked': selectedSmartRouteOpt === 'RECOMMENDED' }">{{smartRouteOpts.recommended.title}}</div>
+        <div class="row" (click)="selectSmartRoute('CLOSEST')" [ngClass]="{'checked': selectedSmartRouteOpt === 'CLOSEST' }">{{smartRouteOpts.closest.title}}</div>
         <div class="row" (click)="selectSmartRoute('SELECTED')" [ngClass]="{'checked': selectedSmartRouteOpt === 'SELECTED' }" routerLink="/selected-server" routerLinkActive="active">
           {{ selectedSmartRouteOpt === 'SELECTED' ? 'Selected Server: ' + selectedSmartRouteServer : 'Selected Server'}}
           <span class="forward-icon">&#x3009;</span>
         </div>
-        <div class="row" (click)="selectSmartRoute('NONE')" [ngClass]="{'checked': selectedSmartRouteOpt === smartRouteOpts.none }">{{smartRouteOpts.none}}</div>
+        <div class="row" (click)="selectSmartRoute('NONE')" [ngClass]="{'checked': selectedSmartRouteOpt === 'NONE' }">{{smartRouteOpts.none.title}}</div>
       </div>
 
     </div>

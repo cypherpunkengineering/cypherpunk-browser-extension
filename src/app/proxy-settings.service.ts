@@ -2,13 +2,23 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { HqService } from './hq.service';
+import { Observable } from 'rxjs/Rx';
 
 @Injectable()
 export class ProxySettingsService {
   options: RequestOptions;
   servers;
+  serverArr;
+  regions = {
+    'NA': 'NORTH AMERICA',
+    'SA': 'CENTRAL & SOUTH AMERICA',
+    'OP': 'OCEANIA & PACIFIC',
+    'EU': 'EUROPE',
+    'AS': 'ASIA & INDIA'
+  };
   premiumProxyAccount;
   accountType;
+  selectedProxy;
 
   constructor (
     private http: Http,
@@ -17,35 +27,48 @@ export class ProxySettingsService {
   ) {
     let headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
     this.options = new RequestOptions({ headers: headers, withCredentials: true });
+  }
 
-    this.hqService.login().subscribe(res => {
-      let accountType = res.account.type;
-      this.accountType = accountType;
-      this.premiumProxyAccount = accountType === 'premium';
-      console.log('Login Successful for', accountType, 'account');
-      this.hqService.findServers(accountType)
-        .subscribe(
-          servers => {
-            // console.log('proxy settings load servers for', accountType, 'account');
-            // console.log(servers);
-            this.servers = servers;
-          },
-          error => console.log(error)
-        );
+  loadServers() {
+    return new Promise((resolve, reject) => {
+      this.hqService.login().flatMap(data => {
+        this.accountType = data.account.type;
+        this.premiumProxyAccount = this.accountType === 'premium';
+        return this.hqService.findServers(this.accountType);
+      }).subscribe(servers => {
+          this.servers = servers;
+          this.serverArr = this.getServerArray();
+          resolve();
+        },
+        error => reject(error)
+      );
     });
   }
 
-  getServerList() {
-    return this.servers;
+  getServerArray() {
+    let regionOrder = { 'NA': 1, 'SA': 2, 'OP': 3, 'EU': 4, 'AS': 5 };
+
+    let serverArr = [];
+    let serverKeys = Object.keys(this.servers);
+    serverKeys.forEach((key: any) => { serverArr.push(this.servers[key]); });
+
+    // Sort By Region, Country, Name
+    serverArr.sort(function(a,b) {
+      if (regionOrder[a.region] < regionOrder[b.region]) return -1;
+      if (regionOrder[a.region] > regionOrder[b.region]) return 1;
+      if (a.country < b.country) return -1;
+      if (a.country > b.country) return 1;
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+      return 0;
+    });
+
+    return serverArr;
   }
 
   getServer(serverId: any) {
     if (!serverId || !this.servers) return {};
     return this.servers[serverId];
-  }
-
-  isPremiumProxyAccount() {
-    return this.premiumProxyAccount;
   }
 
   enableProxy() {

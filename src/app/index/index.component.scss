@@ -2,6 +2,7 @@
 @import '~bourbon-neat/app/assets/stylesheets/_neat';
 @import '~bourbon-bitters/app/assets/stylesheets/_variables';
 @import '~bourbon-bitters/app/assets/stylesheets/_buttons';
+@import '../../scss/variables';
 
 /* Main View Styles */
 #index {
@@ -14,7 +15,7 @@
 
 .cypherpunk-off {
   background-image: none;
-  background-color: #999999;
+  background-color: $gray-med;
 }
 
 #header__main {
@@ -45,7 +46,7 @@
     cursor: pointer;
   }
 
-  &.header-off { background-color: #ff3b30; }
+  &.header-off { background-color: $color-error; }
   #logo {
     @include span-columns(1.75);
     @include pad(18px 0 18px 20px);
@@ -70,6 +71,12 @@
     height: rem(56);
     line-height: rem(56);
     text-align: center;
+  }
+}
+
+#info-connected {
+  .smart-routing--off & {
+    background-color: $color-error;
   }
 }
 
@@ -105,19 +112,20 @@
     margin: 10px 0;
 
     img {
-      width: 16px;  
+      width: 16px;
     }
   }
 }
 
 #smart-routing-off {
   @include span-columns(12);
-  background-color: rgba(102, 102, 102, 0.6);
+  background-color: $gray-dark-trans;
   max-height: rem(480);
 
   .location-info {
     @include span-columns(12);
     padding: 0 rem(20) rem(20);
+    border-bottom: $border--separator;
     // @include pad(rem(20));
     .title {
       // margin-top: rem(40);
@@ -137,6 +145,12 @@
 
   .country-select {
     height: rem(172);
+
+    .location-row {
+      &:hover {
+        background-color: $overlay--hover;
+      }
+    }
   }
 }
 

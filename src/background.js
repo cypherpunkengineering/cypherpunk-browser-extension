@@ -104,3 +104,17 @@ function enableForceHttps() {
     ['blocking']
   );
 }
+
+var forceHttps = localStorage.getItem('cypherpunk.advanced.forceHttps') === "true";
+
+if (forceHttps) {
+  enableForceHttps();
+}
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+  if(request.greeting === "ForceHTTPS"){
+    if (forceHttps) { enableForceHttps(); }
+    else { disableForceHttps(); }
+    sendResponse({ forceHttps: forceHttps });
+  }
+});

@@ -33,6 +33,18 @@
   @include row;
   clear: both;
   height: rem(56);
+  padding: 0 20px;
+
+  .checkbox {
+    background-position: right 50%;
+    display: block;
+    width: 100%;
+  }
+
+  label {
+    cursor: pointer;
+  }
+
   &.header-off { background-color: #ff3b30; }
   #logo {
     @include span-columns(1.75);
@@ -53,8 +65,8 @@
     text-align: left;
   }
   #enabled-switch {
-    @include span-columns(3);
-    @include omega;
+    // @include span-columns(3);
+    // @include omega;
     height: rem(56);
     line-height: rem(56);
     text-align: center;
@@ -82,6 +94,10 @@
   }
 }
 
+.panel__main {
+  padding-top: 1.5rem;
+}
+
 #smart-routing-off {
   @include span-columns(12);
   background-color: rgba(102, 102, 102, 0.6);
@@ -89,9 +105,10 @@
 
   .location-info {
     @include span-columns(12);
-    @include pad(rem(20));
+    padding: 0 rem(20) rem(20);
+    // @include pad(rem(20));
     .title {
-      margin-top: rem(40);
+      // margin-top: rem(40);
       font-size: 18px;
       text-align: center;
     }
@@ -146,7 +163,7 @@
     @include span-columns(12);
     font-size: rem(18);
     text-align: center;
-    margin-top: rem(40);
+    // margin-top: rem(40);
   }
 
   .location {
@@ -186,7 +203,7 @@
 
 .scrolling-binary {
   position: absolute;
-  top: rem(240);
+  top: rem(200);
   z-index: 1;
   color: rgba(255, 255, 255, 0.4);
   left: 0;

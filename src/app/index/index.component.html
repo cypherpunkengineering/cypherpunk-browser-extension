@@ -28,7 +28,7 @@
     </div>
 
     <!-- Smart routing off -->
-    <div id="smart-routing-off" *ngIf="!smartRoutingEnabled">
+    <div id="smart-routing-off" class="panel__main" *ngIf="!smartRoutingEnabled">
       <div class="location-info">
         <div class="title">Your<br>Actual Location</div>
         <div class="flag-container">
@@ -60,7 +60,7 @@
     </div>
 
     <!-- Smart routing on -->
-    <div id="smart-routing-on" *ngIf="smartRoutingEnabled">
+    <div id="smart-routing-on" class="panel__main" *ngIf="smartRoutingEnabled">
       <div class="flags-wrap">
         <div class="title">Your<br>Public Location</div>
         <div class="location">
@@ -136,11 +136,12 @@
   </div>
 
 
-  <div id="header-on-off" class="bottom-separator" [ngClass]="{'header-off': !cypherpunkEnabled}">
-    <div id="logo"><div></div></div>
-    <div id="enabled-label">Cypherpunk is {{cypherpunkEnabled ? 'ON' : 'OFF'}}</div>
+  <div id="header-on-off" class="" [ngClass]="{'header-off': !cypherpunkEnabled}">
+    <!-- <div id="logo"><div></div></div> -->
+
     <div id="enabled-switch">
       <label class="key-switch">
+        <div id="enabled-label">Cypherpunk is {{cypherpunkEnabled ? 'ON' : 'OFF'}}</div>
         <input #enableVpnSwitch [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
         <div class="checkbox"></div>
       </label>

@@ -1,7 +1,12 @@
 @import '~bourbon/app/assets/stylesheets/_bourbon';
 @import '~bourbon-neat/app/assets/stylesheets/_neat';
 @import url('https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,800');
+@import 'variables';
 /* You can add global styles to this file, and also import other style files */
+
+html, body {
+  max-height: $app-height;
+}
 
 body {
   background-color: #f7f7f7;

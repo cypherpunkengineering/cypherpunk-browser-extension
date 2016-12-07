@@ -28,6 +28,8 @@ export class IndexComponent {
   smartRouting = this.indexSettings.smartRouting;
   selectedSmartRouteOpt = 'Loading...';
   selectedSmartRouteServer;
+  selectedProxy = this.indexSettings.selectedProxy;
+
   smartRouteOpts = {
     recommended: { title: 'Silicon Valley, USA (Recommended)', type: 'Recommended' },
     closest: { title: 'Japan (Closest)', type: 'Closest' },
@@ -40,23 +42,6 @@ export class IndexComponent {
     private proxySettingsService: ProxySettingsService,
     private hqService: HqService
   ) {
-
-    // saves proxy creds to local storage
-    this.hqService.fetchUserStatus().subscribe(res => {
-      this.settingsService.saveProxyCredentials(res.privacy.username, res.privacy.password);
-      chrome.webRequest.onAuthRequired.addListener(
-        () => {
-          return {
-            authCredentials: {
-              username: this.proxyCredentials.username,
-              password:  this.proxyCredentials.password
-            }
-          };
-        },
-        {urls: ["<all_urls>"]},
-        ['blocking']
-      );
-    });
 
     // Initialize proxy servers
     this.proxySettingsService.loadServers().then(res => {
@@ -96,6 +81,14 @@ export class IndexComponent {
         this.faviconUrl = curTab.favIconUrl;
       }
     });
+  }
+
+  changeProxy(server: Object) {
+    this.selectedProxy = server;
+    this.settingsService.saveSelectedProxy(server);
+    this.proxySettingsService.selectedProxy = server;
+    this.proxySettingsService.disableProxy();
+    this.proxySettingsService.enableProxy();
   }
 
   toggleCypherpunk(enabled: boolean) {

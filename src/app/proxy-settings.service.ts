@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { HqService } from './hq.service';
+import { SettingsService } from './settings.service';
 import { Observable } from 'rxjs/Rx';
+//import { PingService } from './ping.service';
 
 @Injectable()
 export class ProxySettingsService {
-  options: RequestOptions;
   servers;
   serverArr;
   regions = {
@@ -23,21 +24,38 @@ export class ProxySettingsService {
   constructor (
     private http: Http,
     private localStorageService: LocalStorageService,
+    private settingsService: SettingsService,
     private hqService: HqService
-  ) {
-    let headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
-    this.options = new RequestOptions({ headers: headers, withCredentials: true });
-  }
+  ) {}
 
   loadServers() {
     return new Promise((resolve, reject) => {
-      this.hqService.login().flatMap(data => {
+      this.hqService.login().flatMap(data => { // login
         this.accountType = data.account.type;
         this.premiumProxyAccount = this.accountType === 'premium';
-        return this.hqService.findServers(this.accountType);
+        return this.hqService.fetchUserStatus(); // fetch user credentials
+      }).flatMap(data => {
+        this.settingsService.saveProxyCredentials(data.privacy.username, data.privacy.password);
+        return this.hqService.findServers(this.accountType); // fetch proxy server list
       }).subscribe(servers => {
           this.servers = servers;
           this.serverArr = this.getServerArray();
+          let storedSelectedProxy = this.settingsService.selectedProxy();
+          if (Object.keys(storedSelectedProxy).length) {
+            this.selectedProxy = storedSelectedProxy;
+          }
+          // This should ping the closest server to the user and set that as default
+          else {
+            this.selectedProxy = this.servers.losangeles;
+            this.settingsService.saveSelectedProxy(this.selectedProxy);
+          }
+          // this.pingService.getLatency(this.servers.losangeles.ovHostname).subscribe(value => {
+          //   console.log('Los Angeles', value);
+          // });
+          // this.pingService.getLatency(this.servers.amsterdam.ovHostname).subscribe(value => {
+          //   console.log('Amsterdam', value);
+          // });
+
           resolve();
         },
         error => reject(error)
@@ -73,9 +91,10 @@ export class ProxySettingsService {
 
   enableProxy() {
     if (!this.servers) return;
-    console.log("applying proxy:");
-    let proxyIP = this.servers.losangeles.httpDefault[0];
-    console.log(proxyIP);
+    console.log("Applying proxy");
+    console.log('> Name:', this.selectedProxy.name);
+    console.log('> IP:', this.selectedProxy.httpDefault[0]);
+    let proxyIP = this.selectedProxy.httpDefault[0];
     let config = {
       mode: "pac_script",
       pacScript: {
@@ -87,7 +106,6 @@ export class ProxySettingsService {
               "}"
       }
     };
-    console.log(config);
     chrome.proxy.settings.set({value: config, scope: 'regular'}, () => {
       this.localStorageService.set('proxy.enabled', true);
     });

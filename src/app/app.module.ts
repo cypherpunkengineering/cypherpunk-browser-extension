@@ -17,6 +17,7 @@ import { IndexComponent } from './index/index.component';
 import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
 import { SettingsService } from './settings.service';
+import { PingService } from './ping.service';
 
 let localStorageServiceConfig = {
     prefix: 'cypherpunk',
@@ -56,6 +57,7 @@ let localStorageServiceConfig = {
     ProxySettingsService,
     SettingsService,
     LocalStorageService,
+    PingService,
     { provide: LOCAL_STORAGE_SERVICE_CONFIG, useValue: localStorageServiceConfig }
   ],
   bootstrap: [AppComponent]

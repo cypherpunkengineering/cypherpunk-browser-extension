@@ -47,7 +47,7 @@
             {{proxySettingsService.regions[server.region]}}
           </div>
 
-          <div class="location-row" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
+          <div class="location-row" (click)="changeProxy(server)" [ngClass]="{'checked': selectedProxy.id === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
             <span class="flag">
               <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
             </span>

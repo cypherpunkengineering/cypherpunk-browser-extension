@@ -27,6 +27,7 @@ import { LocalStorageService } from 'angular-2-local-storage';
 class Keys {
   public static PROXY_USERNAME: string = "proxy.username";
   public static PROXY_PASSWORD: string = "proxy.password";
+  public static SELECTED_PROXY: string = "selectedProxy";
 
   // Index vivew
   public static INITIALIZED: string = "intialized";
@@ -58,9 +59,10 @@ class Defaults {
   public static CONFIG = {
     intialized: true,
     enabled: false,
-    smartRoutingEnabled: false,
+    smartRoutingEnabled: true,
     privacyFilterWhitelist: {},
     smartRouting: {},
+    selectedProxy: {},
     advanced: {
       forceHttps: true,
       webRTCLeakProtection: true,
@@ -97,6 +99,7 @@ export class SettingsService {
     if (!initialized) {
       this.localStorageService.set(Keys.INITIALIZED, Defaults.getVal(Keys.INITIALIZED));
       this.localStorageService.set(Keys.ENABLED, Defaults.getVal(Keys.ENABLED));
+      this.localStorageService.set(Keys.SELECTED_PROXY, Defaults.getVal(Keys.SELECTED_PROXY));
       this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, Defaults.getVal(Keys.SMART_ROUTING_ENABLED));
       this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, Defaults.getVal(Keys.PRIVACY_FILTER_WHITELIST));
       this.localStorageService.set(Keys.SMART_ROUTING, Defaults.getVal(Keys.SMART_ROUTING));
@@ -113,12 +116,15 @@ export class SettingsService {
     }
   }
 
+  selectedProxy() { return this.localStorageService.get(Keys.SELECTED_PROXY); }
+
   /** Index Settings **/
   indexSettings() {
     return {
       cypherpunkEnabled: this.localStorageService.get(Keys.ENABLED),
       smartRoutingEnabled: this.localStorageService.get(Keys.SMART_ROUTING_ENABLED),
       smartRouting: this.localStorageService.get(Keys.SMART_ROUTING),
+      selectedProxy: this.localStorageService.get(Keys.SELECTED_PROXY),
       proxyCredentials: {
         username: this.localStorageService.get(Keys.PROXY_USERNAME),
         password: this.localStorageService.get(Keys.PROXY_PASSWORD)
@@ -133,6 +139,10 @@ export class SettingsService {
   saveProxyCredentials(username: string, password: string) {
     this.localStorageService.set(Keys.PROXY_USERNAME, username);
     this.localStorageService.set(Keys.PROXY_PASSWORD, password);
+  }
+
+  saveSelectedProxy(proxy: Object) {
+    this.localStorageService.set(Keys.SELECTED_PROXY, proxy);
   }
 
   saveCypherpunkEnabled(enabled: boolean) {

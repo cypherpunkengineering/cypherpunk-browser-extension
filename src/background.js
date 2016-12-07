@@ -1,3 +1,57 @@
+/** Detect proxy auth and send credentials **/
+
+var gPendingCallbacks = [];
+var bkg = chrome.extension.getBackgroundPage();
+bkg.console.log("Listening")
+
+chrome.webRequest.onAuthRequired.addListener(
+  handleAuthRequest,
+  {urls: ["<all_urls>"]},
+  ['asyncBlocking']
+);
+
+function processPendingCallbacks() {
+  bkg.console.log("Calling back with credentials");
+  var callback = gPendingCallbacks.pop();
+  callback({
+    authCredentials: {
+      username:  localStorage.getItem('cypherpunk.proxy.username'),
+      password: localStorage.getItem('cypherpunk.proxy.password')
+    }
+  });
+}
+
+function handleAuthRequest(details, callback) {
+  gPendingCallbacks.push(callback);
+  processPendingCallbacks();
+}
+
+
+/** User Agent Spoofing **/
+var requestFilter = {
+  urls: [
+    "<all_urls>"
+  ]
+};
+
+chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
+  var headers = details.requestHeaders;
+  var userAgentType = localStorage.getItem('cypherpunk.advanced.userAgent.type');
+  var userAgentString = localStorage.getItem('cypherpunk.advanced.userAgent.string');
+  for(var i = 0, l = headers.length; i < l; ++i) {
+    if( headers[i].name == 'User-Agent' ) {
+      if (userAgentString !== 'false') {
+        headers[i].value = userAgentString || headers[i].value;
+        bkg.console.log('Setting user agent to', userAgentString);
+      }
+      break;
+    }
+  }
+  return { requestHeaders: headers };
+}, requestFilter, ['requestHeaders','blocking']);
+
+
+/** Privacy Filter **/
 // TODO: Change back to true once we have api providing url list
 function cancelRequest(details) { return { cancel: false }; };
 
@@ -34,6 +88,7 @@ chrome.tabs.onActivated.addListener(function (tab) {
 });
 
 
+/** Force HTTPS */
 function redirectRequest(requestDetails) {
   return { redirectUrl: requestDetails.url.replace(/^http:\/\//i, 'https://') };
 }

@@ -63,26 +63,27 @@
     <div id="smart-routing-on" class="panel__main" *ngIf="smartRoutingEnabled">
       <div class="flags-wrap">
         <div class="title">Your<br>Public Location</div>
-        <div class="location">
+        <div class="location location--mine">
           <div class="flag-container small">
             <img src="/assets/flags/jp.svg" />
           </div>
           <div class="subtitle">Japan</div>
         </div>
-        <div class="location">
+        <div class="location location--public" (click)="toggleRoutingDropdown()">
           <div class="flag-container">
             <img src="/assets/flags/us.svg" />
           </div>
           <div class="subtitle bold">
             {{ selectedSmartRouteServer || 'Silicon Valley, USA' }}
             <br>
-            <a href="#" (click)="toggleRoutingDropdown()">
+            <!-- <a href="#" (click)="toggleRoutingDropdown()"> -->
               ( {{smartRouteType()}} )
-              <div>╲╱</div>
-            </a>
+              <div class="arrow--down"><img src="/assets/icon-caret--down.svg" alt=""></div>
+            <!-- </a> -->
           </div>
         </div>
-        <div class="location last">
+
+        <div class="location last location--destination">
           <div class="flag-container small square">
             <img *ngIf="faviconUrl" src="{{faviconUrl}}" />
           </div>

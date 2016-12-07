@@ -98,6 +98,18 @@
   padding-top: 1.5rem;
 }
 
+.location--public {
+  cursor: pointer;
+
+  .arrow--down {
+    margin: 10px 0;
+
+    img {
+      width: 16px;  
+    }
+  }
+}
+
 #smart-routing-off {
   @include span-columns(12);
   background-color: rgba(102, 102, 102, 0.6);
@@ -137,7 +149,7 @@
     @include transition(height 0.5s);
     background-color: #0f3c75;
     overflow: hidden;
-    &.open { height: rem(150); }
+    &.open { height: rem(125); }
     &.closed { height: 0; }
     .row {
       @include pad(0 rem(10) 0 rem(30));

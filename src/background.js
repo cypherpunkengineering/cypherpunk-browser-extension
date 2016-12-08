@@ -1,54 +1,48 @@
-/** Detect proxy auth and send credentials **/
-
-var gPendingCallbacks = [];
-var bkg = chrome.extension.getBackgroundPage();
-bkg.console.log("Listening")
-
-chrome.webRequest.onAuthRequired.addListener(
-  handleAuthRequest,
-  {urls: ["<all_urls>"]},
-  ['asyncBlocking']
-);
-
-function processPendingCallbacks() {
-  bkg.console.log("Calling back with credentials");
-  var callback = gPendingCallbacks.pop();
-  callback({
-    authCredentials: {
-      username:  localStorage.getItem('cypherpunk.proxy.username'),
-      password: localStorage.getItem('cypherpunk.proxy.password')
+function httpGetAsync(theUrl, callback) {
+  var xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange = function() {
+    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+      callback(xmlHttp.responseText);
     }
-  });
+  }
+  xmlHttp.open("GET", theUrl, true); // true for asynchronous
+  xmlHttp.send(null);
 }
 
-function handleAuthRequest(details, callback) {
-  gPendingCallbacks.push(callback);
-  processPendingCallbacks();
-}
+httpGetAsync('https://cypherpunk.com/api/v0/account/status', function(res) {
+  res = JSON.parse(res)
+  var authUsername = res.privacy.username;
+  var authPassword = res.privacy.password;
+
+  /** Detect proxy auth and send credentials **/
+  var gPendingCallbacks = [];
+  var bkg = chrome.extension.getBackgroundPage();
+
+  chrome.webRequest.onAuthRequired.addListener(
+    function(details, callbackFn) {
+      callbackFn({ authCredentials: {username: authUsername, password: authPassword} });
+    },
+    {urls: ["<all_urls>"]},
+    ['asyncBlocking']
+  );
+});
 
 
 /** User Agent Spoofing **/
-var requestFilter = {
-  urls: [
-    "<all_urls>"
-  ]
-};
-
 chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
   var headers = details.requestHeaders;
-  var userAgentType = localStorage.getItem('cypherpunk.advanced.userAgent.type');
   var userAgentString = localStorage.getItem('cypherpunk.advanced.userAgent.string');
+  if (!userAgentString) return;
   for(var i = 0, l = headers.length; i < l; ++i) {
     if( headers[i].name == 'User-Agent' ) {
       if (userAgentString !== 'false') {
         headers[i].value = userAgentString || headers[i].value;
-        bkg.console.log('Setting user agent to', userAgentString);
       }
       break;
     }
   }
   return { requestHeaders: headers };
-}, requestFilter, ['requestHeaders','blocking']);
+}, { urls: ["<all_urls>"] }, ['requestHeaders','blocking']);
 
 
 /** Privacy Filter **/

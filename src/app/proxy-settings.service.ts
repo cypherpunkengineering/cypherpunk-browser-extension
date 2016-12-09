@@ -41,7 +41,7 @@ export class ProxySettingsService {
           this.servers = servers;
           this.serverArr = this.getServerArray();
           let storedSelectedProxy = this.settingsService.selectedProxy();
-          if (Object.keys(storedSelectedProxy).length) {
+          if (storedSelectedProxy) {
             this.selectedProxy = storedSelectedProxy;
           }
           // This should ping the closest server to the user and set that as default
@@ -120,25 +120,4 @@ export class ProxySettingsService {
       this.localStorageService.set('proxy.enabled', false);
     });
   }
-
-  getLocalIPs(callback) {
-    var ips = [];
-    // var RTCPeerConnection = window.RTCPeerConnection ||
-    //     window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
-    var pc = new RTCPeerConnection({ iceServers: [] });
-    pc.createDataChannel('');
-    pc.onicecandidate = function(e) {
-      if (!e.candidate) {
-        pc.close();
-        callback(ips);
-        return;
-      }
-      var ip = /^candidate:.+ (\S+) \d+ typ/.exec(e.candidate.candidate)[1];
-      if (ips.indexOf(ip) == -1) ips.push(ip);
-    };
-    pc.createOffer(function(sdp) {
-        pc.setLocalDescription(sdp);
-    }, function onerror() {});
-  }
 }
-

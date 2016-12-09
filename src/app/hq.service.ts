@@ -27,8 +27,15 @@ export class HqService {
   fetchUserStatus(): Observable<any> {
     return this.http.get(this.apiPrefix + '/account/status')
     .map((res:Response) => res.json())
-    .catch((error:any) => Observable.throw(error || 'Error fetching account status'));
+    .catch((error:any) => Observable.throw(error || 'Error getting account status'));
   }
+
+  findNetworkStatus(): Observable<any> {
+    return this.http.get(this.apiPrefix + '/network/status')
+    .map((res:Response) => res.json())
+    .catch((error:any) => Observable.throw(error || 'Error getting network status'));
+  }
+  
 
   debugCheckSession(): void {
     // Debug: get this header to check consistency with session token

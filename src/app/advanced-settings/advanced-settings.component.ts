@@ -1,9 +1,13 @@
 import { Component, Input, Output } from '@angular/core';
 import { SettingsService } from '../settings.service';
+import { Animations } from '../animations';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './advanced-settings.component.html'
+  templateUrl: './advanced-settings.component.html',
+  styles: [':host { z-index: 1; width: 100%; height: 100%; display: block; position: absolute; }'],
+  host: { '[@routeAnimation]': 'true' },
+  animations: Animations.slideFromLeft
 })
 export class AdvancedSettingsComponent {
   title = 'Advanced Settings';

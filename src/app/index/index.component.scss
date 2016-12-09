@@ -100,7 +100,7 @@
     cursor: pointer;
   }
 }
-
+:host { width: 100%; display: block; }
 .panel__main {
   padding-top: 1.5rem;
 }

@@ -3,11 +3,14 @@ import { ProxySettingsService } from '../proxy-settings.service';
 import { Subject } from 'rxjs/Subject';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
+import { Animations } from '../animations';
 
 @Component({
   selector: 'app-root',
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss']
+  styleUrls: ['./index.component.scss'],
+  host: { '[@routeAnimation]': 'true' },
+  animations: Animations.stationary
 })
 export class IndexComponent {
   title = 'Index';

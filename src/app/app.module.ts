@@ -18,6 +18,7 @@ import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
 import { SettingsService } from './settings.service';
 import { PingService } from './ping.service';
+import {Animations} from './animations';
 
 let localStorageServiceConfig = {
     prefix: 'cypherpunk',
@@ -58,6 +59,7 @@ let localStorageServiceConfig = {
     SettingsService,
     LocalStorageService,
     PingService,
+    Animations,
     { provide: LOCAL_STORAGE_SERVICE_CONFIG, useValue: localStorageServiceConfig }
   ],
   bootstrap: [AppComponent]

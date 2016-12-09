@@ -22,6 +22,7 @@ export class UserAgentComponent {
   setUserAgent(type: string) {
     this.selectedUserAgentType = type;
     this.settingsService.saveUserAgent(type, this.userAgentStrings[type.toLowerCase()]);
+    chrome.runtime.sendMessage({ greeting: "UserAgentSpoofing" });
   }
 
 }

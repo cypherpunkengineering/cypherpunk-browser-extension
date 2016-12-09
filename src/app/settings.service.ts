@@ -77,8 +77,8 @@ class Defaults {
         blockMalware: true
       },
       userAgent: {
-        type: "PRIVATE",
-        string: ""
+        type: "DEFAULT",
+        string: false
       }
     }
   };

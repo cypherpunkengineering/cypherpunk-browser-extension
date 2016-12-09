@@ -24,7 +24,7 @@ export class AdvancedSettingsComponent {
   toggleForceHttps(enabled: boolean) {
     console.log('Force HTTPS:', enabled);
     this.settingsService.saveForceHttps(enabled);
-    chrome.runtime.sendMessage({greeting: "ForceHTTPS"});
+    chrome.runtime.sendMessage({ greeting: "ForceHTTPS" });
   }
 
   toggleWebRtcLeakProtection(enabled: boolean) {

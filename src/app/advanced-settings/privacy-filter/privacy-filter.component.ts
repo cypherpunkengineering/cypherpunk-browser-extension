@@ -18,18 +18,22 @@ export class PrivacyFilterComponent {
 
   togglePrivacyFilterEnabled(enabled: boolean) {
     this.settingsService.savePrivacyFilterEnabled(enabled);
+    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
   toggleBlockAds(enabled: boolean) {
     this.settingsService.savePrivacyFilterAds(enabled);
+    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
   toggleBlockTrackers(enabled: boolean) {
     this.settingsService.savePrivacyFilterTrackers(enabled);
+    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
   toggleBlockMalware(enabled: boolean) {
     this.settingsService.savePrivacyFilterMalware(enabled);
+    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
 }

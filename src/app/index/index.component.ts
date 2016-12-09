@@ -104,6 +104,7 @@ export class IndexComponent {
       this.showRoutingDropdown = false;
       this.proxySettingsService.disableProxy();
     }
+    chrome.runtime.sendMessage({ greeting: "CypherpunkEnabled" });
   }
 
   toggleSmartRouting(enabled: boolean) {
@@ -126,6 +127,7 @@ export class IndexComponent {
       this.privacyFilterWhitelist[this.domain] = false;
     }
     this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
+    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
   toggleRoutingDropdown() {

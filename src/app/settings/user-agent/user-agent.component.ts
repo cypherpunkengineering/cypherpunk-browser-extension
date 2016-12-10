@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SettingsService } from '../../settings.service';
-import { Animations } from '../../animations';
 
 @Component({
   selector: 'app-user-agent',

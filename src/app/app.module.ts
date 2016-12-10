@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-import { LocalStorageService, LOCAL_STORAGE_SERVICE_CONFIG } from 'angular-2-local-storage';
+import { LocalStorageModule } from 'angular-2-local-storage';
 
 import { AppComponent } from './app.component';
 import { SmartRoutesComponent } from './smart-routes/smart-routes.component';
@@ -19,7 +19,6 @@ import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
 import { SettingsService } from './settings.service';
 import { PingService } from './ping.service';
-import { Animations } from './animations';
 
 let localStorageServiceConfig = {
     prefix: 'cypherpunk',
@@ -54,15 +53,16 @@ let localStorageServiceConfig = {
       { path: '', component: IndexComponent }
         // { path: '**', component: PageNotFoundComponent }
     ]),
+    LocalStorageModule.withConfig({
+      prefix: 'cypherpunk',
+      storageType: 'localStorage'
+    })
   ],
   providers: [
     HqService,
     ProxySettingsService,
     SettingsService,
-    LocalStorageService,
-    PingService,
-    Animations,
-    { provide: LOCAL_STORAGE_SERVICE_CONFIG, useValue: localStorageServiceConfig }
+    PingService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,17 +1,24 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, Input, Output, style, animate, transition, state, trigger } from '@angular/core';
 import { ProxySettingsService } from '../proxy-settings.service';
 import { Subject } from 'rxjs/Subject';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
-import { Animations } from '../animations';
 
 @Component({
   selector: 'app-root',
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
   host: { '[@routeAnimation]': 'true' },
-  animations: Animations.stationary
+  animations: [
+    trigger('routeAnimation', [
+      state('*',  style({transform: 'translateX(0)'})),
+      transition('* => void',
+        animate('0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000)', style({transform: 'translateX(0)'}))
+      )
+    ])
+  ]
 })
+
 export class IndexComponent {
   title = 'Index';
   domain = '(Loading...)';

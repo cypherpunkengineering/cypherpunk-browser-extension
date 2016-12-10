@@ -18,7 +18,7 @@ npm install -g angular-cli
 npm install
 
 # build extension
-ng build --prod
+ng build --prod --aot
 
 # package as zip
 npm run compress

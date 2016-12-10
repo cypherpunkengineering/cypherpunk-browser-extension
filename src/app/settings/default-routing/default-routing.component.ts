@@ -1,13 +1,15 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SettingsService } from '../../settings.service';
 import { ProxySettingsService } from '../../proxy-settings.service';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-default-routing',
   templateUrl: './default-routing.component.html',
   styleUrls: ['./default-routing.component.scss']
 })
 export class DefaultRoutingComponent {
+  @Output() changeView = new EventEmitter<string>();
+
   title = 'Default Routing';
 
   defaultRoutingSettings = this.settingsService.defaultRoutingSettings();
@@ -21,6 +23,10 @@ export class DefaultRoutingComponent {
     this.defaultRoutingType = type;
     this.defaultRoutingSelected = 'N/A';
     this.settingsService.saveRoutingInfo(type, null);
+  }
+
+  goToView(name: string) {
+    this.changeView.emit(name);
   }
 }
 

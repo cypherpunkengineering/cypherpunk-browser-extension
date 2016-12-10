@@ -1,12 +1,14 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProxySettingsService } from '../../../proxy-settings.service';
 import { SettingsService } from '../../../settings.service';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-specific-server',
   templateUrl: './specific-server.component.html'
 })
 export class SpecificServerComponent {
+  @Output() changeView = new EventEmitter<string>();
+
   title = 'Use specific server';
   premiumAccount = this.proxySettingsService.premiumProxyAccount;
   serverArr = this.proxySettingsService.serverArr;
@@ -24,6 +26,10 @@ export class SpecificServerComponent {
       this.selectedServerId = server.id;
       this.settingsService.saveRoutingInfo("SPECIFIC", server.id);
     }
+  }
+
+  goToView(name: string) {
+    this.changeView.emit(name);
   }
 }
 

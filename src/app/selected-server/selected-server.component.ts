@@ -4,7 +4,7 @@ import { LocalStorageService } from 'angular-2-local-storage';
 import { SettingsService } from '../settings.service';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-selected-server',
   templateUrl: './selected-server.component.html'
 })
 export class SelectedServerComponent {

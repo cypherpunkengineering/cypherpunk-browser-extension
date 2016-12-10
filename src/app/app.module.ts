@@ -7,18 +7,19 @@ import { LocalStorageService, LOCAL_STORAGE_SERVICE_CONFIG } from 'angular-2-loc
 
 import { AppComponent } from './app.component';
 import { SmartRoutesComponent } from './smart-routes/smart-routes.component';
-import { AdvancedSettingsComponent } from './advanced-settings/advanced-settings.component';
-import { PrivacyFilterComponent } from './advanced-settings/privacy-filter/privacy-filter.component';
-import { UserAgentComponent } from './advanced-settings/user-agent/user-agent.component';
-import { DefaultRoutingComponent } from './advanced-settings/default-routing/default-routing.component';
-import { SpecificServerComponent } from './advanced-settings/default-routing/specific-server/specific-server.component';
+import { SettingsComponent } from './settings/settings.component';
+import { PrivacyFilterComponent } from './settings/privacy-filter/privacy-filter.component';
+import { UserAgentComponent } from './settings/user-agent/user-agent.component';
+import { DefaultRoutingComponent } from './settings/default-routing/default-routing.component';
+import { SpecificServerComponent } from './settings/default-routing/specific-server/specific-server.component';
 import { SelectedServerComponent } from './selected-server/selected-server.component';
 import { IndexComponent } from './index/index.component';
+import { SettingsControllerComponent } from './settings/settings-controller.component';
 import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
 import { SettingsService } from './settings.service';
 import { PingService } from './ping.service';
-import {Animations} from './animations';
+import { Animations } from './animations';
 
 let localStorageServiceConfig = {
     prefix: 'cypherpunk',
@@ -30,12 +31,13 @@ let localStorageServiceConfig = {
     AppComponent,
     IndexComponent,
     SmartRoutesComponent,
-    AdvancedSettingsComponent,
+    SettingsComponent,
     PrivacyFilterComponent,
     UserAgentComponent,
     DefaultRoutingComponent,
     SpecificServerComponent,
-    SelectedServerComponent
+    SelectedServerComponent,
+    SettingsControllerComponent
   ],
   imports: [
     BrowserModule,
@@ -43,10 +45,10 @@ let localStorageServiceConfig = {
     HttpModule,
     RouterModule.forRoot([
       { path: 'smart-routes', component: SmartRoutesComponent },
-      { path: 'advanced-settings', component: AdvancedSettingsComponent },
-      { path: 'advanced-settings/privacy-filter', component: PrivacyFilterComponent },
-      { path: 'advanced-settings/user-agent', component: UserAgentComponent },
-      { path: 'advanced-settings/default-routing', component: DefaultRoutingComponent },
+      { path: 'settings', component: SettingsControllerComponent },
+      { path: 'settings/privacy-filter', component: PrivacyFilterComponent },
+      { path: 'settings/user-agent', component: UserAgentComponent },
+      { path: 'settings/default-routing', component: DefaultRoutingComponent },
       { path: 'advanced-settings/default-routing/specific-server', component: SpecificServerComponent },
       { path: 'selected-server', component: SelectedServerComponent },
       { path: '', component: IndexComponent }

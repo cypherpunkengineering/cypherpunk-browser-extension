@@ -4,7 +4,7 @@
   </div>
 
   <!-- Default Routing -->
-  <div routerLink="default-routing" routerLinkActive="active" class="switch-row clickable bottom-separator">
+  <div (click)="goToView('app-default-routing')" class="switch-row clickable bottom-separator">
     <div class="label half">Default Routing</div>
     <div class="switch half">
       {{defaultRouting()}}
@@ -35,7 +35,7 @@
   </div>
 
   <!-- Privacy Filter Settings -->
-  <div routerLink="privacy-filter" routerLinkActive="active" class="switch-row clickable bottom-separator">
+  <div (click)="goToView('app-privacy-filter')" class="switch-row clickable bottom-separator">
     <div class="label half">Privacy Filter Settings</div>
     <div class="switch half">
       <span class="forward-icon">&#x3009;</span>
@@ -43,7 +43,7 @@
   </div>
 
   <!-- User Agent -->
-  <div routerLink="user-agent" routerLinkActive="active" class="switch-row clickable bottom-separator">
+  <div (click)="goToView('app-user-agent')" class="switch-row clickable bottom-separator">
     <div class="label half">User Agent</div>
     <div class="switch half">
       {{userAgentType}}

@@ -1,7 +1,7 @@
 <div id="index" [ngClass]="{'cypherpunk-on': cypherpunkEnabled, 'cypherpunk-off': !cypherpunkEnabled, 'smart-routing--on': smartRoutingEnabled, 'smart-routing--off': !smartRoutingEnabled}">
   <div id="header__main">
     <img src="/assets/header-logo-big.svg" alt="">
-    <a routerLink="/advanced-settings" routerLinkActive="active" class="btn__settings"><img src="/assets/icon_settings.svg" alt=""></a>
+    <a routerLink="/settings" routerLinkActive="active" class="btn__settings"><img src="/assets/icon_settings.svg" alt=""></a>
   </div>
   <!-- <div id="header-on-off" class="bottom-separator" [ngClass]="{'header-off': !cypherpunkEnabled}">
     <div id="logo"><div></div></div>
@@ -119,7 +119,7 @@
     <div class="title">Cypherpunk is Off</div>
     <div class="button">
       <label class="key-switch">
-        <input #enableVpnSwitchLarge type="checkbox" (change)="toggleCypherpunk($event)" />
+        <input #enableVpnSwitchLarge [(ngModel)]="cypherpunkEnabled" type="checkbox" (ngModelChange)="toggleCypherpunk($event)" />
         <div class="checkbox large"></div>
       </label>
     </div>

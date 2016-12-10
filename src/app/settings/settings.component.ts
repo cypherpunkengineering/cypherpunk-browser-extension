@@ -1,16 +1,18 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SettingsService } from '../settings.service';
 import { Animations } from '../animations';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './advanced-settings.component.html',
-  styles: [':host { z-index: 1; width: 100%; height: 100%; display: block; position: absolute; }'],
-  host: { '[@routeAnimation]': 'true' },
-  animations: Animations.slideFromLeft
+  selector: 'app-settings',
+  templateUrl: './settings.component.html'
+  // styles: [':host { z-index: 1; width: 100%; height: 100%; display: block; position: absolute; }'],
+  // host: { '[@routeAnimation]': 'true' },
+  // animations: Animations.slideFromLeft
 })
-export class AdvancedSettingsComponent {
-  title = 'Advanced Settings';
+export class SettingsComponent {
+  @Output() changeView = new EventEmitter<string>();
+
+  title = 'Settings';
   advancedSettings = this.settingsService.advancedSettings();
   defaultRouting = () => {
     let type = this.advancedSettings.defaultRouting.type;
@@ -34,6 +36,10 @@ export class AdvancedSettingsComponent {
   toggleWebRtcLeakProtection(enabled: boolean) {
     console.log('WebRTC Leak Protection:', enabled);
     this.settingsService.saveWebRtcLeakProtection(enabled);
+  }
+
+  goToView(name: string) {
+    this.changeView.emit(name);
   }
 }
 

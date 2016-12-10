@@ -45,7 +45,6 @@ export class IndexComponent {
     private proxySettingsService: ProxySettingsService,
     private hqService: HqService
   ) {
-
     // Initialize proxy servers
     this.proxySettingsService.loadServers().then(res => {
       this.servers = this.proxySettingsService.servers;
@@ -62,6 +61,10 @@ export class IndexComponent {
         }
       }
       else { this.selectedSmartRouteOpt = 'RECOMMENDED'; }
+
+      this.hqService.findNetworkStatus().subscribe(res => {
+        console.log('Network status', res);
+      });
     });
 
     // Grab domain name, favicon and privacy filter settings
@@ -96,6 +99,7 @@ export class IndexComponent {
 
   toggleCypherpunk(enabled: boolean) {
     this.settingsService.saveCypherpunkEnabled(enabled);
+    chrome.runtime.sendMessage({ greeting: "CypherpunkEnabled" });
     // Triggers boolean change when large switch is hit
     if (this.cypherpunkEnabled !== enabled) {
       this.cypherpunkEnabled = enabled;
@@ -107,7 +111,6 @@ export class IndexComponent {
       this.showRoutingDropdown = false;
       this.proxySettingsService.disableProxy();
     }
-    chrome.runtime.sendMessage({ greeting: "CypherpunkEnabled" });
   }
 
   toggleSmartRouting(enabled: boolean) {

@@ -1,11 +1,17 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SettingsService } from '../../settings.service';
+import { Animations } from '../../animations';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-user-agent',
   templateUrl: './user-agent.component.html'
+  // styles: [':host { z-index: 2; width: 100%; height: 100%; display: block; position: absolute; }'],
+  // host: { '[@routeAnimation]': 'true' },
+  // animations: Animations.slideFromLeft
 })
 export class UserAgentComponent {
+  @Output() changeView = new EventEmitter<string>();
+
   title = 'User Agent';
   userAgentSettings = this.settingsService.userAgentSettings();
   selectedUserAgentType = this.userAgentSettings.userAgentType;
@@ -23,6 +29,10 @@ export class UserAgentComponent {
     this.selectedUserAgentType = type;
     this.settingsService.saveUserAgent(type, this.userAgentStrings[type.toLowerCase()]);
     chrome.runtime.sendMessage({ greeting: "UserAgentSpoofing" });
+  }
+
+  goToView(name: string) {
+    this.changeView.emit(name);
   }
 
 }

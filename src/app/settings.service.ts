@@ -146,6 +146,7 @@ export class SettingsService {
   }
 
   saveCypherpunkEnabled(enabled: boolean) {
+    console.log('CypherPunk Saving bool', enabled);
     this.localStorageService.set(Keys.ENABLED, enabled);
   }
 

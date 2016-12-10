@@ -1,0 +1,10 @@
+<app-settings (changeView)="changeView($event)" *ngIf="currentView === 'app-settings'"></app-settings>
+
+<app-user-agent (changeView)="changeView($event)" *ngIf="currentView === 'app-user-agent'"></app-user-agent>
+
+<app-default-routing (changeView)="changeView($event)" *ngIf="currentView === 'app-default-routing'"></app-default-routing>
+
+<app-specific-server (changeView)="changeView($event)" *ngIf="currentView === 'app-specific-server'"></app-specific-server>
+
+<app-privacy-filter (changeView)="changeView($event)" *ngIf="currentView === 'app-privacy-filter'"></app-privacy-filter>
+

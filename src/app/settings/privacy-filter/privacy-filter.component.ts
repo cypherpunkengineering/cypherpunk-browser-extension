@@ -1,11 +1,13 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SettingsService } from '../../settings.service';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-privacy-filter',
   templateUrl: './privacy-filter.component.html'
 })
 export class PrivacyFilterComponent {
+  @Output() changeView = new EventEmitter<string>();
+
   title = 'Privacy Filter Settings';
 
   privacyFilterSettings = this.settingsService.privacyFilterSettings();
@@ -34,6 +36,10 @@ export class PrivacyFilterComponent {
   toggleBlockMalware(enabled: boolean) {
     this.settingsService.savePrivacyFilterMalware(enabled);
     chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
+  }
+
+  goToView(name: string) {
+    this.changeView.emit(name);
   }
 
 }

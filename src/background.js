@@ -66,6 +66,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     else { disableUserAgentSpoofing(); }
   }
   else if (request.greeting === 'PrivacyFilter') {
+    cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
+    if (!cypherpunkEnabled) { return; }
     // Reload current tab to update blocked requests
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       chrome.tabs.reload(tabs[0].id);

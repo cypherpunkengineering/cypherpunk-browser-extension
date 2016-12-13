@@ -4,7 +4,7 @@ import { LocalStorageService } from 'angular-2-local-storage';
 import { HqService } from './hq.service';
 import { SettingsService } from './settings.service';
 import { Observable } from 'rxjs/Rx';
-//import { PingService } from './ping.service';
+import { PingService } from './ping.service';
 
 @Injectable()
 export class ProxySettingsService {
@@ -25,7 +25,8 @@ export class ProxySettingsService {
     private http: Http,
     private localStorageService: LocalStorageService,
     private settingsService: SettingsService,
-    private hqService: HqService
+    private hqService: HqService,
+    private pingService: PingService
   ) {}
 
   loadServers() {
@@ -49,13 +50,32 @@ export class ProxySettingsService {
             this.selectedProxy = this.servers.losangeles;
             this.settingsService.saveSelectedProxy(this.selectedProxy);
           }
-          // this.pingService.getLatency(this.servers.losangeles.ovHostname).subscribe(value => {
-          //   console.log('Los Angeles', value);
-          // });
-          // this.pingService.getLatency(this.servers.amsterdam.ovHostname).subscribe(value => {
-          //   console.log('Amsterdam', value);
+
+
+          // this.pingService.getServerLatencyList(this.serverArr, 3)
+          // .then(data => {
+          //   console.log(data);
+
           // });
 
+          // this.pingService.getLatency(this.servers.newyork.ovHostname, 0.3).then(value => {
+          //   console.log('New York', value);
+          // });
+          // this.pingService.getLatency(this.servers.amsterdam.ovHostname, 0.3).then(value => {
+          //   console.log('Amsterdam', value);
+          // });
+          // this.pingService.getLatency(this.servers.london.ovHostname, 0.3).then(value => {
+          //   console.log('London', value);
+          // });
+          // this.pingService.getLatency(this.servers.seattle.ovHostname, 0.3).then(value => {
+          //   console.log('Seattle', value);
+          // });
+          // this.pingService.getLatency(this.servers.saltlakecity.ovHostname, 0.3).then(value => {
+          //   console.log('Salt Lake City', value);
+          // });
+          // this.pingService.getLatency(this.servers.losangeles.ovHostname, 0.3).then(value => {
+          //   console.log('Los Angeles', value);
+          // });
           resolve();
         },
         error => reject(error)

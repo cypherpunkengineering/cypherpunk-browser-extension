@@ -4,7 +4,7 @@
   </div>
 
   <!-- Default Routing -->
-  <div (click)="goToView('app-default-routing')" class="switch-row clickable bottom-separator">
+  <div (click)="goToView('app-default-routing')" class="switch-row highlighted clickable bottom-separator">
     <div class="label half">Default Routing</div>
     <div class="switch half">
       {{defaultRouting()}}
@@ -13,7 +13,7 @@
   </div>
 
   <!-- Force HTTPS -->
-  <div class="switch-row bottom-separator">
+  <div class="switch-row highlighted bottom-separator">
     <div class="label">Force HTTPS</div>
     <div class="switch">
       <label class="label-switch">
@@ -24,7 +24,7 @@
   </div>
 
   <!-- WebRTC Leak Protection -->
-  <div class="switch-row bottom-separator">
+  <div class="switch-row highlighted bottom-separator">
     <div class="label">WebRTC Leak Protection</div>
     <div class="switch">
       <label class="label-switch">
@@ -35,7 +35,7 @@
   </div>
 
   <!-- Privacy Filter Settings -->
-  <div (click)="goToView('app-privacy-filter')" class="switch-row clickable bottom-separator">
+  <div (click)="goToView('app-privacy-filter')" class="switch-row highlighted clickable bottom-separator">
     <div class="label half">Privacy Filter Settings</div>
     <div class="switch half">
       <span class="forward-icon">&#x3009;</span>
@@ -43,7 +43,7 @@
   </div>
 
   <!-- User Agent -->
-  <div (click)="goToView('app-user-agent')" class="switch-row clickable bottom-separator">
+  <div (click)="goToView('app-user-agent')" class="switch-row highlighted clickable bottom-separator">
     <div class="label half">User Agent</div>
     <div class="switch half">
       {{userAgentType}}
@@ -52,7 +52,7 @@
   </div>
 
   <!-- Logout -->
-  <div class="switch-row clickable bottom-separator">
+  <div class="switch-row highlighted clickable bottom-separator">
     <div class="label full">Logout</div>
   </div>
 </div>

@@ -5,7 +5,6 @@
 
   <div class="country-select">
     <div *ngFor="let server of serverArr; let i = index; trackBy: trackByFn">
-
       <div class="region" *ngIf="i === 0 || (!(i === 0) && serverArr[i-1].region !== server.region)">
         {{regions[server.region]}}
       </div>
@@ -18,7 +17,7 @@
         <span *ngIf="server.level === 'premium'" class="premium">PREMIUM</span>
         <span *ngIf="!server.httpDefault.length" class="unavailable">UNAVAILABLE</span>
       </div>
-
     </div>
   </div>
+
 </div>

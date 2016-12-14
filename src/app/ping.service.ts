@@ -9,20 +9,31 @@ export class PingService {
   average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
 
   getServerLatencyList(servers: [any], runs: number) {
+    return Promise.all(servers.map(server => {
+      if (server.httpDefault.length) {
+        var promises = [];
+        for (let i = 0; i < runs; i++) { promises.push(this.getLatency(server.ovHostname, 1)); }
+
+        return Promise.all(promises)
+        .then((pings) => {
+          return { id: server.id, latency: this.average(pings) };
+        });
+      }
+      else { return Promise.resolve({ id: server.id, latency: 9999 }); }
+    }))
+    .then(latencyList => {
+      return latencyList.sort((a, b) => { return a.latency - b.latency; });
+    });
+  }
+
+
+  requestImage(url: string) {
+    url = 'https://' + url;
     return new Promise((resolve, reject) => {
-      resolve(servers.map(server => {
-        if (server.httpDefault) {
-
-          var promise = this.getLatency(server.ovHostname, 1);
-          var promises = Array(runs).fill(promise);
-
-          return Promise.all(promises).then((vals) => {
-            return { id: server.id, latency: this.average(vals) };
-          }).catch(reject);
-
-        }
-        else { return { id: server.id, latency: -1 } }
-      }));
+      var img = new Image();
+      img.onload = () => { resolve(img); };
+      img.onerror = () => { reject(url); };
+      img.src = url + '?random-no-cache=' + Math.floor((1 + Math.random()) * 0x10000).toString(16);
     });
   }
 
@@ -35,18 +46,10 @@ export class PingService {
             resolve(delta);
         };
 
-        var requestImage = (url) => {
-          url = 'https://' + url;
-          return new Promise((resolve, reject) => {
-            var img = new Image();
-            img.onload = () => { resolve(img); };
-            img.onerror = () => { reject(url); };
-            img.src = url + '?random-no-cache=' + Math.floor((1 + Math.random()) * 0x10000).toString(16);
-          });
-        }
+        this.requestImage(url).then(response).catch(response);
 
-        requestImage(url).then(response).catch(response);
-
+        // If request times out set latency high, so it's low on the list
+        setTimeout(() => { resolve(999); }, 2000);
     });
   }
 }

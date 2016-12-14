@@ -42,7 +42,7 @@ export class IndexComponent {
 
   smartRouteOpts = {
     recommended: { title: 'Silicon Valley, USA (Recommended)', type: 'Recommended' },
-    closest: { title: 'Japan (Closest)', type: 'Closest' },
+    closest: { title: 'Loading...', type: 'Closest' },
     selected: { title: 'Selected Server: Silicon Valley, USA', type: 'Selected Server' },
     none: { title: 'Do not proxy', type: 'No Proxy' }
   };
@@ -54,8 +54,6 @@ export class IndexComponent {
   ) {
     // Initialize proxy servers
     this.proxySettingsService.loadServers().then(res => {
-      this.servers = this.proxySettingsService.servers;
-      this.serverArr = this.proxySettingsService.serverArr;
 
       if (this.cypherpunkEnabled) { this.proxySettingsService.enableProxy(); }
       else { this.proxySettingsService.disableProxy(); }

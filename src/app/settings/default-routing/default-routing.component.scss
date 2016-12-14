@@ -6,10 +6,11 @@
   clear: both;
   height: rem(75);
   color: #fff;
+  background-color: #483F8F;
   cursor: pointer;
-  &:hover, &.checked:hover { background-color: lighten(#0f3c75, 10%); }
+  &:hover, &.checked:hover { background-color: darken(#483F8F, 5%); }
   &.checked {
-    background: url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 32%;
+    background: #483F8F url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 32%;
   }
   .label {
     @include span-columns(12);

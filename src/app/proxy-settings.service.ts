@@ -10,6 +10,9 @@ import { PingService } from './ping.service';
 export class ProxySettingsService {
   servers;
   serverArr;
+  latencyArr;
+  closestServer;
+  closestServerName = 'Loading...';
   regions = {
     'NA': 'NORTH AMERICA',
     'SA': 'CENTRAL & SOUTH AMERICA',
@@ -51,31 +54,15 @@ export class ProxySettingsService {
             this.settingsService.saveSelectedProxy(this.selectedProxy);
           }
 
+          // Populate list of servers sorted by latency
+          this.pingService.getServerLatencyList(this.serverArr, 3)
+          .then((array) => {
+            this.latencyArr = array;
+            this.closestServer = this.servers[array[0].id];
+            this.closestServerName = this.closestServer.name;
+            console.log(this.latencyArr, this.closestServer, this.closestServerName);
+          });
 
-          // this.pingService.getServerLatencyList(this.serverArr, 3)
-          // .then(data => {
-          //   console.log(data);
-
-          // });
-
-          // this.pingService.getLatency(this.servers.newyork.ovHostname, 0.3).then(value => {
-          //   console.log('New York', value);
-          // });
-          // this.pingService.getLatency(this.servers.amsterdam.ovHostname, 0.3).then(value => {
-          //   console.log('Amsterdam', value);
-          // });
-          // this.pingService.getLatency(this.servers.london.ovHostname, 0.3).then(value => {
-          //   console.log('London', value);
-          // });
-          // this.pingService.getLatency(this.servers.seattle.ovHostname, 0.3).then(value => {
-          //   console.log('Seattle', value);
-          // });
-          // this.pingService.getLatency(this.servers.saltlakecity.ovHostname, 0.3).then(value => {
-          //   console.log('Salt Lake City', value);
-          // });
-          // this.pingService.getLatency(this.servers.losangeles.ovHostname, 0.3).then(value => {
-          //   console.log('Los Angeles', value);
-          // });
           resolve();
         },
         error => reject(error)

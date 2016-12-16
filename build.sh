@@ -6,12 +6,22 @@ git submodule update --init --recursive
 # fix path
 export PATH=$PATH:/usr/local/bin
 
-# prepare nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-nvm install v7.0.0
-nvm alias default v7.0.0
-nvm use v7.0.0
+# build vars
+NODE_VERSION=v7.2.1
+
+# load nvm depending on OS
+case `uname -s` in
+	Darwin)
+		source "$(brew --prefix nvm)/nvm.sh" ${NODE_VERSION}
+		;;
+	FreeBSD|Linux)
+		source $HOME/.nvm/nvm.sh ${NODE_VERSION}
+		;;
+esac
+
+# prepare node/npm
+nvm install ${NODE_VERSION}
+nvm use ${NODE_VERSION}
 
 # install deps
 npm install -g angular-cli

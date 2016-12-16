@@ -8,9 +8,10 @@ export class PingService {
 
   average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
 
-  getServerLatencyList(servers: [any], runs: number) {
+  getServerLatencyList(servers: [any], runs: number, premium) {
     return Promise.all(servers.map(server => {
-      if (server.httpDefault.length) {
+      // Ensure that server is available. If server is premium user must have premium account
+      if (server.httpDefault.length && (server.level === 'premium' && premium || server.level === 'free')) {
         var promises = [];
         for (let i = 0; i < runs; i++) { promises.push(this.getLatency(server.ovHostname, 1)); }
 

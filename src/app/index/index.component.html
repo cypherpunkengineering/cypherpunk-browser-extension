@@ -74,7 +74,7 @@
             <img src="/assets/flags/us.svg" />
           </div>
           <div class="subtitle bold">
-            {{ selectedSmartRouteServer || 'Silicon Valley, USA' }}
+            {{ selectedSmartRouteServerName}}
             <br>
             <!-- <a href="#" (click)="toggleRoutingDropdown()"> -->
               ( {{smartRouteType()}} )
@@ -105,7 +105,7 @@
         <div class="row" (click)="selectSmartRoute('RECOMMENDED')" [ngClass]="{'checked': selectedSmartRouteOpt === 'RECOMMENDED' }">{{smartRouteOpts.recommended.title}}</div>
         <div class="row" (click)="selectSmartRoute('CLOSEST')" [ngClass]="{'checked': selectedSmartRouteOpt === 'CLOSEST' }">{{ proxySettingsService.closestServerName }} (Closest)</div>
         <div class="row" (click)="selectSmartRoute('SELECTED')" [ngClass]="{'checked': selectedSmartRouteOpt === 'SELECTED' }" routerLink="/selected-server" routerLinkActive="active">
-          {{ selectedSmartRouteOpt === 'SELECTED' ? 'Selected Server: ' + selectedSmartRouteServer : 'Selected Server'}}
+          {{ selectedSmartRouteOpt === 'SELECTED' && selectedSmartRouteServer ? 'Selected Server: ' + selectedSmartRouteServer.name : 'Selected Server'}}
           <span class="forward-icon">&#x3009;</span>
         </div>
         <div class="row" (click)="selectSmartRoute('NONE')" [ngClass]="{'checked': selectedSmartRouteOpt === 'NONE' }">{{smartRouteOpts.none.title}}</div>

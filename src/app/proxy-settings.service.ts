@@ -48,19 +48,19 @@ export class ProxySettingsService {
           if (storedSelectedProxy) {
             this.selectedProxy = storedSelectedProxy;
           }
-          // This should ping the closest server to the user and set that as default
-          else {
-            this.selectedProxy = this.servers.losangeles;
-            this.settingsService.saveSelectedProxy(this.selectedProxy);
-          }
 
           // Populate list of servers sorted by latency
-          this.pingService.getServerLatencyList(this.serverArr, 3)
+          this.pingService.getServerLatencyList(this.serverArr, 3, this.premiumProxyAccount)
           .then((array) => {
             this.latencyArr = array;
             this.closestServer = this.servers[array[0].id];
             this.closestServerName = this.closestServer.name;
             console.log(this.latencyArr, this.closestServer, this.closestServerName);
+            // If there is not stored selected proxy store the closest server
+            if (!storedSelectedProxy) {
+              this.selectedProxy = this.closestServer;
+              this.settingsService.saveSelectedProxy(this.selectedProxy);
+            }
           });
 
           resolve();
@@ -96,9 +96,20 @@ export class ProxySettingsService {
     return this.servers[serverId];
   }
 
+  // Do not apply proxy when pinging proxy servers to measure latency
+  generateDirectPingRules() {
+    let rules = "";
+    this.serverArr.forEach(function(server) {
+      if (server.ovHostname) {
+        rules += "if (shExpMatch(host, \"" + server.ovHostname + "\")) return 'DIRECT';\n";
+      }
+    });
+    return rules;
+  }
+
   enableProxy() {
     if (!this.servers) return;
-    console.log("Applying proxy");
+    console.log("Applying proxy config");
     console.log('> Name:', this.selectedProxy.name);
     console.log('> IP:', this.selectedProxy.httpDefault[0]);
     let proxyIP = this.selectedProxy.httpDefault[0];
@@ -106,6 +117,7 @@ export class ProxySettingsService {
       mode: "pac_script",
       pacScript: {
         data: "function FindProxyForURL(url, host) {\n" +
+              this.generateDirectPingRules() +
               "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n" +
               "  if (shExpMatch(host, \"*.com\")) return 'PROXY " + proxyIP + ":3128';\n" +
               "  if (shExpMatch(host, \"*.jp\")) return 'PROXY " + proxyIP + ":3128';\n" +
@@ -119,7 +131,7 @@ export class ProxySettingsService {
   }
 
   disableProxy() {
-    console.log("remove proxy config");
+    console.log("Removing proxy config");
     let config = {
       mode: "system"
     }

@@ -1,7 +1,14 @@
 <div id="index" [ngClass]="{'cypherpunk-on': cypherpunkEnabled, 'cypherpunk-off': !cypherpunkEnabled, 'smart-routing--on': smartRoutingEnabled, 'smart-routing--off': !smartRoutingEnabled}">
   <div id="header__main">
-    <img src="/assets/header-logo-big.svg" alt="">
-    <a routerLink="/settings" routerLinkActive="active" class="btn__settings"><img src="/assets/icon_settings.svg" alt=""></a>
+    <img class="logo" src="/assets/icon-account.svg" alt="">
+    <img class="title" src="/assets/header-logo-big.svg" alt="">
+    <a routerLink="/settings" routerLinkActive="active" class="btn__settings"><img src="/assets/gear.png" alt=""></a>
+    <div id="cypher-punk-enabled-switch" class="switch">
+      <label class="label-switch">
+        <input #enableCypherpunk [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
+        <div class="checkbox"></div>
+      </label>
+    </div>
   </div>
   <!-- <div id="header-on-off" class="bottom-separator" [ngClass]="{'header-off': !cypherpunkEnabled}">
     <div id="logo"><div></div></div>
@@ -14,18 +21,13 @@
     </div>
   </div> -->
 
+  <!-- Cypherpunk is disabled -->
+  <div id="info-disconnected" *ngIf="!cypherpunkEnabled">
+    <img class="off-logo" src="/assets/main-off.png" alt="">
+  </div>
+
   <!-- Cypherpunk is enabled -->
   <div id="info-connected" *ngIf="cypherpunkEnabled">
-
-    <div id="smart-routing-on-off" class="switch-row bottom-separator">
-      <div id="smart-routing-label" class="label">Smart Routing is {{enableSmartRouting.checked ? 'ON' : 'OFF'}}</div>
-      <div id="smart-routing-enabled-switch" class="switch">
-        <label class="label-switch">
-          <input #enableSmartRouting type="checkbox" [(ngModel)]="smartRoutingEnabled" (ngModelChange)="toggleSmartRouting($event)" [disabled]="!cypherpunkEnabled" />
-          <div class="checkbox"></div>
-        </label>
-      </div>
-    </div>
 
     <!-- Smart routing off -->
     <div id="smart-routing-off" class="panel__main" *ngIf="!smartRoutingEnabled">
@@ -112,34 +114,34 @@
       </div>
 
     </div>
-  </div>
 
-  <!-- Cypherpunk is disabled -->
-  <div id="info-disconnected" *ngIf="!cypherpunkEnabled">
-    <div class="title">Cypherpunk is Off</div>
-    <div class="button">
-      <label class="key-switch">
-        <input #enableVpnSwitchLarge [(ngModel)]="cypherpunkEnabled" type="checkbox" (ngModelChange)="toggleCypherpunk($event)" />
-        <div class="checkbox large"></div>
-      </label>
+    <div id="smart-routing-on-off" class="switch-row large">
+      <div id="smart-routing-label" class="label">Smart Routing is {{enableSmartRouting.checked ? 'ON' : 'OFF'}}</div>
+      <div id="smart-routing-enabled-switch" class="switch">
+        <label class="label-switch">
+          <input #enableSmartRouting type="checkbox" [(ngModel)]="smartRoutingEnabled" (ngModelChange)="toggleSmartRouting($event)" [disabled]="!cypherpunkEnabled" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
     </div>
-    <div class="subtitle" (click)="cypherpunkEnabled=true">Enable browser protection</div>
+
+    <div *ngIf="cypherpunkEnabled" id="privacy-on-off" class="switch-row large top-separator">
+      <div id="privacy-label" class="label">Privacy filter for <span [innerHTML]="domain"></span></div>
+      <div id="privacy-enabled-switch" class="switch">
+        <label class="label-switch">
+          <input type="checkbox" [(ngModel)]="privacyFilterSwitch" (ngModelChange)="togglePrivacyFilter($event)" [disabled]="!cypherpunkEnabled" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
+
   </div>
 
-  <div id="privacy-on-off" class="switch-row top-separator bottom-separator">
-    <div id="privacy-label" class="label">Privacy filter for <span [innerHTML]="domain"></span></div>
-    <div id="privacy-enabled-switch" class="switch">
-      <label class="label-switch">
-        <input type="checkbox" [(ngModel)]="privacyFilterSwitch" (ngModelChange)="togglePrivacyFilter($event)" [disabled]="!cypherpunkEnabled" />
-        <div class="checkbox"></div>
-      </label>
-    </div>
-  </div>
 
 
-  <div id="header-on-off" class="" [ngClass]="{'header-off': !cypherpunkEnabled}">
+<!--   <div id="header-on-off" class="" [ngClass]="{'header-off': !cypherpunkEnabled}"> -->
     <!-- <div id="logo"><div></div></div> -->
 
+    <!--
     <div id="enabled-switch">
       <label class="key-switch">
         <div id="enabled-label">Cypherpunk is {{cypherpunkEnabled ? 'ON' : 'OFF'}}</div>
@@ -147,7 +149,7 @@
         <div class="checkbox"></div>
       </label>
     </div>
-  </div>
+  </div> -->
 
 
   <!-- <div id="footer">

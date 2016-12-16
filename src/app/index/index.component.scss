@@ -21,12 +21,25 @@
 #header__main {
   // background-color: #4c8ee1;
   padding: 10px 0;
-
-  .btn__settings {
-    opacity: 0.75;
+  background-color: #0E063D;
+  text-align: left;
+  .logo {
     position: absolute;
-    right: 16px;
-    top: 16px;
+    left: rem(20);
+    top: rem(16);
+  }
+  .title {
+    margin-left: rem(52);
+  }
+  .btn__settings {
+    position: absolute;
+    right: rem(80);
+    top: rem(16);
+  }
+  .switch {
+    position: absolute;
+    right: rem(20);
+    top: rem(16);
   }
 }
 
@@ -81,24 +94,26 @@
 }
 
 #info-disconnected {
-  height: rem(370);
-  .title {
-    padding-top: rem(60);
-    font-size: rem(32);
-    font-weight: 500;
-    text-align: center;
-    margin: 0 rem(75);
-  }
-  .button {
-    padding-top: rem(30);
-    text-align: center;
-  }
-  .subtitle {
-    padding-top: rem(10);
-    font-size: rem(18);
-    text-align: center;
-    cursor: pointer;
-  }
+  height: rem(468);
+  background-color: #040224;
+  .off-logo { margin-top: rem(50); }
+  // .title {
+  //   padding-top: rem(60);
+  //   font-size: rem(32);
+  //   font-weight: 500;
+  //   text-align: center;
+  //   margin: 0 rem(75);
+  // }
+  // .button {
+  //   padding-top: rem(30);
+  //   text-align: center;
+  // }
+  // .subtitle {
+  //   padding-top: rem(10);
+  //   font-size: rem(18);
+  //   text-align: center;
+  //   cursor: pointer;
+  // }
 }
 :host { width: 100%; display: block; }
 .panel__main {
@@ -119,7 +134,6 @@
 
 #smart-routing-off {
   @include span-columns(12);
-  background-color: $gray-dark-trans;
   max-height: rem(480);
 
   .location-info {
@@ -160,12 +174,13 @@
 
 #smart-routing-on {
   @include pad(rem(20) 0);
-  min-height: rem(330);
+  height: rem(366);
+
 
   .routing-dd {
     @include span-columns(12);
     @include transition(height 0.5s);
-    background-color: #483F8F;
+    background-color: #29207B;
     overflow: hidden;
     &.open { height: rem(125); }
     &.closed { height: 0; }
@@ -180,7 +195,7 @@
       .forward-icon { float: right; }
       &:first-child { margin-top: rem(5); }
       &:last-child { margin-bottom: rem(5); }
-      &:hover, &.checked:hover { background-color: darken(#483F8F, 5%); }
+      &:hover, &.checked:hover { background-color: darken(#29207B, 5%); }
       &.checked {
         background: url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
       }
@@ -193,7 +208,7 @@
     @include span-columns(12);
     font-size: rem(18);
     text-align: center;
-    // margin-top: rem(40);
+    margin-top: rem(4);
   }
 
   .location {
@@ -233,7 +248,7 @@
 
 .scrolling-binary {
   position: absolute;
-  top: rem(200);
+  top: rem(165);
   z-index: 1;
   color: rgba(255, 255, 255, 0.4);
   left: 0;

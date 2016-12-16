@@ -9,7 +9,7 @@ html, body {
 }
 
 body {
-  background-color: #f7f7f7;
+  background-color: #040224;
   font-family: 'Dosis', sans-serif;
   font-size: rem(14);
   font-weight: 300;
@@ -34,7 +34,7 @@ body {
 #sub-menu {
   width: 100%;
   height: 100%;
-  background-color: #291B7D;
+  background-color: #0E063D;
 }
 
 /* Reuseable Components */
@@ -47,24 +47,30 @@ body {
   font-size: rem(12);
 }
 
+
 .switch-row {
   @include row;
   clear: both;
   height: rem(40);
   color: #fff;
+  &.large {
+    height: rem(50);
+    line-height: rem(50);
+    background-color: #0E063D;
+  }
   &.highlighted {
-    background-color: #483F8F;
+    background-color: #1A1246;
   }
   &.clickable {
     cursor: pointer;
-    &:hover { background-color: darken(#483F8F, 5%); }
+    &:hover { background-color: darken(#1A1246, 5%); }
   }
   &.selectable {
     @include pad(0 0 0 rem(10));
     cursor: pointer;
-    &:hover, &.checked:hover { background-color: darken(#483F8F, 5%); }
+    &:hover, &.checked:hover { background-color: darken(#1A1246, 5%); }
     &.checked {
-      background: #483F8F url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
+      background: #29207B url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
     }
   }
   .label {
@@ -76,6 +82,15 @@ body {
     div { @include display(inline-block); }
     &.half { @include span-columns(6); }
     &.full { @include span-columns(12); }
+  }
+  &.large.top-separator { border-top: solid 2px #040224; }
+  &.large .label {
+    height: rem(50);
+    line-height: rem(50);
+    background-color: transparent;
+  }
+  &.large .label-switch {
+    margin-top: 5px;
   }
   .switch {
     @include span-columns(3);
@@ -144,16 +159,16 @@ body {
   $switch-padding: 2px;
   $switch-height: 24px;
   $switch-radius: $switch-height;
-  $switch-background: rgba(255, 255, 255, 0.9);
+  $switch-background: #29207B;
   $switch-disabled-background: #ddd;
   $switch-shadow: none; //inset 0px 1px 2px 1px rgba(0, 0, 0, 0.1);
-  $switch-active-color: #fff;
+  $switch-active-color: #29207B;
 
   $knob-size: $switch-height - ($switch-padding * 3);
   $knob-radius: $switch-height - ($switch-padding * 0.2);
   $knob-width: $knob-size;
-  $knob-color: linear-gradient(135deg, #ccc 0%,#ccc 50%,#B7B7B7 51%,#B7B7B7 100%);
-  $knob-active-color: linear-gradient(135deg, #81D135 0%,#81D135 50%,#73BB2E 51%,#73BB2E 100%);
+  $knob-color: linear-gradient(135deg, #B4B5ED 0%, #B4B5ED 50%, #7974C2 51%, #7974C2 100%);
+  $knob-active-color: linear-gradient(135deg, #4FB9DC 0%, #4FB9DC 50%, #2A89B9 51%, #2A89B9 100%);
   $knob-shadow: none; //0 1px 2px 0 rgba(0, 0, 0, 0.5);
 
   border-radius: $switch-radius;

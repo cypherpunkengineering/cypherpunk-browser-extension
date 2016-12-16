@@ -94,7 +94,7 @@
 }
 
 #info-disconnected {
-  height: rem(468);
+  height: rem(497);
   background-color: #040224;
   .off-logo { margin-top: rem(50); }
   // .title {
@@ -174,7 +174,7 @@
 
 #smart-routing-on {
   @include pad(rem(20) 0);
-  height: rem(366);
+  height: rem(395);
 
 
   .routing-dd {
@@ -182,6 +182,7 @@
     @include transition(height 0.5s);
     background-color: #29207B;
     overflow: hidden;
+    margin-top: rem(29);
     &.open { height: rem(125); }
     &.closed { height: 0; }
     .row {

@@ -28,6 +28,7 @@ export class IndexComponent {
   servers;
   serverArr;
   regions = this.proxySettingsService.regions;
+  premiumAccount = this.proxySettingsService.premiumProxyAccount;
 
 
   indexSettings = this.settingsService.indexSettings();
@@ -89,7 +90,8 @@ export class IndexComponent {
     });
   }
 
-  changeProxy(server: Object) {
+  changeProxy(server: any) {
+    if (server.level === 'premium' && !this.premiumAccount) { return; }
     this.selectedProxy = server;
     this.settingsService.saveSelectedProxy(server);
     this.proxySettingsService.selectedProxy = server;

@@ -14,7 +14,7 @@ body {
   font-size: rem(14);
   font-weight: 300;
   width: rem(360);
-  height: rem(500);
+  height: rem(552);
   margin: 0;
   padding: 0;
 }
@@ -283,8 +283,18 @@ a {
   }
 }
 
+.view-container {
+  width:100%;
+  height: 100%;
+  display: block;
+  position:absolute;
+  .parent { z-index: 2; }
+  .child { z-index: 3; }
+  .grandchild { z-index: 4; }
+}
+
 .country-select {
-  height: rem(444);
+  height: rem(496);
   width: 100%;
   overflow-y: scroll;
   color: #fff;

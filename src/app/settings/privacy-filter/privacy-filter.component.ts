@@ -7,6 +7,7 @@ import { SettingsService } from '../../settings.service';
 })
 export class PrivacyFilterComponent {
   @Output() changeView = new EventEmitter<string>();
+  browserObj: any = chrome ? chrome : chrome;
 
   title = 'Privacy Filter Settings';
 
@@ -20,22 +21,22 @@ export class PrivacyFilterComponent {
 
   togglePrivacyFilterEnabled(enabled: boolean) {
     this.settingsService.savePrivacyFilterEnabled(enabled);
-    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    this.browserObj.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
   toggleBlockAds(enabled: boolean) {
     this.settingsService.savePrivacyFilterAds(enabled);
-    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    this.browserObj.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
   toggleBlockTrackers(enabled: boolean) {
     this.settingsService.savePrivacyFilterTrackers(enabled);
-    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    this.browserObj.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
   toggleBlockMalware(enabled: boolean) {
     this.settingsService.savePrivacyFilterMalware(enabled);
-    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    this.browserObj.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
   goToView(name: string) {

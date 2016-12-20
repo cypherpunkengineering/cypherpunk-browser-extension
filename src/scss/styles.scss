@@ -70,7 +70,7 @@ body {
     cursor: pointer;
     &:hover, &.checked:hover { background-color: darken(#1A1246, 5%); }
     &.checked {
-      background: #29207B url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
+      background: #1A1246 url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
     }
   }
   .label {
@@ -288,6 +288,7 @@ a {
   height: 100%;
   display: block;
   position:absolute;
+  box-shadow: 1px 0px 5px 1px rgba(0,0,0,0.5);
   .parent { z-index: 2; }
   .child { z-index: 3; }
   .grandchild { z-index: 4; }

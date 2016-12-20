@@ -24,6 +24,8 @@ import { SettingsService } from '../settings.service';
    ]
 })
 export class SelectedServerComponent {
+  browserObj: any = chrome ? chrome : chrome;
+
   title = 'Selected Server';
   domain;
   premiumAccount = this.proxySettingsService.premiumProxyAccount;
@@ -42,7 +44,7 @@ export class SelectedServerComponent {
     private proxySettingsService: ProxySettingsService
   ) {
 
-    chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
+    let callback = (tabs) => {
       let curTab = tabs[0];
       let url = curTab.url
       this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
@@ -53,8 +55,14 @@ export class SelectedServerComponent {
           this.selectedServerId = curSmartRoute.serverId;
         });
       }
-    });
-
+    };
+    if (chrome) { // Chrome
+      this.browserObj.tabs.query({currentWindow: true, active: true}, callback);
+    }
+    else { // FF
+      this.browserObj.tabs.query({currentWindow: true, active: true})
+      .then(callback);
+    }
   }
 
   selectProxy(server) {

@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Rx';
 export class HqService {
   options: RequestOptions;
   apiPrefix: string = 'https://cypherpunk.com/api/v0';
+  browserObj: any = chrome ? chrome : chrome;
 
   constructor (private http: Http) {
     let headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
@@ -38,9 +39,16 @@ export class HqService {
 
 
   debugCheckSession(): void {
-    // Debug: get this header to check consistency with session token
-    chrome.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'}, (cookie) => {
-      console.log(cookie);
-    });
+    // Browser compatibility
+    if (chrome) {
+      // Debug: get this header to check consistency with session token
+      this.browserObj.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'}, (cookie) => {
+        console.log(cookie);
+      });
+    }
+    else {
+      let cookies = this.browserObj.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'});
+      console.log(cookies);
+    }
   }
 }

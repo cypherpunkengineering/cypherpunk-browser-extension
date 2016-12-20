@@ -20,6 +20,8 @@ import { SettingsService } from '../settings.service';
 })
 
 export class IndexComponent {
+  browserObj: any = chrome ? chrome : chrome;
+
   title = 'Index';
   domain = '(Loading...)';
   showRoutingDropdown = false;
@@ -69,7 +71,7 @@ export class IndexComponent {
     });
 
     // Grab domain name, favicon and privacy filter settings
-    chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
+    let callback = (tabs) => {
       let curTab = tabs[0];
       let url = curTab.url
       this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
@@ -87,7 +89,14 @@ export class IndexComponent {
       if (curTab.favIconUrl && curTab.favIconUrl != '' && curTab.favIconUrl.indexOf('chrome://favicon/') == -1) {
         this.faviconUrl = curTab.favIconUrl;
       }
-    });
+    };
+    if (chrome) { // Chrome
+      this.browserObj.tabs.query({currentWindow: true, active: true}, callback);
+    }
+    else { // FF
+      this.browserObj.tabs.query({currentWindow: true, active: true})
+      .then(callback);
+    }
   }
 
   changeProxy(server: any) {
@@ -101,7 +110,7 @@ export class IndexComponent {
 
   toggleCypherpunk(enabled: boolean) {
     this.settingsService.saveCypherpunkEnabled(enabled);
-    chrome.runtime.sendMessage({ greeting: "CypherpunkEnabled" });
+    this.browserObj.runtime.sendMessage({ greeting: "CypherpunkEnabled" });
     // Triggers boolean change when large switch is hit
     if (this.cypherpunkEnabled !== enabled) {
       this.cypherpunkEnabled = enabled;
@@ -136,7 +145,7 @@ export class IndexComponent {
       this.privacyFilterWhitelist[this.domain] = false;
     }
     this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
-    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    this.browserObj.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
   toggleRoutingDropdown() {

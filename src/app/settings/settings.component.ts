@@ -10,6 +10,7 @@ import { SettingsService } from '../settings.service';
 })
 export class SettingsComponent {
   @Output() changeView = new EventEmitter<string>();
+  browserObj: any = chrome ? chrome : chrome;
 
   title = 'Settings';
   advancedSettings = this.settingsService.advancedSettings();
@@ -29,7 +30,7 @@ export class SettingsComponent {
   toggleForceHttps(enabled: boolean) {
     console.log('Force HTTPS:', enabled);
     this.settingsService.saveForceHttps(enabled);
-    chrome.runtime.sendMessage({ greeting: "ForceHTTPS" });
+    this.browserObj.runtime.sendMessage({ greeting: "ForceHTTPS" });
   }
 
   toggleWebRtcLeakProtection(enabled: boolean) {

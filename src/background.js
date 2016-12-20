@@ -5,6 +5,12 @@ var userAgentString = localStorage.getItem('cypherpunk.advanced.userAgent.string
 
 var authUsername, authPassword;
 
+// Browser compatibility
+var browserObj = browser;
+if (chrome) {
+  browserObj = chrome;
+}
+
 function httpGetAsync(theUrl, callback) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
@@ -46,7 +52,7 @@ if (cypherpunkEnabled) { init(); }
 else { destroy(); }
 
 // Event Listener Triggers
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+browserObj.runtime.onMessage.addListener(function(request, sender, sendResponse){
   if (request.greeting === "CypherpunkEnabled"){
     cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
     // Cypherpunk is turned on, enable features based on settings
@@ -69,8 +75,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
     if (!cypherpunkEnabled) { return; }
     // Reload current tab to update blocked requests
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.reload(tabs[0].id);
+    browserObj.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      browserObj.tabs.reload(tabs[0].id);
     });
   }
 });
@@ -83,13 +89,13 @@ function supplyProxyCredentials(details, callbackFn) {
 
 function disableProxyAuthCredentials() {
   console.log('Disabling Proxy Auth');
-  chrome.webRequest.onAuthRequired.removeListener(supplyProxyCredentials);
+  browserObj.webRequest.onAuthRequired.removeListener(supplyProxyCredentials);
 }
 
 function enableProxyAuthCredentials() {
   disableProxyAuthCredentials();
   console.log('Enabling Proxy Auth');
-  chrome.webRequest.onAuthRequired.addListener(
+  browserObj.webRequest.onAuthRequired.addListener(
     supplyProxyCredentials,
     {urls: ["<all_urls>"]},
     ['asyncBlocking']
@@ -114,13 +120,13 @@ function spoofUserAgent(details) {
 
 function disableUserAgentSpoofing() {
   console.log('Disabling User Agent Spoofing');
-  chrome.webRequest.onBeforeSendHeaders.removeListener(spoofUserAgent);
+  browserObj.webRequest.onBeforeSendHeaders.removeListener(spoofUserAgent);
 }
 
 function enableUserAgentSpoofing() {
   disableUserAgentSpoofing();
   console.log('Enabling User Agent Spoofing');
-  chrome.webRequest.onBeforeSendHeaders.addListener(
+  browserObj.webRequest.onBeforeSendHeaders.addListener(
     spoofUserAgent,
     { urls: ["<all_urls>"] },
     ['requestHeaders','blocking']
@@ -134,13 +140,13 @@ function cancelRequest(details) { return { cancel: false }; };
 
 function disablePrivacyFilter() {
   console.log('Disabling Privacy Filter');
-  chrome.webRequest.onBeforeRequest.removeListener(cancelRequest);
+  browserObj.webRequest.onBeforeRequest.removeListener(cancelRequest);
 }
 
 function enablePrivacyFilter() {
   disablePrivacyFilter();
   console.log('Enabling Privacy Filter');
-  chrome.webRequest.onBeforeRequest.addListener(
+  browserObj.webRequest.onBeforeRequest.addListener(
     cancelRequest,
     { urls: ["<all_urls>"] },
     ["blocking"]
@@ -148,8 +154,8 @@ function enablePrivacyFilter() {
 };
 
 // Enable privacy filter if it's enabled
-chrome.tabs.onActivated.addListener(function (tab) {
-  chrome.tabs.get(tab.tabId, function(tab) {
+browserObj.tabs.onActivated.addListener(function (tab) {
+  browserObj.tabs.get(tab.tabId, function(tab) {
     var url = tab.url;
     if (!url) { return; }
 
@@ -175,13 +181,13 @@ function redirectRequest(requestDetails) {
 
 function disableForceHttps() {
   console.log('Disabling Force HTTPS');
-  chrome.webRequest.onBeforeRequest.removeListener(redirectRequest);
+  browserObj.webRequest.onBeforeRequest.removeListener(redirectRequest);
 }
 
 function enableForceHttps() {
   disableForceHttps();
   console.log('Enabling Force HTTPS');
-  chrome.webRequest.onBeforeRequest.addListener(
+  browserObj.webRequest.onBeforeRequest.addListener(
     redirectRequest,
     { urls:['http://*/*'] },
     ['blocking']

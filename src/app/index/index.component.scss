@@ -88,9 +88,6 @@
 }
 
 #info-connected {
-  .smart-routing--off & {
-    background-color: $color-error;
-  }
 }
 
 #info-disconnected {
@@ -132,47 +129,7 @@
   }
 }
 
-#smart-routing-off {
-  @include span-columns(12);
-  max-height: rem(480);
-
-  .location-info {
-    @include span-columns(12);
-    padding: 0 rem(20) rem(20);
-    border-bottom: $border--separator;
-    // @include pad(rem(20));
-    .title {
-      // margin-top: rem(40);
-      font-size: 18px;
-      text-align: center;
-    }
-    .location {
-      margin-top: rem(10);
-      text-align: center;
-
-      label {
-        font-weight: 400;
-        display: block;
-      }
-    }
-  }
-
-  .country-select {
-    height: rem(172);
-
-    .location-row {
-      &:hover {
-        background-color: $overlay--hover;
-      }
-    }
-
-    .region {
-      background-color: $overlay--dark;
-    }
-  }
-}
-
-#smart-routing-on {
+#smart-routing-info {
   @include pad(rem(20) 0);
   height: rem(395);
 

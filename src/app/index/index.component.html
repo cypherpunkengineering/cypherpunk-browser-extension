@@ -1,4 +1,5 @@
-<div id="index" [ngClass]="{'cypherpunk-on': cypherpunkEnabled, 'cypherpunk-off': !cypherpunkEnabled, 'smart-routing--on': smartRoutingEnabled, 'smart-routing--off': !smartRoutingEnabled}">
+<div id="index" [ngClass]="{'cypherpunk-on': cypherpunkEnabled, 'cypherpunk-off': !cypherpunkEnabled,
+  'smart-routing-info': true}">
   <div id="header__main">
     <img class="logo" src="/assets/icon-account.svg" alt="">
     <img class="title" src="/assets/header-logo-big.svg" alt="">
@@ -28,41 +29,7 @@
 
   <!-- Cypherpunk is enabled -->
   <div id="info-connected" *ngIf="cypherpunkEnabled">
-
-    <!-- Smart routing off -->
-    <div id="smart-routing-off" class="panel__main" *ngIf="!smartRoutingEnabled">
-      <div class="location-info">
-        <div class="title">Your<br>Actual Location</div>
-        <div class="flag-container">
-          <img src="/assets/flags/jp.svg" />
-        </div>
-        <div class="location">
-          <label>Japan</label>
-          IP Address: 78.12.34.567
-        </div>
-      </div>
-
-      <!-- Smart Routing Dropdown -->
-      <div class="country-select">
-        <div *ngFor="let server of proxySettingsService.serverArr; let i = index; trackBy: trackByFn">
-          <div class="region" *ngIf="i === 0 || (!(i === 0) && proxySettingsService.serverArr[i-1].region !== server.region)">
-            {{proxySettingsService.regions[server.region]}}
-          </div>
-
-          <div class="location-row" (click)="changeProxy(server)" [ngClass]="{'checked': selectedProxy.id === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
-            <span class="flag">
-              <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
-            </span>
-            <span class="name">{{server.name}}</span>
-            <span *ngIf="server.level === 'premium'" class="premium">PREMIUM</span>
-            <span *ngIf="!server.httpDefault.length" class="unavailable">UNAVAILABLE</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Smart routing on -->
-    <div id="smart-routing-on" class="panel__main" *ngIf="smartRoutingEnabled">
+    <div id="smart-routing-info" class="panel__main">
       <div class="flags-wrap">
         <div class="title">Your<br>Public Location</div>
         <div class="location location--mine">

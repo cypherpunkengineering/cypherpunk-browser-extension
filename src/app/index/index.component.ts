@@ -26,7 +26,7 @@ export class IndexComponent {
   domain = '(Loading...)';
   showRoutingDropdown = false;
   faviconUrl = undefined;
-  privacyFilterSwitch = true;
+  privacyFilterSwitch = false;
   servers;
   serverArr;
   regions = this.proxySettingsService.regions;

@@ -71,7 +71,7 @@ class Defaults {
         selected: null
       },
       privacyFilter: {
-        enabled: true,
+        enabled: false,
         blockAds: true,
         blockTrackers: true,
         blockMalware: true

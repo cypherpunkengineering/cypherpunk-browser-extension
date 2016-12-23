@@ -5,12 +5,6 @@ var userAgentString = localStorage.getItem('cypherpunk.advanced.userAgent.string
 
 var authUsername, authPassword;
 
-// Browser compatibility
-var browserObj = browser;
-if (chrome) {
-  browserObj = chrome;
-}
-
 function httpGetAsync(theUrl, callback) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
@@ -52,7 +46,7 @@ if (cypherpunkEnabled) { init(); }
 else { destroy(); }
 
 // Event Listener Triggers
-browserObj.runtime.onMessage.addListener(function(request, sender, sendResponse){
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
   if (request.greeting === "CypherpunkEnabled"){
     cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
     // Cypherpunk is turned on, enable features based on settings
@@ -75,8 +69,8 @@ browserObj.runtime.onMessage.addListener(function(request, sender, sendResponse)
     cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
     if (!cypherpunkEnabled) { return; }
     // Reload current tab to update blocked requests
-    browserObj.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      browserObj.tabs.reload(tabs[0].id);
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      chrome.tabs.reload(tabs[0].id);
     });
   }
 });
@@ -89,13 +83,13 @@ function supplyProxyCredentials(details, callbackFn) {
 
 function disableProxyAuthCredentials() {
   console.log('Disabling Proxy Auth');
-  browserObj.webRequest.onAuthRequired.removeListener(supplyProxyCredentials);
+  chrome.webRequest.onAuthRequired.removeListener(supplyProxyCredentials);
 }
 
 function enableProxyAuthCredentials() {
   disableProxyAuthCredentials();
   console.log('Enabling Proxy Auth');
-  browserObj.webRequest.onAuthRequired.addListener(
+  chrome.webRequest.onAuthRequired.addListener(
     supplyProxyCredentials,
     {urls: ["<all_urls>"]},
     ['asyncBlocking']
@@ -120,13 +114,13 @@ function spoofUserAgent(details) {
 
 function disableUserAgentSpoofing() {
   console.log('Disabling User Agent Spoofing');
-  browserObj.webRequest.onBeforeSendHeaders.removeListener(spoofUserAgent);
+  chrome.webRequest.onBeforeSendHeaders.removeListener(spoofUserAgent);
 }
 
 function enableUserAgentSpoofing() {
   disableUserAgentSpoofing();
   console.log('Enabling User Agent Spoofing');
-  browserObj.webRequest.onBeforeSendHeaders.addListener(
+  chrome.webRequest.onBeforeSendHeaders.addListener(
     spoofUserAgent,
     { urls: ["<all_urls>"] },
     ['requestHeaders','blocking']
@@ -140,13 +134,13 @@ function cancelRequest(details) { return { cancel: false }; };
 
 function disablePrivacyFilter() {
   console.log('Disabling Privacy Filter');
-  browserObj.webRequest.onBeforeRequest.removeListener(cancelRequest);
+  chrome.webRequest.onBeforeRequest.removeListener(cancelRequest);
 }
 
 function enablePrivacyFilter() {
   disablePrivacyFilter();
   console.log('Enabling Privacy Filter');
-  browserObj.webRequest.onBeforeRequest.addListener(
+  chrome.webRequest.onBeforeRequest.addListener(
     cancelRequest,
     { urls: ["<all_urls>"] },
     ["blocking"]
@@ -154,8 +148,8 @@ function enablePrivacyFilter() {
 };
 
 // Enable privacy filter if it's enabled
-browserObj.tabs.onActivated.addListener(function (tab) {
-  browserObj.tabs.get(tab.tabId, function(tab) {
+chrome.tabs.onActivated.addListener(function (tab) {
+  chrome.tabs.get(tab.tabId, function(tab) {
     var url = tab.url;
     if (!url) { return; }
 
@@ -181,13 +175,13 @@ function redirectRequest(requestDetails) {
 
 function disableForceHttps() {
   console.log('Disabling Force HTTPS');
-  browserObj.webRequest.onBeforeRequest.removeListener(redirectRequest);
+  chrome.webRequest.onBeforeRequest.removeListener(redirectRequest);
 }
 
 function enableForceHttps() {
   disableForceHttps();
   console.log('Enabling Force HTTPS');
-  browserObj.webRequest.onBeforeRequest.addListener(
+  chrome.webRequest.onBeforeRequest.addListener(
     redirectRequest,
     { urls:['http://*/*'] },
     ['blocking']

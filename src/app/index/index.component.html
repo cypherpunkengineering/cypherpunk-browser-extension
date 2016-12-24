@@ -82,16 +82,6 @@
 
     </div>
 
-    <div id="smart-routing-on-off" class="switch-row large">
-      <div id="smart-routing-label" class="label">Smart Routing is {{enableSmartRouting.checked ? 'ON' : 'OFF'}}</div>
-      <div id="smart-routing-enabled-switch" class="switch">
-        <label class="label-switch">
-          <input #enableSmartRouting type="checkbox" [(ngModel)]="smartRoutingEnabled" (ngModelChange)="toggleSmartRouting($event)" [disabled]="!cypherpunkEnabled" />
-          <div class="checkbox"></div>
-        </label>
-      </div>
-    </div>
-
     <div *ngIf="cypherpunkEnabled" id="privacy-on-off" class="switch-row large top-separator">
       <div id="privacy-label" class="label">Privacy filter for <span [innerHTML]="domain"></span></div>
       <div id="privacy-enabled-switch" class="switch">

@@ -20,8 +20,6 @@ import { SettingsService } from '../settings.service';
 })
 
 export class IndexComponent {
-  browserObj: any = chrome ? chrome : chrome;
-
   title = 'Index';
   domain = '(Loading...)';
   showRoutingDropdown = false;
@@ -89,13 +87,7 @@ export class IndexComponent {
         this.faviconUrl = curTab.favIconUrl;
       }
     };
-    if (chrome) { // Chrome
-      this.browserObj.tabs.query({currentWindow: true, active: true}, callback);
-    }
-    else { // FF
-      this.browserObj.tabs.query({currentWindow: true, active: true})
-      .then(callback);
-    }
+    chrome.tabs.query({currentWindow: true, active: true}, callback);
   }
 
   changeProxy(server: any) {
@@ -109,7 +101,7 @@ export class IndexComponent {
 
   toggleCypherpunk(enabled: boolean) {
     this.settingsService.saveCypherpunkEnabled(enabled);
-    this.browserObj.runtime.sendMessage({ greeting: "CypherpunkEnabled" });
+    chrome.runtime.sendMessage({ greeting: "CypherpunkEnabled" });
     // Triggers boolean change when large switch is hit
     if (this.cypherpunkEnabled !== enabled) {
       this.cypherpunkEnabled = enabled;
@@ -132,7 +124,7 @@ export class IndexComponent {
       this.privacyFilterWhitelist[this.domain] = false;
     }
     this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
-    this.browserObj.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
   }
 
   toggleRoutingDropdown() {

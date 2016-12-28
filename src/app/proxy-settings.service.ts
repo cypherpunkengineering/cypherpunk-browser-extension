@@ -34,11 +34,11 @@ export class ProxySettingsService {
 
   loadServers() {
     return new Promise((resolve, reject) => {
-      this.hqService.login().flatMap(data => { // login
-        this.accountType = data.account.type;
-        this.premiumProxyAccount = this.accountType === 'premium';
-        return this.hqService.fetchUserStatus(); // fetch user credentials
-      }).flatMap(data => {
+      // this.hqService.login().flatMap(data => { // login
+      //   this.accountType = data.account.type;
+      //   this.premiumProxyAccount = this.accountType === 'premium';
+      //   return this.hqService.fetchUserStatus(); // fetch user credentials
+      this.hqService.fetchUserStatus().flatMap(data => {
         this.settingsService.saveProxyCredentials(data.privacy.username, data.privacy.password);
         return this.hqService.findServers(this.accountType); // fetch proxy server list
       }).subscribe(servers => {
@@ -65,7 +65,14 @@ export class ProxySettingsService {
 
           resolve();
         },
-        error => reject(error)
+        error => {
+          if (error.status === 403) {
+            chrome.tabs.create({'url': 'https://cypherpunk.com/login'});
+          }
+          else {
+            reject(error)
+          }
+        }
       );
     });
   }

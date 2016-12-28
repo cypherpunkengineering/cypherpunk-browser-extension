@@ -19,7 +19,7 @@ export class HqService {
     .catch((error:any) => Observable.throw(error || 'findServers Error'));
   }
 
-  login(): Observable<any>  {
+  testLogin(): Observable<any>  {
     return this.http.post(this.apiPrefix + '/account/authenticate/userpasswd', '{"login":"test@test.test","password":"test123"}', this.options)
       .map((res:Response) => res.json())
       .catch((error:any) => Observable.throw(error || 'login Error'));
@@ -39,16 +39,8 @@ export class HqService {
 
 
   debugCheckSession(): void {
-    // Browser compatibility
-    if (chrome) {
-      // Debug: get this header to check consistency with session token
-      this.browserObj.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'}, (cookie) => {
-        console.log(cookie);
-      });
-    }
-    else {
-      let cookies = this.browserObj.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'});
-      console.log(cookies);
-    }
+    chrome.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'}, (cookie) => {
+      console.log(cookie);
+    });
   }
 }

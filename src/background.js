@@ -12,6 +12,7 @@ var authUsername, authPassword;
 
 function applyProxy(pacScript) {
   chrome.proxy.settings.set({value: pacScript, scope: 'regular'});
+
 }
 
 function disableProxy() {
@@ -150,6 +151,18 @@ function init() {
   // Enable user agent spoofing if user agent string supplied
   if (userAgentString) { enableUserAgentSpoofing(); }
   else { disableUserAgentSpoofing(); }
+
+  chrome.browserAction.setIcon({
+    path : {
+      "128": "assets/cypherpunk_shaded_128.png",
+      "96": "assets/cypherpunk_shaded_96.png",
+      "64": "assets/cypherpunk_shaded_64.png",
+      "48": "assets/cypherpunk_shaded_48.png",
+      "32": "assets/cypherpunk_shaded_32.png",
+      "24": "assets/cypherpunk_shaded_24.png",
+      "16": "assets/cypherpunk_shaded_16.png"
+     }
+  });
 }
 
 function destroy() {
@@ -158,6 +171,17 @@ function destroy() {
   // disableForceHttps();
   disablePrivacyFilter();
   disableProxy();
+  chrome.browserAction.setIcon({
+    path : {
+      "128": "assets/cypherpunk_grey_128.png",
+      "96": "assets/cypherpunk_grey_96.png",
+      "64": "assets/cypherpunk_grey_64.png",
+      "48": "assets/cypherpunk_grey_48.png",
+      "32": "assets/cypherpunk_grey_32.png",
+      "24": "assets/cypherpunk_grey_24.png",
+      "16": "assets/cypherpunk_grey_16.png"
+     }
+  });
 }
 
 if (cypherpunkEnabled) { init(); }

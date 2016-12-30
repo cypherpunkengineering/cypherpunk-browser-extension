@@ -35,7 +35,7 @@ export class IndexComponent {
   proxyCredentials = this.indexSettings.proxyCredentials;
   privacyFilterWhitelist = this.indexSettings.privacyFilter.whitelist;
   cypherpunkEnabled = this.indexSettings.cypherpunkEnabled;
-  smartRouting = this.indexSettings.smartRouting;
+  routing = this.indexSettings.routing;
   selectedSmartRouteOpt = 'Loading...';
   selectedSmartRouteServer;
   selectedSmartRouteServerName = 'Loading...';
@@ -101,7 +101,7 @@ export class IndexComponent {
 
   toggleCypherpunk(enabled: boolean) {
     this.settingsService.saveCypherpunkEnabled(enabled);
-    chrome.runtime.sendMessage({ greeting: "CypherpunkEnabled" });
+    chrome.runtime.sendMessage({ action: "CypherpunkEnabled" });
     // Triggers boolean change when large switch is hit
     if (this.cypherpunkEnabled !== enabled) {
       this.cypherpunkEnabled = enabled;
@@ -124,7 +124,7 @@ export class IndexComponent {
       this.privacyFilterWhitelist[this.domain] = false;
     }
     this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
-    chrome.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    chrome.runtime.sendMessage({ action: "PrivacyFilter" });
   }
 
   toggleRoutingDropdown() {
@@ -141,11 +141,11 @@ export class IndexComponent {
     this.selectedSmartRouteServer = undefined;
     this.selectedSmartRouteOpt = type;
     console.log(this.selectedSmartRouteOpt);
-    this.smartRouting[this.domain] = { type: type };
+    this.routing[this.domain] = { type: type };
 
     if (type === 'SMART') {
       // Don't store smart routing info if on Smart
-      delete this.smartRouting[this.domain];
+      delete this.routing[this.domain];
       this.applySmartProxy();
     }
     else if (type === 'CLOSEST') {
@@ -155,7 +155,7 @@ export class IndexComponent {
       this.applyNoProxy();
     }
 
-    this.settingsService.saveSmartRouting(this.smartRouting);
+    this.settingsService.saveRouting(this.routing);
   }
 
   // TODO: This only applies when selection is made in the extension. We need
@@ -197,7 +197,7 @@ export class IndexComponent {
   }
 
   smartRoutingInit() {
-    let curSmartRoute = this.smartRouting[this.domain];
+    let curSmartRoute = this.routing[this.domain];
     console.log(curSmartRoute, this.domain);
     // Smart routing is on, either Closest, Selected Server, or Do not proxy is selected
     if (curSmartRoute) {

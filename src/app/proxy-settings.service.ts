@@ -135,11 +135,11 @@ export class ProxySettingsService {
               "}"
       }
     };
-    chrome.runtime.sendMessage({ greeting: "ApplyProxy", pacScript: config });
+    chrome.runtime.sendMessage({ action: "ApplyProxy", pacScript: config });
   }
 
   disableProxy() {
     console.log("Removing proxy config");
-    chrome.runtime.sendMessage({ greeting: "DisableProxy" });
+    chrome.runtime.sendMessage({ action: "DisableProxy" });
   }
 }

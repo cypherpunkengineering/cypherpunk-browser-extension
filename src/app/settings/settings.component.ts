@@ -30,7 +30,7 @@ export class SettingsComponent {
   // toggleForceHttps(enabled: boolean) {
   //   console.log('Force HTTPS:', enabled);
   //   this.settingsService.saveForceHttps(enabled);
-  //   this.browserObj.runtime.sendMessage({ greeting: "ForceHTTPS" });
+  //   this.browserObj.runtime.sendMessage({ action: "ForceHTTPS" });
   // }
 
   // toggleWebRtcLeakProtection(enabled: boolean) {

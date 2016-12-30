@@ -34,8 +34,8 @@ export class SelectedServerComponent {
   regions = this.proxySettingsService.regions;
 
   selectedServerSettings = this.settingsService.selectedServerSettings();
-  smartRouting = this.selectedServerSettings.smartRouting;
-  smartRoutingType = 'SELECTED';
+  routing = this.selectedServerSettings.routing;
+  routingType = 'SELECTED';
 
   constructor(
     private zone: NgZone,
@@ -49,7 +49,7 @@ export class SelectedServerComponent {
       let url = curTab.url
       this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
 
-      let curSmartRoute = this.smartRouting[this.domain];
+      let curSmartRoute = this.routing[this.domain];
       if (curSmartRoute) {
         this.zone.run(() => {
           this.selectedServerId = curSmartRoute.serverId;
@@ -70,11 +70,11 @@ export class SelectedServerComponent {
     if (server.level === 'premium' && !this.premiumAccount) { return; }
     else {
       this.selectedServerId = server.id;
-       this.smartRouting[this.domain] = {
-         type: this.smartRoutingType,
+       this.routing[this.domain] = {
+         type: this.routingType,
          serverId: server.id
        }
-      this.settingsService.saveSmartRouting(this.smartRouting);
+      this.settingsService.saveRouting(this.routing);
     }
 
   }

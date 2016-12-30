@@ -37,25 +37,25 @@ class Keys {
   public static ENABLED: string = "enabled";
   public static SMART_ROUTING_ENABLED: string = "smartRoutingEnabled";
   public static PRIVACY_FILTER_WHITELIST: string = "privacyFilterWhitelist";
-  public static SMART_ROUTING: string = "smartRouting";
+  public static ROUTING: string = "routing";
 
   // Advanced Settings
-  public static FORCE_HTTPS: string = "advanced.forceHttps";
-  public static WEB_RTC_LEAK_PROTECTION: string = "advanced.webRTCLeakProtection";
+  public static FORCE_HTTPS: string = "settings.forceHttps";
+  public static WEB_RTC_LEAK_PROTECTION: string = "settings.webRTCLeakProtection";
 
   // Default Routing
-  public static ROUTING_TYPE: string = "advanced.defaultRouting.type";
-  public static ROUTING_SELECTED_SERVER: string = "advanced.defaultRouting.selected";
+  public static ROUTING_TYPE: string = "settings.defaultRouting.type";
+  public static ROUTING_SELECTED_SERVER: string = "settings.defaultRouting.selected";
 
   // User Agent
-  public static USER_AGENT_TYPE: string = "advanced.userAgent.type";
-  public static USER_AGENT_STRING: string = "advanced.userAgent.string";
+  public static USER_AGENT_TYPE: string = "settings.userAgent.type";
+  public static USER_AGENT_STRING: string = "settings.userAgent.string";
 
   // Privacy Filter
-  public static PRIVACY_FILTER_ENABLED: string = "advanced.privacyFilter.enabled";
-  public static PRIVACY_FILTER_ADS: string = "advanced.privacyFilter.blockAds";
-  public static PRIVACY_FILTER_TRACKERS: string = "advanced.privacyFilter.blockTrackers";
-  public static PRIVACY_FILTER_MALWARE: string = "advanced.privacyFilter.blockMalware";
+  public static PRIVACY_FILTER_ENABLED: string = "settings.privacyFilter.enabled";
+  public static PRIVACY_FILTER_ADS: string = "settings.privacyFilter.blockAds";
+  public static PRIVACY_FILTER_TRACKERS: string = "settings.privacyFilter.blockTrackers";
+  public static PRIVACY_FILTER_MALWARE: string = "settings.privacyFilter.blockMalware";
 }
 
 class Defaults {
@@ -64,12 +64,12 @@ class Defaults {
     enabled: false,
     smartRoutingEnabled: true,
     privacyFilterWhitelist: {},
-    smartRouting: {},
+    routing: {},
     selectedProxy: {},
     latencyList: null,
     proxyServers: null,
     proxyServersArr: [],
-    advanced: {
+    settings: {
       forceHttps: true,
       webRTCLeakProtection: true,
       defaultRouting: {
@@ -111,7 +111,7 @@ export class SettingsService {
       this.localStorageService.set(Keys.PROXY_SERVERS_ARR, Defaults.getVal(Keys.PROXY_SERVERS_ARR));
       this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, Defaults.getVal(Keys.SMART_ROUTING_ENABLED));
       this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, Defaults.getVal(Keys.PRIVACY_FILTER_WHITELIST));
-      this.localStorageService.set(Keys.SMART_ROUTING, Defaults.getVal(Keys.SMART_ROUTING));
+      this.localStorageService.set(Keys.ROUTING, Defaults.getVal(Keys.ROUTING));
       this.localStorageService.set(Keys.ROUTING_TYPE, Defaults.getVal(Keys.ROUTING_TYPE));
       this.localStorageService.set(Keys.ROUTING_SELECTED_SERVER, Defaults.getVal(Keys.ROUTING_SELECTED_SERVER));
       this.localStorageService.set(Keys.FORCE_HTTPS, Defaults.getVal(Keys.FORCE_HTTPS));
@@ -132,7 +132,7 @@ export class SettingsService {
     return {
       cypherpunkEnabled: this.localStorageService.get(Keys.ENABLED),
       smartRoutingEnabled: this.localStorageService.get(Keys.SMART_ROUTING_ENABLED),
-      smartRouting: this.localStorageService.get(Keys.SMART_ROUTING),
+      routing: this.localStorageService.get(Keys.ROUTING),
       selectedProxy: this.localStorageService.get(Keys.SELECTED_PROXY),
       proxyCredentials: {
         username: this.localStorageService.get(Keys.PROXY_USERNAME),
@@ -176,14 +176,14 @@ export class SettingsService {
     this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, list)
   }
 
-  saveSmartRouting(smartRoutes: Object) {
-    this.localStorageService.set(Keys.SMART_ROUTING, smartRoutes);
+  saveRouting(routes: Object) {
+    this.localStorageService.set(Keys.ROUTING, routes);
   }
 
   /** Smart Routing Selected Server Settings **/
   selectedServerSettings() {
     return {
-      smartRouting: this.localStorageService.get(Keys.SMART_ROUTING)
+      routing: this.localStorageService.get(Keys.ROUTING)
     }
   }
 

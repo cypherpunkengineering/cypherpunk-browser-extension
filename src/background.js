@@ -1,7 +1,7 @@
 var cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
-//var forceHttps = localStorage.getItem('cypherpunk.advanced.forceHttps') === "true";
-var privacyFilterEnabled = localStorage.getItem('advanced.privacyFilter.enabled') === "true";
-var userAgentString = localStorage.getItem('cypherpunk.advanced.userAgent.string');
+//var forceHttps = localStorage.getItem('cypherpunk.settings.forceHttps') === "true";
+var privacyFilterEnabled = localStorage.getItem('cypherpunk.settings.privacyFilter.enabled') === "true";
+var userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
 
 var authUsername, authPassword;
 
@@ -15,6 +15,7 @@ function applyProxy(pacScript) {
 }
 
 function disableProxy() {
+  console.log('Disabling Proxy');
   applyProxy({ mode: "system" });
 }
 
@@ -25,7 +26,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   // 4) If url does exist apply saved proxy setting
 
   var url = tab.url;
-  if (cypherpunkEnabled && url !== undefined && changeInfo.status == "complete") {
+  console.log('Cypherpunk is enabled', cypherpunkEnabled);
+  if (cypherpunkEnabled && url !== undefined && changeInfo.status == "loading") {
 
     var domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
 
@@ -36,7 +38,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     var proxyServers = localStorage.getItem('cypherpunk.proxyServers');
     proxyServers = JSON.parse(proxyServers);
 
-    var defaultRoutingType = JSON.parse(localStorage.getItem('cypherpunk.advanced.defaultRouting.type'));
+    var defaultRoutingType = JSON.parse(localStorage.getItem('cypherpunk.settings.defaultRouting.type'));
     var routingType = routingSetting ? routingSetting.type : defaultRoutingType;
     var selectedProxy;
 
@@ -44,7 +46,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
     if (routingType === 'SELECTED') {
       console.log('USING SELECTED PROXY');
-      var defaultSelectedServerId = JSON.parse(localStorage.getItem('cypherpunk.advanced.defaultRouting.selected'));
+      var defaultSelectedServerId = JSON.parse(localStorage.getItem('cypherpunk.settings.defaultRouting.selected'));
       // User has custom selection
       if (routingSetting && routingSetting.serverId) {
         selectedProxy = proxyServers[routingSetting.serverId];
@@ -106,6 +108,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     }
 
   }
+  else { disableProxy(); }
 });
 
 function generateDirectPingRules() {
@@ -154,6 +157,7 @@ function destroy() {
   disableUserAgentSpoofing();
   // disableForceHttps();
   disablePrivacyFilter();
+  disableProxy();
 }
 
 if (cypherpunkEnabled) { init(); }
@@ -161,25 +165,25 @@ else { destroy(); }
 
 // Event Listener Triggers
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
-  if (request.greeting === "CypherpunkEnabled"){
+  if (request.action === "CypherpunkEnabled"){
     cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
     // Cypherpunk is turned on, enable features based on settings
     if (cypherpunkEnabled) { init(); }
     // Cypherpunk is turned off, disable all features
     else { destroy(); }
   }
-  else if (request.greeting === 'ApplyProxy') {
+  else if (request.action === 'ApplyProxy') {
     applyProxy(request.pacScript);
   }
-  else if (request.greeting === 'DisableProxy') {
+  else if (request.action === 'DisableProxy') {
     disableProxy();
   }
-  else if (request.greeting === 'UserAgentSpoofing') {
-    userAgentString = localStorage.getItem('cypherpunk.advanced.userAgent.string');
+  else if (request.action === 'UserAgentSpoofing') {
+    userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
     if (userAgentString) { enableUserAgentSpoofing(); }
     else { disableUserAgentSpoofing(); }
   }
-  else if (request.greeting === 'PrivacyFilter') {
+  else if (request.action === 'PrivacyFilter') {
     cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
     if (!cypherpunkEnabled) { return; }
     // Reload current tab to update blocked requests
@@ -187,8 +191,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       chrome.tabs.reload(tabs[0].id);
     });
   }
-  // else if (request.greeting === "ForceHTTPS"){
-  //   forceHttps = localStorage.getItem('cypherpunk.advanced.forceHttps') === "true"
+  // else if (request.action === "ForceHTTPS"){
+  //   forceHttps = localStorage.getItem('cypherpunk.settings.forceHttps') === "true"
   //   if (forceHttps) { enableForceHttps(); }
   //   else { disableForceHttps(); }
   //   sendResponse({ forceHttps: forceHttps });
@@ -270,8 +274,8 @@ function enablePrivacyFilter() {
 // Enable privacy filter if it's enabled
 chrome.tabs.onActivated.addListener(function (tab) {
   chrome.tabs.get(tab.tabId, function(tab) {
+    if (!tab || !tab.url) { return; }
     var url = tab.url;
-    if (!url) { return; }
 
     var domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
     var privacyFilterWhitelist = localStorage.getItem('cypherpunk.privacyFilterWhitelist');

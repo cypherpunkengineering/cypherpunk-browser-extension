@@ -10,7 +10,6 @@ import { SettingsService } from '../../settings.service';
 })
 export class UserAgentComponent {
   @Output() changeView = new EventEmitter<string>();
-  browserObj: any = chrome ? chrome : chrome;
 
   title = 'User Agent';
   userAgentSettings = this.settingsService.userAgentSettings();
@@ -28,7 +27,7 @@ export class UserAgentComponent {
   setUserAgent(type: string) {
     this.selectedUserAgentType = type;
     this.settingsService.saveUserAgent(type, this.userAgentStrings[type.toLowerCase()]);
-    this.browserObj.runtime.sendMessage({ greeting: "UserAgentSpoofing" });
+    chrome.runtime.sendMessage({ greeting: "UserAgentSpoofing" });
   }
 
   goToView(name: string) {

@@ -17,26 +17,26 @@ export class SettingsComponent {
   defaultRouting = () => {
     let type = this.advancedSettings.defaultRouting.type;
     if (type === 'SMART') { return 'Smart Routing'; }
-    else if (type === 'FASTEST') { return 'Fastest Server'; }
-    else if (type === 'SPECIFIC') { return 'Specific Server'; }
+    else if (type === 'CLOSEST') { return 'Fastest Server'; }
+    else if (type === 'SELECTED') { return 'Specific Server'; }
     else { return 'No Proxy'; }
   };
-  forceHttpsEnabled = this.advancedSettings.forceHttps;
-  webRtcLeakProtectionEnabled = this.advancedSettings.webRtcLeakProtection;
+// forceHttpsEnabled = this.advancedSettings.forceHttps;
+//  webRtcLeakProtectionEnabled = this.advancedSettings.webRtcLeakProtection;
   userAgentType = this.advancedSettings.userAgentType;
 
   constructor(private settingsService: SettingsService) {}
 
-  toggleForceHttps(enabled: boolean) {
-    console.log('Force HTTPS:', enabled);
-    this.settingsService.saveForceHttps(enabled);
-    this.browserObj.runtime.sendMessage({ greeting: "ForceHTTPS" });
-  }
+  // toggleForceHttps(enabled: boolean) {
+  //   console.log('Force HTTPS:', enabled);
+  //   this.settingsService.saveForceHttps(enabled);
+  //   this.browserObj.runtime.sendMessage({ greeting: "ForceHTTPS" });
+  // }
 
-  toggleWebRtcLeakProtection(enabled: boolean) {
-    console.log('WebRTC Leak Protection:', enabled);
-    this.settingsService.saveWebRtcLeakProtection(enabled);
-  }
+  // toggleWebRtcLeakProtection(enabled: boolean) {
+  //   console.log('WebRTC Leak Protection:', enabled);
+  //   this.settingsService.saveWebRtcLeakProtection(enabled);
+  // }
 
   goToView(name: string) {
     this.changeView.emit(name);

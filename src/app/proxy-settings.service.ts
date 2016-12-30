@@ -10,7 +10,6 @@ import { PingService } from './ping.service';
 export class ProxySettingsService {
   servers;
   serverArr;
-  latencyArr;
   closestServer;
   closestServerName = 'Loading...';
   regions = {
@@ -35,35 +34,39 @@ export class ProxySettingsService {
   loadServers() {
     return new Promise((resolve, reject) => {
       // this.hqService.login().flatMap(data => { // login
-      //   this.accountType = data.account.type;
-      //   this.premiumProxyAccount = this.accountType === 'premium';
       //   return this.hqService.fetchUserStatus(); // fetch user credentials
       this.hqService.fetchUserStatus().flatMap(data => {
+        this.accountType = data.account.type;
+        this.premiumProxyAccount = this.accountType === 'premium';
         this.settingsService.saveProxyCredentials(data.privacy.username, data.privacy.password);
         return this.hqService.findServers(this.accountType); // fetch proxy server list
       }).subscribe(servers => {
           this.servers = servers;
           this.serverArr = this.getServerArray();
+          this.settingsService.saveProxyServers(servers, this.serverArr);
           let storedSelectedProxy = this.settingsService.selectedProxy();
-          if (storedSelectedProxy) {
+          let hasStoredSelection = Object.keys(storedSelectedProxy).length;
+          if (hasStoredSelection) {
             this.selectedProxy = storedSelectedProxy;
           }
 
           // Populate list of servers sorted by latency
           this.pingService.getServerLatencyList(this.serverArr, 3, this.premiumProxyAccount)
-          .then((array) => {
-            this.latencyArr = array;
-            this.closestServer = this.servers[array[0].id];
+          .then((latencyArray) => {
+            this.settingsService.saveLatencyList(latencyArray);
+            this.closestServer = this.servers[latencyArray[0].id];
             this.closestServerName = this.closestServer.name;
-            console.log(this.latencyArr, this.closestServer, this.closestServerName);
+            console.log(latencyArray, this.closestServer, this.closestServerName);
             // If there is not stored selected proxy store the closest server
-            if (!storedSelectedProxy) {
+            if (!hasStoredSelection) {
               this.selectedProxy = this.closestServer;
               this.settingsService.saveSelectedProxy(this.selectedProxy);
             }
+
+            console.log('Resolving load servers', this.selectedProxy);
+            resolve();
           });
 
-          resolve();
         },
         error => {
           if (error.status === 403) {
@@ -132,18 +135,11 @@ export class ProxySettingsService {
               "}"
       }
     };
-    chrome.proxy.settings.set({value: config, scope: 'regular'}, () => {
-      this.localStorageService.set('proxy.enabled', true);
-    });
+    chrome.runtime.sendMessage({ greeting: "ApplyProxy", pacScript: config });
   }
 
   disableProxy() {
     console.log("Removing proxy config");
-    let config = {
-      mode: "system"
-    }
-    chrome.proxy.settings.set({value: config, scope: 'regular'}, () => {
-      this.localStorageService.set('proxy.enabled', false);
-    });
+    chrome.runtime.sendMessage({ greeting: "DisableProxy" });
   }
 }

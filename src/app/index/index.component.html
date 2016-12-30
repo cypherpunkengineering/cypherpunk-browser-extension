@@ -71,7 +71,7 @@
 
       <!-- Smart Routing Dropdown -->
       <div class="routing-dd" [ngClass]="{'open': showRoutingDropdown, 'closed': !showRoutingDropdown}">
-        <div class="row" (click)="selectSmartRoute('RECOMMENDED')" [ngClass]="{'checked': selectedSmartRouteOpt === 'RECOMMENDED' }">{{smartRouteOpts.recommended.title}}</div>
+        <div class="row" (click)="selectSmartRoute('SMART')" [ngClass]="{'checked': selectedSmartRouteOpt === 'SMART' }">{{ proxySettingsService.closestServerName }} (Recommended)</div>
         <div class="row" (click)="selectSmartRoute('CLOSEST')" [ngClass]="{'checked': selectedSmartRouteOpt === 'CLOSEST' }">{{ proxySettingsService.closestServerName }} (Closest)</div>
         <div class="row" (click)="selectSmartRoute('SELECTED')" [ngClass]="{'checked': selectedSmartRouteOpt === 'SELECTED' }" routerLink="/selected-server" routerLinkActive="active">
           {{ selectedSmartRouteOpt === 'SELECTED' && selectedSmartRouteServer ? 'Selected Server: ' + selectedSmartRouteServer.name : 'Selected Server'}}

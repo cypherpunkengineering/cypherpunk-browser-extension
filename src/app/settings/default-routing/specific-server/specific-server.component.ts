@@ -24,7 +24,7 @@ export class SpecificServerComponent {
     if (server.level === 'premium' && !this.premiumAccount) { return; }
     else {
       this.selectedServerId = server.id;
-      this.settingsService.saveRoutingInfo("SPECIFIC", server.id);
+      this.settingsService.saveRoutingInfo("SELECTED", server.id);
     }
   }
 

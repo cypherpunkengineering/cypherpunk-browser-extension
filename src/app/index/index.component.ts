@@ -42,7 +42,7 @@ export class IndexComponent {
   selectedProxy = this.indexSettings.selectedProxy;
 
   smartRouteOpts = {
-    recommended: { title: 'Silicon Valley, USA (Recommended)', type: 'Recommended' },
+    smart: { title: 'Silicon Valley, USA (Recommended)', type: 'Recommended' },
     closest: { title: 'Loading...', type: 'Closest' },
     selected: { title: 'Selected Server: Silicon Valley, USA', type: 'Selected Server' },
     none: { title: 'Do not proxy', type: 'No Proxy' }
@@ -62,9 +62,9 @@ export class IndexComponent {
 
       this.smartRoutingInit();
 
-      this.hqService.findNetworkStatus().subscribe(res => {
-        console.log('Network status', res);
-      });
+      // this.hqService.findNetworkStatus().subscribe(res => {
+      //   console.log('Network status', res);
+      // });
     });
 
     // Grab domain name, favicon and privacy filter settings
@@ -138,25 +138,21 @@ export class IndexComponent {
 
   selectSmartRoute(type: string) {
     // Selected type is provided by the selected-server view
-    if (type === 'SELECTED') { return; }
     this.selectedSmartRouteServer = undefined;
     this.selectedSmartRouteOpt = type;
-    // Don't store smart routing info if on recommended
-    if (this.smartRouting[this.domain] && type === 'RECOMMENDED') {
-      delete this.smartRouting[this.domain];
-    }
-    else {
-      this.smartRouting[this.domain] = { type: type };
+    console.log(this.selectedSmartRouteOpt);
+    this.smartRouting[this.domain] = { type: type };
 
-      if (type === 'Recommended') {
-        this.applyRecommendedProxy();
-      }
-      else if (type === 'CLOSEST') {
-        this.applyClosestProxy();
-      }
-      else if (type === 'NONE') {
-        this.applyNoProxy();
-      }
+    if (type === 'SMART') {
+      // Don't store smart routing info if on Smart
+      delete this.smartRouting[this.domain];
+      this.applySmartProxy();
+    }
+    else if (type === 'CLOSEST') {
+      this.applyClosestProxy();
+    }
+    else if (type === 'NONE') {
+      this.applyNoProxy();
     }
 
     this.settingsService.saveSmartRouting(this.smartRouting);
@@ -164,8 +160,13 @@ export class IndexComponent {
 
   // TODO: This only applies when selection is made in the extension. We need
   // to apply the proxy upon tab activation in the background script to switch proxy per site.
-  applyRecommendedProxy() {
-    console.log('Applying Recommended Proxy');
+  applySmartProxy() {
+    console.log('Applying Smart Proxy');
+    this.selectedSmartRouteServer = this.proxySettingsService.closestServer;
+    this.selectedSmartRouteServerName = this.proxySettingsService.closestServer.name;
+    this.proxySettingsService.selectedProxy = this.selectedSmartRouteServer;
+    this.proxySettingsService.disableProxy();
+    this.proxySettingsService.enableProxy();
     // 1) If .com pick first proxy server in US
     // 2) If .jp pick first proxy server in Japan
   }
@@ -187,7 +188,7 @@ export class IndexComponent {
   }
 
   applySelectedProxy(curSmartRoute) {
-    console.log('Applying Selected Proxy');
+    console.log('Applying Selected Proxy', curSmartRoute.serverId);
     this.selectedSmartRouteServer = this.servers[curSmartRoute.serverId];
     this.selectedSmartRouteServerName = this.selectedSmartRouteServer.name;
     // selectedSmarRouteServer should already be set by the selected-server view
@@ -197,6 +198,7 @@ export class IndexComponent {
 
   smartRoutingInit() {
     let curSmartRoute = this.smartRouting[this.domain];
+    console.log(curSmartRoute, this.domain);
     // Smart routing is on, either Closest, Selected Server, or Do not proxy is selected
     if (curSmartRoute) {
       this.selectedSmartRouteOpt = curSmartRoute.type;
@@ -210,9 +212,10 @@ export class IndexComponent {
         this.applyNoProxy();
       }
     }
-    // If there is no smart routing data stored, default to recommended
+    // If there is no smart routing data stored, default to Smart
     else {
-      this.selectedSmartRouteOpt = 'RECOMMENDED';
+      this.selectedSmartRouteOpt = 'SMART';
+      this.applySmartProxy();
     }
   }
 }

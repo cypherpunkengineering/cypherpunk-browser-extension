@@ -1,9 +1,123 @@
 var cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
-var forceHttps = localStorage.getItem('cypherpunk.advanced.forceHttps') === "true";
+//var forceHttps = localStorage.getItem('cypherpunk.advanced.forceHttps') === "true";
 var privacyFilterEnabled = localStorage.getItem('advanced.privacyFilter.enabled') === "true";
 var userAgentString = localStorage.getItem('cypherpunk.advanced.userAgent.string');
 
 var authUsername, authPassword;
+
+
+
+
+/* Apply Proxy PAC Script */
+
+function applyProxy(pacScript) {
+  chrome.proxy.settings.set({value: pacScript, scope: 'regular'});
+}
+
+function disableProxy() {
+  applyProxy({ mode: "system" });
+}
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  // 1) Get the domain of url
+  // 2) Check against local storage to see proxy type
+  // 3) If url doesnt exist in local storage, apply selected default proxy option
+  // 4) If url does exist apply saved proxy setting
+
+  var url = tab.url;
+  if (cypherpunkEnabled && url !== undefined && changeInfo.status == "complete") {
+
+    var domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
+
+    var routing = localStorage.getItem('cypherpunk.smartRouting');
+    routing = JSON.parse(routing);
+    var routingSetting = routing[domain];
+
+    var proxyServers = localStorage.getItem('cypherpunk.proxyServers');
+    proxyServers = JSON.parse(proxyServers);
+
+    var defaultRoutingType = JSON.parse(localStorage.getItem('cypherpunk.advanced.defaultRouting.type'));
+    var routingType = routingSetting ? routingSetting.type : defaultRoutingType;
+    var selectedProxy;
+
+    console.log('ROUTING TYPE IS:', routingType);
+
+    if (routingType === 'SELECTED') {
+      console.log('USING SELECTED PROXY');
+      var defaultSelectedServerId = JSON.parse(localStorage.getItem('cypherpunk.advanced.defaultRouting.selected'));
+      // User has custom selection
+      if (routingSetting && routingSetting.serverId) {
+        selectedProxy = proxyServers[routingSetting.serverId];
+      }
+      // Default to selected server in settings
+      else {
+        selectedProxy = proxyServers[defaultSelectedServerId];
+      }
+    }
+    else if (routingType === 'NONE') {
+      console.log('USING NO PROXY');
+      disableProxy();
+    }
+    else if (routingType === 'CLOSEST') {
+      console.log('USING CLOSEST PROXY');
+
+      // LOOK at latency list grab first server
+      var latencyList = JSON.parse(localStorage.getItem('cypherpunk.latencyList'));
+      selectedProxy = proxyServers[latencyList[0].id];
+    }
+    else {
+      console.log('USING SMART PROXY');
+
+      var tld = url.match(/[.](jp|com)/);
+      tld = tld.length ? tld[0] : null;
+      var serverId;
+      // Default to central US server for .com
+      // Default to tokyo for .jp
+      if (tld === '.com' || !tld) {
+        serverId = 'dallas';
+      }
+      else if (tld === '.jp') {
+        serverId = 'london'; // TODO: CHANGE TO TOKYO WHEN PROXY IS AVAILABLE
+      }
+      selectedProxy = proxyServers[serverId];
+    }
+
+    if (selectedProxy) {
+      console.log('SELECTED PROXY IS:', selectedProxy);
+      var proxyIP = selectedProxy.httpDefault[0];
+      var config = {
+        mode: "pac_script",
+        pacScript: {
+          data: "function FindProxyForURL(url, host) {\n" +
+                generateDirectPingRules() +
+                "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n" +
+                "  if (shExpMatch(host, \"*.com\")) return 'PROXY " + proxyIP + ":3128';\n" +
+                "  if (shExpMatch(host, \"*.jp\")) return 'PROXY " + proxyIP + ":3128';\n" +
+                "  else return 'PROXY " + proxyIP + ":3128';\n" +
+                "}"
+        }
+      };
+      console.log('PAC Script Config:', JSON.stringify(config, null, 2));
+      applyProxy(config);
+    }
+    else {
+      console.log('SELECTED PROXY IS: NO PROXY');
+      disableProxy();
+    }
+
+  }
+});
+
+function generateDirectPingRules() {
+  var rules = "";
+  var serverArr = JSON.parse(localStorage.getItem('cypherpunk.proxyServersArr'));
+  serverArr.forEach(function(server) {
+    if (server.ovHostname) {
+      rules += "if (shExpMatch(host, \"" + server.ovHostname + "\")) return 'DIRECT';\n";
+    }
+  });
+  return rules;
+}
 
 function httpGetAsync(theUrl, callback) {
   var xmlHttp = new XMLHttpRequest();
@@ -27,8 +141,8 @@ function init() {
   });
 
   // Enable force http if it's enabled
-  if (forceHttps) { enableForceHttps(); }
-  else { disableForceHttps(); }
+  // if (forceHttps) { enableForceHttps(); }
+  // else { disableForceHttps(); }
 
   // Enable user agent spoofing if user agent string supplied
   if (userAgentString) { enableUserAgentSpoofing(); }
@@ -38,7 +152,7 @@ function init() {
 function destroy() {
   disableProxyAuthCredentials();
   disableUserAgentSpoofing();
-  disableForceHttps();
+  // disableForceHttps();
   disablePrivacyFilter();
 }
 
@@ -54,11 +168,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     // Cypherpunk is turned off, disable all features
     else { destroy(); }
   }
-  else if (request.greeting === "ForceHTTPS"){
-    forceHttps = localStorage.getItem('cypherpunk.advanced.forceHttps') === "true"
-    if (forceHttps) { enableForceHttps(); }
-    else { disableForceHttps(); }
-    sendResponse({ forceHttps: forceHttps });
+  else if (request.greeting === 'ApplyProxy') {
+    applyProxy(request.pacScript);
+  }
+  else if (request.greeting === 'DisableProxy') {
+    disableProxy();
   }
   else if (request.greeting === 'UserAgentSpoofing') {
     userAgentString = localStorage.getItem('cypherpunk.advanced.userAgent.string');
@@ -73,6 +187,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       chrome.tabs.reload(tabs[0].id);
     });
   }
+  // else if (request.greeting === "ForceHTTPS"){
+  //   forceHttps = localStorage.getItem('cypherpunk.advanced.forceHttps') === "true"
+  //   if (forceHttps) { enableForceHttps(); }
+  //   else { disableForceHttps(); }
+  //   sendResponse({ forceHttps: forceHttps });
+  // }
 });
 
 
@@ -169,22 +289,22 @@ chrome.tabs.onActivated.addListener(function (tab) {
 
 
 /** Force HTTPS */
-function redirectRequest(requestDetails) {
-  return { redirectUrl: requestDetails.url.replace(/^http:\/\//i, 'https://') };
-}
+// function redirectRequest(requestDetails) {
+//   return { redirectUrl: requestDetails.url.replace(/^http:\/\//i, 'https://') };
+// }
 
-function disableForceHttps() {
-  console.log('Disabling Force HTTPS');
-  chrome.webRequest.onBeforeRequest.removeListener(redirectRequest);
-}
+// function disableForceHttps() {
+//   console.log('Disabling Force HTTPS');
+//   chrome.webRequest.onBeforeRequest.removeListener(redirectRequest);
+// }
 
-function enableForceHttps() {
-  disableForceHttps();
-  console.log('Enabling Force HTTPS');
-  chrome.webRequest.onBeforeRequest.addListener(
-    redirectRequest,
-    { urls:['http://*/*'] },
-    ['blocking']
-  );
-}
+// function enableForceHttps() {
+//   disableForceHttps();
+//   console.log('Enabling Force HTTPS');
+//   chrome.webRequest.onBeforeRequest.addListener(
+//     redirectRequest,
+//     { urls:['http://*/*'] },
+//     ['blocking']
+//   );
+// }
 

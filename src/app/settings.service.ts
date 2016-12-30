@@ -28,6 +28,9 @@ class Keys {
   public static PROXY_USERNAME: string = "proxy.username";
   public static PROXY_PASSWORD: string = "proxy.password";
   public static SELECTED_PROXY: string = "selectedProxy";
+  public static LATENCY_LIST: string = "latencyList";
+  public static PROXY_SERVERS: string = "proxyServers";
+  public static PROXY_SERVERS_ARR: string = "proxyServersArr";
 
   // Index vivew
   public static INITIALIZED: string = "intialized";
@@ -63,6 +66,9 @@ class Defaults {
     privacyFilterWhitelist: {},
     smartRouting: {},
     selectedProxy: {},
+    latencyList: null,
+    proxyServers: null,
+    proxyServersArr: [],
     advanced: {
       forceHttps: true,
       webRTCLeakProtection: true,
@@ -100,6 +106,9 @@ export class SettingsService {
       this.localStorageService.set(Keys.INITIALIZED, Defaults.getVal(Keys.INITIALIZED));
       this.localStorageService.set(Keys.ENABLED, Defaults.getVal(Keys.ENABLED));
       this.localStorageService.set(Keys.SELECTED_PROXY, Defaults.getVal(Keys.SELECTED_PROXY));
+      this.localStorageService.set(Keys.LATENCY_LIST, Defaults.getVal(Keys.LATENCY_LIST));
+      this.localStorageService.set(Keys.PROXY_SERVERS, Defaults.getVal(Keys.PROXY_SERVERS));
+      this.localStorageService.set(Keys.PROXY_SERVERS_ARR, Defaults.getVal(Keys.PROXY_SERVERS_ARR));
       this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, Defaults.getVal(Keys.SMART_ROUTING_ENABLED));
       this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, Defaults.getVal(Keys.PRIVACY_FILTER_WHITELIST));
       this.localStorageService.set(Keys.SMART_ROUTING, Defaults.getVal(Keys.SMART_ROUTING));
@@ -139,6 +148,15 @@ export class SettingsService {
   saveProxyCredentials(username: string, password: string) {
     this.localStorageService.set(Keys.PROXY_USERNAME, username);
     this.localStorageService.set(Keys.PROXY_PASSWORD, password);
+  }
+
+  saveLatencyList(arr: Object) {
+    this.localStorageService.set(Keys.LATENCY_LIST, arr);
+  }
+
+  saveProxyServers(servers: Object, serverArr) {
+    this.localStorageService.set(Keys.PROXY_SERVERS, servers);
+    this.localStorageService.set(Keys.PROXY_SERVERS_ARR, serverArr);
   }
 
   saveSelectedProxy(proxy: Object) {

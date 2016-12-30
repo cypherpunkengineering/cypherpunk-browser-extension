@@ -91,9 +91,9 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
           data: "function FindProxyForURL(url, host) {\n" +
                 generateDirectPingRules() +
                 "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n" +
-                "  if (shExpMatch(host, \"*.com\")) return 'PROXY " + proxyIP + ":3128';\n" +
-                "  if (shExpMatch(host, \"*.jp\")) return 'PROXY " + proxyIP + ":3128';\n" +
-                "  else return 'PROXY " + proxyIP + ":3128';\n" +
+                "  if (shExpMatch(host, \"*.com\")) return 'PROXY " + proxyIP + ":80';\n" +
+                "  if (shExpMatch(host, \"*.jp\")) return 'PROXY " + proxyIP + ":80';\n" +
+                "  else return 'PROXY " + proxyIP + ":80';\n" +
                 "}"
         }
       };

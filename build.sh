@@ -24,11 +24,10 @@ nvm install ${NODE_VERSION}
 nvm use ${NODE_VERSION}
 
 # install deps
-npm install -g angular-cli@1.0.0-beta.22-1
 npm install
 
 # build extension
-ng build --prod --aot
+./node_modules/.bin/ng build --prod --aot
 
 # package as zip
 npm run compress

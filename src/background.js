@@ -11,8 +11,8 @@ var authUsername, authPassword;
 /* Apply Proxy PAC Script */
 
 function applyProxy(pacScript) {
+  console.log('Enabling Proxy');
   chrome.proxy.settings.set({value: pacScript, scope: 'regular'});
-
 }
 
 function disableProxy() {
@@ -28,11 +28,11 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
   var url = tab.url;
   console.log('Cypherpunk is enabled', cypherpunkEnabled);
-  if (cypherpunkEnabled && url !== undefined && changeInfo.status == "loading") {
+  if (cypherpunkEnabled && url && url !== undefined && changeInfo.status == "complete") {
 
     var domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
 
-    var routing = localStorage.getItem('cypherpunk.smartRouting');
+    var routing = localStorage.getItem('cypherpunk.routing');
     routing = JSON.parse(routing);
     var routingSetting = routing[domain];
 
@@ -72,7 +72,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
       console.log('USING SMART PROXY');
 
       var tld = url.match(/[.](jp|com)/);
-      tld = tld.length ? tld[0] : null;
+      tld = tld && tld.length ? tld[0] : null;
       var serverId;
       // Default to central US server for .com
       // Default to tokyo for .jp

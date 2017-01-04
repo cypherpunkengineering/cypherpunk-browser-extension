@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/bin/bash -x
+set -e
 
 # fetch submodules
 git submodule update --init --recursive

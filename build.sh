@@ -7,7 +7,7 @@ git submodule update --init --recursive
 export PATH=$PATH:/usr/local/bin
 
 # build vars
-NODE_VERSION=v7.2.1
+NODE_VERSION=v6.9.3
 
 # load nvm depending on OS
 case `uname -s` in

@@ -13,10 +13,10 @@ NODE_VERSION=v6.9.3
 # load nvm depending on OS
 case `uname -s` in
 	Darwin)
-		source "$(brew --prefix nvm)/nvm.sh" ${NODE_VERSION}
+		source "$(brew --prefix nvm)/nvm.sh"
 		;;
 	FreeBSD|Linux)
-		source $HOME/.nvm/nvm.sh ${NODE_VERSION}
+		source $HOME/.nvm/nvm.sh
 		;;
 esac
 

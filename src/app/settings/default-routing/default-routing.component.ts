@@ -23,6 +23,7 @@ export class DefaultRoutingComponent {
     this.defaultRoutingType = type;
     this.defaultRoutingSelected = 'N/A';
     this.settingsService.saveRoutingInfo(type, null);
+    this.proxySettingsService.enableProxy();
   }
 
   goToView(name: string) {

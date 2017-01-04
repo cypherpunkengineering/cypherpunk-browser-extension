@@ -119,27 +119,10 @@ export class ProxySettingsService {
 
   enableProxy() {
     if (!this.servers) return;
-    console.log("Applying proxy config");
-    console.log('> Name:', this.selectedProxy.name);
-    console.log('> IP:', this.selectedProxy.httpDefault[0]);
-    let proxyIP = this.selectedProxy.httpDefault[0];
-    let config = {
-      mode: "pac_script",
-      pacScript: {
-        data: "function FindProxyForURL(url, host) {\n" +
-              this.generateDirectPingRules() +
-              "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n" +
-              "  if (shExpMatch(host, \"*.com\")) return 'PROXY " + proxyIP + ":80';\n" +
-              "  if (shExpMatch(host, \"*.jp\")) return 'PROXY " + proxyIP + ":80';\n" +
-              "  else return 'PROXY " + proxyIP + ":80';\n" +
-              "}"
-      }
-    };
-    chrome.runtime.sendMessage({ action: "ApplyProxy", pacScript: config });
+    chrome.runtime.sendMessage({ action: "ApplyPACScript" });
   }
 
   disableProxy() {
-    console.log("Removing proxy config");
     chrome.runtime.sendMessage({ action: "DisableProxy" });
   }
 }

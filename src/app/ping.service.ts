@@ -6,7 +6,7 @@ import {Subject} from "rxjs/Subject";
 @Injectable()
 export class PingService {
 
-  average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
+  min = arr => arr.reduce( ( p, c ) => { return ( p < c ? p : c ); } );
 
   getServerLatencyList(servers: [any], runs: number, premium) {
     return Promise.all(servers.map(server => {
@@ -17,7 +17,7 @@ export class PingService {
 
         return Promise.all(promises)
         .then((pings) => {
-          return { id: server.id, latency: this.average(pings) };
+          return { id: server.id, latency: this.min(pings) };
         });
       }
       else { return Promise.resolve({ id: server.id, latency: 9999 }); }
@@ -29,7 +29,7 @@ export class PingService {
 
 
   requestImage(url: string) {
-    url = 'https://' + url;
+    url = 'https://' + url + ':3128';
     return new Promise((resolve, reject) => {
       var img = new Image();
       img.onload = () => { resolve(img); };

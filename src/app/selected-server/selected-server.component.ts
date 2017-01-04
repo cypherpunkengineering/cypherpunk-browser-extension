@@ -75,6 +75,7 @@ export class SelectedServerComponent {
          serverId: server.id
        }
       this.settingsService.saveRouting(this.routing);
+      this.proxySettingsService.enableProxy();
     }
 
   }

@@ -25,6 +25,7 @@ export class SpecificServerComponent {
     else {
       this.selectedServerId = server.id;
       this.settingsService.saveRoutingInfo("SELECTED", server.id);
+      this.proxySettingsService.enableProxy();
     }
   }
 

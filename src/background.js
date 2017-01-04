@@ -10,106 +10,116 @@ var authUsername, authPassword;
 
 /* Apply Proxy PAC Script */
 
-function applyProxy(pacScript) {
-  console.log('Enabling Proxy');
-  chrome.proxy.settings.set({value: pacScript, scope: 'regular'});
-}
-
 function disableProxy() {
   console.log('Disabling Proxy');
-  applyProxy({ mode: "system" });
+  chrome.proxy.settings.set({value: { mode: "system" }, scope: 'regular'});
 }
 
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  // 1) Get the domain of url
-  // 2) Check against local storage to see proxy type
-  // 3) If url doesnt exist in local storage, apply selected default proxy option
-  // 4) If url does exist apply saved proxy setting
+function applyPACScript() {
+  chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
 
-  var url = tab.url;
-  console.log('Cypherpunk is enabled', cypherpunkEnabled);
-  if (cypherpunkEnabled && url && url !== undefined && changeInfo.status == "complete") {
+    // 1) Get the domain of url
+    // 2) Check against local storage to see proxy type
+    // 3) If url doesnt exist in local storage, apply selected default proxy option
+    // 4) If url does exist apply saved proxy setting
 
-    var domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
+    var url = tabs[0].url;
+    console.log('Cypherpunk is enabled', cypherpunkEnabled);
+    if (cypherpunkEnabled && url && url !== undefined) {
 
-    var routing = localStorage.getItem('cypherpunk.routing');
-    routing = JSON.parse(routing);
-    var routingSetting = routing[domain];
+      var domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
 
-    var proxyServers = localStorage.getItem('cypherpunk.proxyServers');
-    proxyServers = JSON.parse(proxyServers);
+      var routing = localStorage.getItem('cypherpunk.routing');
+      routing = JSON.parse(routing);
+      var routingSetting = routing[domain];
 
-    var defaultRoutingType = JSON.parse(localStorage.getItem('cypherpunk.settings.defaultRouting.type'));
-    var routingType = routingSetting ? routingSetting.type : defaultRoutingType;
-    var selectedProxy;
+      var proxyServers = localStorage.getItem('cypherpunk.proxyServers');
+      proxyServers = JSON.parse(proxyServers);
 
-    console.log('ROUTING TYPE IS:', routingType);
+      var defaultRoutingType = JSON.parse(localStorage.getItem('cypherpunk.settings.defaultRouting.type'));
+      var routingType = routingSetting ? routingSetting.type : defaultRoutingType;
+      var selectedProxy;
 
-    if (routingType === 'SELECTED') {
-      console.log('USING SELECTED PROXY');
-      var defaultSelectedServerId = JSON.parse(localStorage.getItem('cypherpunk.settings.defaultRouting.selected'));
-      // User has custom selection
-      if (routingSetting && routingSetting.serverId) {
-        selectedProxy = proxyServers[routingSetting.serverId];
-      }
-      // Default to selected server in settings
-      else {
-        selectedProxy = proxyServers[defaultSelectedServerId];
-      }
-    }
-    else if (routingType === 'NONE') {
-      console.log('USING NO PROXY');
-      disableProxy();
-    }
-    else if (routingType === 'CLOSEST') {
-      console.log('USING CLOSEST PROXY');
+      console.log('ROUTING TYPE IS:', routingType);
 
-      // LOOK at latency list grab first server
-      var latencyList = JSON.parse(localStorage.getItem('cypherpunk.latencyList'));
-      selectedProxy = proxyServers[latencyList[0].id];
-    }
-    else {
-      console.log('USING SMART PROXY');
-
-      var tld = url.match(/[.](jp|com)/);
-      tld = tld && tld.length ? tld[0] : null;
-      var serverId;
-      // Default to central US server for .com
-      // Default to tokyo for .jp
-      if (tld === '.com' || !tld) {
-        serverId = 'dallas';
-      }
-      else if (tld === '.jp') {
-        serverId = 'london'; // TODO: CHANGE TO TOKYO WHEN PROXY IS AVAILABLE
-      }
-      selectedProxy = proxyServers[serverId];
-    }
-
-    if (selectedProxy) {
-      console.log('SELECTED PROXY IS:', selectedProxy);
-      var proxyIP = selectedProxy.httpDefault[0];
-      var config = {
-        mode: "pac_script",
-        pacScript: {
-          data: "function FindProxyForURL(url, host) {\n" +
-                generateDirectPingRules() +
-                "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n" +
-                "  if (shExpMatch(host, \"*.com\")) return 'PROXY " + proxyIP + ":80';\n" +
-                "  if (shExpMatch(host, \"*.jp\")) return 'PROXY " + proxyIP + ":80';\n" +
-                "  else return 'PROXY " + proxyIP + ":80';\n" +
-                "}"
+      if (routingType === 'SELECTED') {
+        console.log('USING SELECTED PROXY');
+        var defaultSelectedServerId = JSON.parse(localStorage.getItem('cypherpunk.settings.defaultRouting.selected'));
+        // User has custom selection
+        if (routingSetting && routingSetting.serverId) {
+          selectedProxy = proxyServers[routingSetting.serverId];
         }
-      };
-      console.log('PAC Script Config:', JSON.stringify(config, null, 2));
-      applyProxy(config);
-    }
-    else {
-      console.log('SELECTED PROXY IS: NO PROXY');
-      disableProxy();
-    }
+        // Default to selected server in settings
+        else {
+          selectedProxy = proxyServers[defaultSelectedServerId];
+        }
+      }
+      else if (routingType === 'NONE') {
+        console.log('USING NO PROXY');
+        disableProxy();
+      }
+      else if (routingType === 'CLOSEST') {
+        console.log('USING CLOSEST PROXY');
 
+        // LOOK at latency list grab first server
+        var latencyList = JSON.parse(localStorage.getItem('cypherpunk.latencyList'));
+        selectedProxy = proxyServers[latencyList[0].id];
+      }
+      else {
+        console.log('USING SMART PROXY');
+
+        var tld = url.match(/[.](jp|com)/);
+        tld = tld && tld.length ? tld[0] : null;
+        var serverId;
+        // Default to central US server for .com
+        // Default to tokyo for .jp
+        if (tld === '.com' || !tld) {
+          serverId = 'dallas';
+        }
+        else if (tld === '.jp') {
+          serverId = 'london'; // TODO: CHANGE TO TOKYO WHEN PROXY IS AVAILABLE
+        }
+        selectedProxy = proxyServers[serverId];
+      }
+
+      if (selectedProxy) {
+        console.log('SELECTED PROXY IS:', routingType, selectedProxy);
+        var proxyIP = selectedProxy.httpDefault[0];
+        var config = {
+          mode: "pac_script",
+          pacScript: {
+            data: "function FindProxyForURL(url, host) {\n" +
+                  generateDirectPingRules() +
+                  "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n" +
+                  "  if (shExpMatch(host, \"*.com\")) return 'PROXY " + proxyIP + ":80';\n" +
+                  "  if (shExpMatch(host, \"*.jp\")) return 'PROXY " + proxyIP + ":80';\n" +
+                  "  else return 'PROXY " + proxyIP + ":80';\n" +
+                  "}"
+          }
+        };
+        console.log('Enabling Proxy');
+        chrome.proxy.settings.set({value: config, scope: 'regular'});
+      }
+      else {
+        console.log('SELECTED PROXY IS: NO PROXY');
+        disableProxy();
+      }
+
+    }
+    else { disableProxy(); }
+  });
+}
+
+// Apply pac script when tab is activated
+chrome.tabs.onActivated.addListener(function() {
+  applyPACScript();
+});
+
+// Apply pac script when tab url is changed
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  if (changeInfo.status == 'loading') { // apply pac script while new url is loading
+    applyPACScript();
   }
-  else { disableProxy(); }
 });
 
 function generateDirectPingRules() {
@@ -196,8 +206,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     // Cypherpunk is turned off, disable all features
     else { destroy(); }
   }
-  else if (request.action === 'ApplyProxy') {
-    applyProxy(request.pacScript);
+  else if (request.action === 'ApplyPACScript') {
+    applyPACScript();
   }
   else if (request.action === 'DisableProxy') {
     disableProxy();

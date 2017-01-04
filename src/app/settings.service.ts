@@ -134,6 +134,10 @@ export class SettingsService {
       smartRoutingEnabled: this.localStorageService.get(Keys.SMART_ROUTING_ENABLED),
       routing: this.localStorageService.get(Keys.ROUTING),
       selectedProxy: this.localStorageService.get(Keys.SELECTED_PROXY),
+      defaultRouting: {
+        type: this.localStorageService.get(Keys.ROUTING_TYPE),
+        selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
+      },
       proxyCredentials: {
         username: this.localStorageService.get(Keys.PROXY_USERNAME),
         password: this.localStorageService.get(Keys.PROXY_PASSWORD)

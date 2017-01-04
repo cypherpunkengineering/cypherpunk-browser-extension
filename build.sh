@@ -11,6 +11,7 @@ export PATH=$PATH:/usr/local/bin
 NODE_VERSION=v6.9.3
 
 # load nvm depending on OS
+export NVM_DIR=$HOME/.nvm
 case `uname -s` in
 	Darwin)
 		source "$(brew --prefix nvm)/nvm.sh"

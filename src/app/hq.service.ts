@@ -33,10 +33,9 @@ export class HqService {
 
   findNetworkStatus(): Observable<any> {
     return this.http.get(this.apiPrefix + '/network/status')
-    .map((res:Response) => res.json())
+    .map((res:Response) => res.json()) // TODO: This route should return valid JSON
     .catch((error:any) => Observable.throw(error || 'Error getting network status'));
   }
-
 
   debugCheckSession(): void {
     chrome.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'}, (cookie) => {

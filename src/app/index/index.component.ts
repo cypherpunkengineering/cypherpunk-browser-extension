@@ -25,11 +25,8 @@ export class IndexComponent {
   showRoutingDropdown = false;
   faviconUrl = undefined;
   privacyFilterSwitch = false;
-  servers;
-  serverArr;
   regions = this.proxySettingsService.regions;
   premiumAccount = this.proxySettingsService.premiumProxyAccount;
-
 
   indexSettings = this.settingsService.indexSettings();
   proxyCredentials = this.indexSettings.proxyCredentials;
@@ -37,16 +34,20 @@ export class IndexComponent {
   cypherpunkEnabled = this.indexSettings.cypherpunkEnabled;
   defaultRouting = this.indexSettings.defaultRouting;
   routing = this.indexSettings.routing;
-  selectedSmartRouteOpt = 'Loading...';
-  selectedSmartRouteServer;
-  selectedSmartRouteServerName = 'Loading...';
+  selectedRouteOpt = 'Loading...';
+  selectedRouteServer;
+  selectedRouteServerName = 'Loading...';
+  selectedRouteServerFlag = '';
   selectedProxy = this.indexSettings.selectedProxy;
+  smartServerName = 'Loading...';
+  actualCountryFlag = '';
+  actualCountry = '';
 
-  smartRouteOpts = {
-    smart: { title: 'Silicon Valley, USA (Recommended)', type: 'Recommended' },
-    closest: { title: 'Loading...', type: 'Closest' },
-    selected: { title: 'Selected Server: Silicon Valley, USA', type: 'Selected Server' },
-    none: { title: 'Do not proxy', type: 'No Proxy' }
+  selectedRouteOpts = {
+    smart: 'Smart Routing',
+    fastest: 'Fastest',
+    selected: 'Selected Server',
+    none: 'No Proxy'
   };
 
   constructor(
@@ -56,16 +57,31 @@ export class IndexComponent {
   ) {
     // Initialize proxy servers
     this.proxySettingsService.loadServers().then(res => {
-      this.servers = this.proxySettingsService.servers;
 
       if (this.cypherpunkEnabled) { this.proxySettingsService.enableProxy(); }
       else { this.proxySettingsService.disableProxy(); }
 
-      this.smartRoutingInit();
+      this.selectedRoutingInit();
 
-      // this.hqService.findNetworkStatus().subscribe(res => {
-      //   console.log('Network status', res);
-      // });
+      this.hqService.findNetworkStatus().subscribe(res => {
+        this.actualCountry = this.proxySettingsService.countries[res.country];
+        this.actualCountryFlag = '/assets/flags/svg/flag-' + res.country + '.svg';
+      });
+      chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
+        let curTab = tabs[0];
+        let url = curTab.url
+        let domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
+        let match = this.domain.match(/[.](jp|com)/);
+        let tld = match && match.length ? match[0] : null;
+        // Default to central US server for .com
+        // Default to tokyo for .jp
+        if (tld === '.com' || !tld) {
+          this.smartServerName = this.proxySettingsService.servers['dallas'].name;
+        }
+        else if (tld === '.jp') {
+          this.smartServerName = this.proxySettingsService.servers['london'].name;
+        }
+      });
     });
 
     // Grab domain name, favicon and privacy filter settings
@@ -131,25 +147,24 @@ export class IndexComponent {
     this.showRoutingDropdown = !this.showRoutingDropdown;
   }
 
-  smartRouteType() {
-    if (this.selectedSmartRouteOpt === 'Loading...') { return this.selectedSmartRouteOpt; }
-    return this.smartRouteOpts[this.selectedSmartRouteOpt.toLowerCase()].type;
+  selectedRouteType() {
+    if (this.selectedRouteOpt === 'Loading...') { return this.selectedRouteOpt; }
+    return this.selectedRouteOpts[this.selectedRouteOpt.toLowerCase()];
   }
 
-  selectSmartRoute(type: string) {
+  selectRouteType(type: string) {
     // Selected type is provided by the selected-server view
-    this.selectedSmartRouteServer = undefined;
-    this.selectedSmartRouteOpt = type;
-    console.log(this.selectedSmartRouteOpt);
+    if (type === 'SELECTED') { return; }
+    this.selectedRouteServer = undefined;
+    this.selectedRouteOpt = type;
+    console.log(this.selectedRouteOpt);
     this.routing[this.domain] = { type: type };
 
     if (type === 'SMART') {
-      // Don't store smart routing info if on Smart
-      delete this.routing[this.domain];
       this.applySmartProxy();
     }
-    else if (type === 'CLOSEST') {
-      this.applyClosestProxy();
+    else if (type === 'FASTEST') {
+      this.applyFastestProxy();
     }
     else if (type === 'NONE') {
       this.applyNoProxy();
@@ -158,87 +173,89 @@ export class IndexComponent {
     this.settingsService.saveRouting(this.routing);
   }
 
-  // TODO: This only applies when selection is made in the extension. We need
-  // to apply the proxy upon tab activation in the background script to switch proxy per site.
   applySmartProxy() {
     console.log('Applying Smart Proxy');
-    this.selectedSmartRouteServer = this.proxySettingsService.closestServer;
-    let type = this.defaultRouting.type;
-    if (type === 'SMART') {
-      let match = this.domain.match(/[.](jp|com)/);
-      let tld = match && match.length ? match[0] : null;
-      // Default to central US server for .com
-      // Default to tokyo for .jp
-      if (tld === '.com' || !tld) {
-        this.selectedSmartRouteServer = this.servers['dallas'];
-        this.selectedSmartRouteServerName = this.selectedSmartRouteServer.name;
-      }
-      else if (tld === '.jp') {
-        this.selectedSmartRouteServer = this.servers['london'];
-        this.selectedSmartRouteServerName = this.selectedSmartRouteServer.name;
-      }
+    let match = this.domain.match(/[.](jp|com)/);
+    let tld = match && match.length ? match[0] : null;
+    // Default to central US server for .com
+    // Default to tokyo for .jp
+    if (tld === '.com' || !tld) {
+      this.selectedRouteServer = this.proxySettingsService.servers['dallas'];
     }
-    else if (type === 'SELECTED') {
-      this.selectedSmartRouteServer = this.servers[this.defaultRouting.selected.toString()];
-      this.selectedSmartRouteServerName = this.selectedSmartRouteServer.name;
+    else if (tld === '.jp') {
+      this.selectedRouteServer = this.proxySettingsService.servers['london'];
     }
-    else if (type === 'CLOSEST') {
-      this.selectedSmartRouteServerName = this.proxySettingsService.closestServer.name;
-      this.proxySettingsService.selectedProxy = this.selectedSmartRouteServer;
-    }
-    else if (type === 'NONE') {
-      this.selectedSmartRouteServer = undefined;
-      this.selectedSmartRouteServerName = 'Unprotected';
-    }
-
+    this.selectedRouteServerName = this.selectedRouteServer.name;
+    this.smartServerName = this.selectedRouteServer.name;
+    this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
     this.proxySettingsService.enableProxy();
-    // 1) If .com pick first proxy server in US
-    // 2) If .jp pick first proxy server in Japan
   }
 
-  applyClosestProxy() {
-    console.log('Applying Closest Proxy');
-    this.selectedSmartRouteServer = this.proxySettingsService.closestServer;
-    this.selectedSmartRouteServerName = this.proxySettingsService.closestServer.name;
-    this.proxySettingsService.selectedProxy = this.selectedSmartRouteServer;
+  applyFastestProxy() {
+    console.log('Applying Fastest Proxy');
+    this.selectedRouteServer = this.proxySettingsService.fastestServer;
+    this.selectedRouteServerName = this.proxySettingsService.fastestServer.name;
+    this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
+    this.proxySettingsService.selectedProxy = this.selectedRouteServer;
     this.proxySettingsService.enableProxy();
   }
 
   applyNoProxy() {
     console.log('Applying No Proxy');
-    this.selectedSmartRouteServer = undefined;
-    this.selectedSmartRouteServerName = 'Unprotected';
+    this.selectedRouteServer = undefined;
+    this.selectedRouteServerName = 'Unprotected';
+    this.selectedRouteServerFlag = this.actualCountryFlag;
     this.proxySettingsService.disableProxy();
   }
 
-  applySelectedProxy(curSmartRoute) {
-    console.log('Applying Selected Proxy', curSmartRoute.serverId);
-    this.selectedSmartRouteServer = this.servers[curSmartRoute.serverId];
-    this.selectedSmartRouteServerName = this.selectedSmartRouteServer.name;
+  applySelectedProxy(serverId) {
+    console.log('Applying Selected Proxy', serverId);
+    this.selectedRouteServer = this.proxySettingsService.servers[serverId];
+    this.selectedRouteServerName = this.selectedRouteServer.name;
+    this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
     // selectedSmarRouteServer should already be set by the selected-server view
     this.proxySettingsService.enableProxy();
   }
 
-  smartRoutingInit() {
-    let curSmartRoute = this.routing[this.domain];
-    console.log(curSmartRoute, this.domain);
-    // Smart routing is on, either Closest, Selected Server, or Do not proxy is selected
-    if (curSmartRoute) {
-      this.selectedSmartRouteOpt = curSmartRoute.type;
-      if (curSmartRoute.type === 'SELECTED') {
-        this.applySelectedProxy(curSmartRoute);
+  selectedRoutingInit() {
+    let domainRouteOveride = this.routing[this.domain];
+    // If domain has specified routing overrides:
+    // Determine if Fastest, Selected Server, or Do not proxy is selected
+    if (domainRouteOveride) {
+      console.log('Applying Domain Specific Proxy');
+      console.log(domainRouteOveride, this.domain);
+      this.selectedRouteOpt = domainRouteOveride.type;
+      if (domainRouteOveride.type === 'SELECTED') {
+        this.applySelectedProxy(domainRouteOveride.serverId);
       }
-      else if (curSmartRoute.type === 'CLOSEST') {
-          this.applyClosestProxy();
+      else if (domainRouteOveride.type === 'FASTEST') {
+        this.applyFastestProxy();
       }
-      else if (curSmartRoute.type === 'NONE') {
+      else if (domainRouteOveride.type === 'NONE') {
         this.applyNoProxy();
       }
+      else if (domainRouteOveride.type === 'SMART') {
+        this.applySmartProxy();
+      }
     }
-    // If there is no smart routing data stored, default to Smart
+    // If there is no domain specific routing data stored, use default routing info
     else {
-      this.selectedSmartRouteOpt = this.defaultRouting.type.toString();
-      this.applySmartProxy();
+      this.selectedRouteOpt = this.defaultRouting.type.toString();
+      console.log('Applying Default Proxy');
+      this.selectedRouteServer = this.proxySettingsService.fastestServer;
+      let type = this.defaultRouting.type;
+      if (type === 'SMART') {
+        this.applySmartProxy();
+      }
+      else if (type === 'SELECTED') {
+        this.applySelectedProxy(this.defaultRouting.selected.toString());
+      }
+      else if (type === 'FASTEST') {
+        this.applyFastestProxy();
+      }
+      else if (type === 'NONE') {
+        this.applyNoProxy();
+      }
     }
   }
 }

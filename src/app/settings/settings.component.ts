@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SettingsService } from '../settings.service';
+import { ProxySettingsService } from '../proxy-settings.service';
 
 @Component({
   selector: 'app-settings',
@@ -17,7 +18,7 @@ export class SettingsComponent {
   defaultRouting = () => {
     let type = this.advancedSettings.defaultRouting.type;
     if (type === 'SMART') { return 'Smart Routing'; }
-    else if (type === 'CLOSEST') { return 'Fastest Server'; }
+    else if (type === 'FASTEST') { return 'Fastest Server'; }
     else if (type === 'SELECTED') { return 'Specific Server'; }
     else { return 'No Proxy'; }
   };
@@ -25,7 +26,7 @@ export class SettingsComponent {
 //  webRtcLeakProtectionEnabled = this.advancedSettings.webRtcLeakProtection;
   userAgentType = this.advancedSettings.userAgentType;
 
-  constructor(private settingsService: SettingsService) {}
+  constructor(private settingsService: SettingsService, private proxySettingsService: ProxySettingsService) {}
 
   // toggleForceHttps(enabled: boolean) {
   //   console.log('Force HTTPS:', enabled);
@@ -37,6 +38,13 @@ export class SettingsComponent {
   //   console.log('WebRTC Leak Protection:', enabled);
   //   this.settingsService.saveWebRtcLeakProtection(enabled);
   // }
+
+  logout() {
+    this.proxySettingsService.disableProxy();
+    chrome.cookies.remove({"url": "https://cypherpunk.com", "name": "cypherpunk.session"}, function(deleted_cookie) { console.log("DELETED COOKIE", deleted_cookie); });
+    this.settingsService.saveCypherpunkEnabled(false);
+    chrome.runtime.sendMessage({ action: "CypherpunkEnabled" });
+  }
 
   goToView(name: string) {
     this.changeView.emit(name);

@@ -58,8 +58,8 @@ function applyPACScript() {
         console.log('USING NO PROXY');
         disableProxy();
       }
-      else if (routingType === 'CLOSEST') {
-        console.log('USING CLOSEST PROXY');
+      else if (routingType === 'FASTEST') {
+        console.log('USING FASTEST PROXY');
 
         // LOOK at latency list grab first server
         var latencyList = JSON.parse(localStorage.getItem('cypherpunk.latencyList'));

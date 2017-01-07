@@ -27,10 +27,10 @@ import { LocalStorageService } from 'angular-2-local-storage';
 class Keys {
   public static PROXY_USERNAME: string = "proxy.username";
   public static PROXY_PASSWORD: string = "proxy.password";
-  public static SELECTED_PROXY: string = "selectedProxy";
   public static LATENCY_LIST: string = "latencyList";
   public static PROXY_SERVERS: string = "proxyServers";
   public static PROXY_SERVERS_ARR: string = "proxyServersArr";
+  public static PREMIUM_ACCOUNT: string = "premiumAccount";
 
   // Index vivew
   public static INITIALIZED: string = "intialized";
@@ -65,10 +65,10 @@ class Defaults {
     smartRoutingEnabled: true,
     privacyFilterWhitelist: {},
     routing: {},
-    selectedProxy: {},
     latencyList: null,
     proxyServers: null,
     proxyServersArr: [],
+    premiumAccount: false,
     settings: {
       forceHttps: true,
       webRTCLeakProtection: true,
@@ -105,10 +105,10 @@ export class SettingsService {
     if (!initialized) {
       this.localStorageService.set(Keys.INITIALIZED, Defaults.getVal(Keys.INITIALIZED));
       this.localStorageService.set(Keys.ENABLED, Defaults.getVal(Keys.ENABLED));
-      this.localStorageService.set(Keys.SELECTED_PROXY, Defaults.getVal(Keys.SELECTED_PROXY));
       this.localStorageService.set(Keys.LATENCY_LIST, Defaults.getVal(Keys.LATENCY_LIST));
       this.localStorageService.set(Keys.PROXY_SERVERS, Defaults.getVal(Keys.PROXY_SERVERS));
       this.localStorageService.set(Keys.PROXY_SERVERS_ARR, Defaults.getVal(Keys.PROXY_SERVERS_ARR));
+      this.localStorageService.set(Keys.PREMIUM_ACCOUNT, Defaults.getVal(Keys.PREMIUM_ACCOUNT));
       this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, Defaults.getVal(Keys.SMART_ROUTING_ENABLED));
       this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, Defaults.getVal(Keys.PRIVACY_FILTER_WHITELIST));
       this.localStorageService.set(Keys.ROUTING, Defaults.getVal(Keys.ROUTING));
@@ -125,7 +125,16 @@ export class SettingsService {
     }
   }
 
-  selectedProxy() { return this.localStorageService.get(Keys.SELECTED_PROXY); }
+  /* Proxy Settings Service */
+  proxySettingsService() {
+    return {
+      latencyList: this.localStorageService.get(Keys.LATENCY_LIST),
+      proxyServers: this.localStorageService.get(Keys.PROXY_SERVERS),
+      proxyServersArr: this.localStorageService.get(Keys.PROXY_SERVERS_ARR),
+      premiumAccount: this.localStorageService.get(Keys.PREMIUM_ACCOUNT)
+    };
+  }
+
 
   /** Index Settings **/
   indexSettings() {
@@ -133,7 +142,6 @@ export class SettingsService {
       cypherpunkEnabled: this.localStorageService.get(Keys.ENABLED),
       smartRoutingEnabled: this.localStorageService.get(Keys.SMART_ROUTING_ENABLED),
       routing: this.localStorageService.get(Keys.ROUTING),
-      selectedProxy: this.localStorageService.get(Keys.SELECTED_PROXY),
       defaultRouting: {
         type: this.localStorageService.get(Keys.ROUTING_TYPE),
         selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
@@ -161,10 +169,6 @@ export class SettingsService {
   saveProxyServers(servers: Object, serverArr) {
     this.localStorageService.set(Keys.PROXY_SERVERS, servers);
     this.localStorageService.set(Keys.PROXY_SERVERS_ARR, serverArr);
-  }
-
-  saveSelectedProxy(proxy: Object) {
-    this.localStorageService.set(Keys.SELECTED_PROXY, proxy);
   }
 
   saveCypherpunkEnabled(enabled: boolean) {

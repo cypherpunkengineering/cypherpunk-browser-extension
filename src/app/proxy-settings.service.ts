@@ -10,8 +10,10 @@ import { PingService } from './ping.service';
 export class ProxySettingsService {
   servers;
   serverArr;
+  latencyList;
   fastestServer;
   fastestServerName = 'Loading...';
+
   regions = {
     'NA': 'NORTH AMERICA',
     'SA': 'CENTRAL & SOUTH AMERICA',
@@ -234,7 +236,6 @@ export class ProxySettingsService {
 
   premiumProxyAccount;
   accountType;
-  selectedProxy;
 
   constructor (
     private http: Http,
@@ -242,7 +243,31 @@ export class ProxySettingsService {
     private settingsService: SettingsService,
     private hqService: HqService,
     private pingService: PingService
-  ) {}
+  ) {
+    let serverData = this.settingsService.proxySettingsService();
+    this.servers = serverData.proxyServers;
+    if (this.servers) {
+      this.serverArr = serverData.proxyServersArr;
+      this.latencyList = serverData.latencyList;
+      this.fastestServer = this.servers[serverData.latencyList[0].id];
+      this.fastestServerName = this.fastestServer.name;
+      this.premiumProxyAccount = serverData.premiumAccount;
+    }
+
+    // If app is updated while open
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.action === "ServersUpdated") {
+        console.log('SERVERS UPDATED');
+        let updatedServerData = this.settingsService.proxySettingsService();
+        this.servers = updatedServerData.proxyServers;
+        this.serverArr = updatedServerData.proxyServersArr;
+        this.latencyList = updatedServerData.latencyList;
+        this.fastestServer = this.servers[updatedServerData.latencyList[0].id];
+        this.fastestServerName = this.fastestServer.name;
+        this.premiumProxyAccount = updatedServerData.premiumAccount;
+      }
+    });
+  }
 
   loadServers() {
     return new Promise((resolve, reject) => {
@@ -254,42 +279,22 @@ export class ProxySettingsService {
         this.settingsService.saveProxyCredentials(data.privacy.username, data.privacy.password);
         return this.hqService.findServers(this.accountType); // fetch proxy server list
       }).subscribe(servers => {
-          this.servers = servers;
-          this.serverArr = this.getServerArray();
-          this.settingsService.saveProxyServers(servers, this.serverArr);
-          let storedSelectedProxy = this.settingsService.selectedProxy();
-          let hasStoredSelection = Object.keys(storedSelectedProxy).length;
-          if (hasStoredSelection) {
-            this.selectedProxy = storedSelectedProxy;
-          }
+        this.servers = servers;
+        this.serverArr = this.getServerArray();
+        this.settingsService.saveProxyServers(servers, this.serverArr);
 
-          // Populate list of servers sorted by latency
-          this.pingService.getServerLatencyList(this.serverArr, 3, this.premiumProxyAccount)
-          .then((latencyArray) => {
-            this.settingsService.saveLatencyList(latencyArray);
-            this.fastestServer = this.servers[latencyArray[0].id];
-            this.fastestServerName = this.fastestServer.name;
-            console.log(latencyArray, this.fastestServer, this.fastestServerName);
-            // If there is not stored selected proxy store the closest server
-            if (!hasStoredSelection) {
-              this.selectedProxy = this.fastestServer;
-              this.settingsService.saveSelectedProxy(this.selectedProxy);
-            }
+        // Populate list of servers sorted by latency
+        this.pingService.getServerLatencyList(this.serverArr, 3, this.premiumProxyAccount)
+        .then((latencyArray) => {
+          this.settingsService.saveLatencyList(latencyArray);
+          this.latencyList = latencyArray;
+          this.fastestServer = this.servers[latencyArray[0].id];
+          this.fastestServerName = this.fastestServer.name;
+          console.log(latencyArray, this.fastestServer, this.fastestServerName);
+          resolve();
 
-            console.log('Resolving load servers', this.selectedProxy);
-            resolve();
-          });
-
-        },
-        error => {
-          if (error.status === 403) {
-            chrome.tabs.create({'url': 'https://cypherpunk.com/login'});
-          }
-          else {
-            reject(error)
-          }
-        }
-      );
+        });
+      });
     });
   }
 

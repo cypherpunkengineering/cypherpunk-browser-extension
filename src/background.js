@@ -5,8 +5,75 @@ var userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string
 
 var authUsername, authPassword;
 
+// Remove proxy and settings upon uninstall
+chrome.management.onUninstalled.addListener(() => {
+  destroy();
+});
 
+/* PROXY SERVER PINGING FUNCTIONALITY */
+var serverArr = JSON.parse(localStorage.getItem('cypherpunk.proxyServersArr'));
 
+function updateProxies() {
+  if (!serverArr.length) { return; }
+  loadProxies();
+}
+var hourlyUpdateInterval = 4;
+setInterval(updateProxies, hourlyUpdateInterval * 60 * 60 *1000);
+
+var min = arr => arr.reduce( ( p, c ) => { return ( p < c ? p : c ); } );
+
+function getServerLatencyList(servers, runs, premium) {
+  return Promise.all(servers.map(server => {
+    // Ensure that server is available. If server is premium user must have premium account
+    if (server.httpDefault.length && (server.level === 'premium' && premium || server.level === 'free')) {
+      var promises = [];
+      for (var i = 0; i < runs; i++) { promises.push(this.getLatency(server.ovHostname, 1)); }
+
+      return Promise.all(promises)
+      .then((pings) => {
+        return { id: server.id, latency: this.min(pings) };
+      });
+    }
+    else { return Promise.resolve({ id: server.id, latency: 9999 }); }
+  }))
+  .then(latencyList => {
+    return latencyList.sort((a, b) => { return a.latency - b.latency; });
+  })
+  .then(function(latencyList) {
+    // Keep old list if latency is high for every server
+    if (latencyList[0].latency < 9999) {
+      localStorage.setItem('cypherpunk.latencyList', JSON.stringify(latencyList));
+    }
+    chrome.runtime.sendMessage({ action: "ServersUpdated", latencyList: latencyList });
+    return latencyList;
+  });
+}
+
+function requestImage(url) {
+  url = 'https://' + url + ':3128';
+  return new Promise((resolve, reject) => {
+    var img = new Image();
+    img.onload = () => { resolve(img); };
+    img.onerror = () => { reject(url); };
+    img.src = url + '?random-no-cache=' + Math.floor((1 + Math.random()) * 0x10000).toString(16);
+  });
+}
+
+function getLatency(url, multiplier) {
+  return new Promise((resolve, reject) => {
+    var start = (new Date()).getTime();
+    var response = () => {
+        var delta = ((new Date()).getTime() - start);
+        delta *= (multiplier || 1);
+        resolve(delta);
+    };
+
+    this.requestImage(url).then(response).catch(response);
+
+    // If request times out set latency high, so it's low on the list
+    setTimeout(() => { resolve(99999); }, 4000);
+  });
+}
 
 /* Apply Proxy PAC Script */
 
@@ -23,18 +90,18 @@ function applyPACScript() {
     // 3) If url doesnt exist in local storage, apply selected default proxy option
     // 4) If url does exist apply saved proxy setting
 
+    if (!tabs.length) { return; }
     var url = tabs[0].url;
     console.log('Cypherpunk is enabled', cypherpunkEnabled);
     if (cypherpunkEnabled && url && url !== undefined) {
 
       var domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
 
-      var routing = localStorage.getItem('cypherpunk.routing');
-      routing = JSON.parse(routing);
+      var routing = JSON.parse(localStorage.getItem('cypherpunk.routing'));
       var routingSetting = routing[domain];
 
-      var proxyServers = localStorage.getItem('cypherpunk.proxyServers');
-      proxyServers = JSON.parse(proxyServers);
+      var proxyServers = JSON.parse(localStorage.getItem('cypherpunk.proxyServers'));
+      var latencyList = JSON.parse(localStorage.getItem('cypherpunk.latencyList'));
 
       var defaultRoutingType = JSON.parse(localStorage.getItem('cypherpunk.settings.defaultRouting.type'));
       var routingType = routingSetting ? routingSetting.type : defaultRoutingType;
@@ -62,24 +129,11 @@ function applyPACScript() {
         console.log('USING FASTEST PROXY');
 
         // LOOK at latency list grab first server
-        var latencyList = JSON.parse(localStorage.getItem('cypherpunk.latencyList'));
         selectedProxy = proxyServers[latencyList[0].id];
       }
       else {
         console.log('USING SMART PROXY');
-
-        var tld = url.match(/[.](jp|com)/);
-        tld = tld && tld.length ? tld[0] : null;
-        var serverId;
-        // Default to central US server for .com
-        // Default to tokyo for .jp
-        if (tld === '.com' || !tld) {
-          serverId = 'dallas';
-        }
-        else if (tld === '.jp') {
-          serverId = 'london'; // TODO: CHANGE TO TOKYO WHEN PROXY IS AVAILABLE
-        }
-        selectedProxy = proxyServers[serverId];
+        selectedProxy = getSmartServer(url, proxyServers, latencyList);
       }
 
       if (selectedProxy) {
@@ -108,6 +162,111 @@ function applyPACScript() {
     }
     else { disableProxy(); }
   });
+}
+
+function getSmartServer(domain, allServers, latencyList) {
+  var smartServer;
+  var fastestCountryServer = (country) => {
+    var fastestServer, curServer, latency;
+    // Find fastest server for given country
+    for(var x = 0; x < latencyList.length; x++) {
+      latency = latencyList[x].latency;
+      curServer = allServers[latencyList[x].id];
+      if (curServer.country === country && latency < 9999) {
+        fastestServer = curServer;
+        break;
+      }
+    }
+
+    // All servers pinged 9999 or higher, default to fastest US server
+    if (!fastestServer) {
+      for(var y = 0; y < latencyList.length; y++) {
+        latency = latencyList[y].latency;
+        curServer = allServers[latencyList[y].id];
+        if (curServer.country === 'US') {
+          fastestServer = curServer;
+          break;
+        }
+      }
+    }
+    return fastestServer;
+  }
+
+  var match = domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
+  var tld = match && match.length ? match[0] : null;
+  // .au -> AU
+  // .br -> BR
+  // .ca -> CA
+  // .ch -> CH
+  // .de -> DE
+  // .fr -> FR
+  // .uk -> GB
+  // .hk -> HK
+  // .in -> IN
+  // .it -> IT
+  // .jp -> JP
+  // .nl -> NL
+  // .no -> NO
+  // .ru -> RU
+  // .se -> SE
+  // .sg -> SG
+  // .tr -> TR
+  // else -> US
+  if (tld === '.com') {
+    smartServer = fastestCountryServer('US');
+  }
+  else if (tld === '.au') {
+    smartServer = fastestCountryServer('AU');
+  }
+  else if (tld === '.br') {
+    smartServer = fastestCountryServer('BR');
+  }
+  else if (tld === '.ca') {
+    smartServer = fastestCountryServer('CA');
+  }
+  else if (tld === '.ch') {
+    smartServer = fastestCountryServer('CH');
+  }
+  else if (tld === '.de') {
+    smartServer = fastestCountryServer('DE');
+  }
+  else if (tld === '.uk') {
+    smartServer = fastestCountryServer('GB');
+  }
+  else if (tld === '.hk') {
+    smartServer = fastestCountryServer('HK');
+  }
+  else if (tld === '.in') {
+    smartServer = fastestCountryServer('IN');
+  }
+  else if (tld === '.it') {
+    smartServer = fastestCountryServer('IT');
+  }
+  else if (tld === '.jp') {
+    smartServer = fastestCountryServer('JP');
+  }
+  else if (tld === '.nl') {
+    smartServer = fastestCountryServer('NL');
+  }
+  else if (tld === '.no') {
+    smartServer = fastestCountryServer('NO');
+  }
+  else if (tld === '.ru') {
+    smartServer = fastestCountryServer('RU');
+  }
+  else if (tld === '.se') {
+    smartServer = fastestCountryServer('SE');
+  }
+  else if (tld === '.sg') {
+    smartServer = fastestCountryServer('SG');
+  }
+  else if (tld === '.tr') {
+    smartServer = fastestCountryServer('TR');
+  }
+  else {
+    smartServer = fastestCountryServer('US');
+  }
+  return smartServer;
 }
 
 // Apply pac script when tab is activated
@@ -144,15 +303,53 @@ function httpGetAsync(theUrl, callback) {
   xmlHttp.send(null);
 }
 
-function init() {
+function saveServerArray(servers) {
+  var regionOrder = { 'NA': 1, 'SA': 2, 'OP': 3, 'EU': 4, 'AS': 5 };
+
+  var serverArr = [];
+  var serverKeys = Object.keys(servers);
+  serverKeys.forEach((key) => { serverArr.push(servers[key]); });
+
+  // Sort By Region, Country, Name
+  serverArr.sort((a,b) => {
+    if (regionOrder[a.region] < regionOrder[b.region]) return -1;
+    if (regionOrder[a.region] > regionOrder[b.region]) return 1;
+    if (a.country < b.country) return -1;
+    if (a.country > b.country) return 1;
+    if (a.name < b.name) return -1;
+    if (a.name > b.name) return 1;
+    return 0;
+  });
+
+  localStorage.setItem('cypherpunk.proxyServersArr', JSON.stringify(serverArr));
+  return serverArr;
+}
+
+function loadProxies() {
   // Block auth popup dialog when connected to proxy
-  httpGetAsync('https://cypherpunk.com/api/v0/account/status', function(res) {
+  httpGetAsync('https://cypherpunk.com/api/v0/account/status', (res) => {
     res = JSON.parse(res)
     authUsername = res.privacy.username;
     authPassword = res.privacy.password;
-
     enableProxyAuthCredentials();
+    localStorage.setItem('cypherpunk.premiumAccount', JSON.stringify(res.account.type === 'premium'));
+
+    httpGetAsync('https://cypherpunk.com/api/v0/location/list/' + res.account.type, (servers) => {
+      localStorage.setItem('cypherpunk.proxyServers', servers);
+      getServerLatencyList(saveServerArray(JSON.parse(servers)), 3, res.account.type);
+      console.log('SERVERS SAVED', res.account.type);
+    });
   });
+}
+
+// Try to load servers even if cypherpunk is not enabled
+if (!cypherpunkEnabled) {
+  loadProxies();
+}
+
+function init() {
+
+  loadProxies();
 
   // Enable force http if it's enabled
   // if (forceHttps) { enableForceHttps(); }
@@ -163,15 +360,15 @@ function init() {
   else { disableUserAgentSpoofing(); }
 
   chrome.browserAction.setIcon({
-    path : {
-      "128": "assets/cypherpunk_shaded_128.png",
-      "96": "assets/cypherpunk_shaded_96.png",
-      "64": "assets/cypherpunk_shaded_64.png",
-      "48": "assets/cypherpunk_shaded_48.png",
-      "32": "assets/cypherpunk_shaded_32.png",
-      "24": "assets/cypherpunk_shaded_24.png",
-      "16": "assets/cypherpunk_shaded_16.png"
-     }
+   path : {
+     "128": "assets/cypherpunk_shaded_128.png",
+     "96": "assets/cypherpunk_shaded_96.png",
+     "64": "assets/cypherpunk_shaded_64.png",
+     "48": "assets/cypherpunk_shaded_48.png",
+     "32": "assets/cypherpunk_shaded_32.png",
+     "24": "assets/cypherpunk_shaded_24.png",
+     "16": "assets/cypherpunk_shaded_16.png"
+    }
   });
 }
 

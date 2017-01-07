@@ -38,10 +38,10 @@ export class IndexComponent {
   selectedRouteServer;
   selectedRouteServerName = 'Loading...';
   selectedRouteServerFlag = '';
-  selectedProxy = this.indexSettings.selectedProxy;
   smartServerName = 'Loading...';
   actualCountryFlag = '';
   actualCountry = '';
+  smartServer;
 
   selectedRouteOpts = {
     smart: 'Smart Routing',
@@ -55,13 +55,10 @@ export class IndexComponent {
     private proxySettingsService: ProxySettingsService,
     private hqService: HqService
   ) {
-    // Initialize proxy servers
-    this.proxySettingsService.loadServers().then(res => {
 
+    let init = () => {
       if (this.cypherpunkEnabled) { this.proxySettingsService.enableProxy(); }
       else { this.proxySettingsService.disableProxy(); }
-
-      this.selectedRoutingInit();
 
       this.hqService.findNetworkStatus().subscribe(res => {
         this.actualCountry = this.proxySettingsService.countries[res.country];
@@ -70,48 +67,153 @@ export class IndexComponent {
       chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
         let curTab = tabs[0];
         let url = curTab.url
-        let domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
-        let match = this.domain.match(/[.](jp|com)/);
-        let tld = match && match.length ? match[0] : null;
-        // Default to central US server for .com
-        // Default to tokyo for .jp
-        if (tld === '.com' || !tld) {
-          this.smartServerName = this.proxySettingsService.servers['dallas'].name;
-        }
-        else if (tld === '.jp') {
-          this.smartServerName = this.proxySettingsService.servers['london'].name;
+        this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
+        this.getSmartServerName(this.domain);
+
+        // Load which proxy is selected once we have domain info
+        this.selectedRoutingInit();
+
+        // if (this.privacyFilterWhitelist[this.domain] === undefined) {
+        //   this.privacyFilterSwitch = true;
+        // }
+        // else if (this.privacyFilterWhitelist[this.domain] === false) {
+        //   this.privacyFilterSwitch = false;
+        // }
+
+        // Load fav icon
+        let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
+
+        // favicon appears to be a normal url
+        if (curTab.favIconUrl && curTab.favIconUrl != '' && curTab.favIconUrl.indexOf('chrome://favicon/') == -1) {
+          this.faviconUrl = curTab.favIconUrl;
         }
       });
-    });
+    }
+    // Initialize proxy servers
+    // If serverArr is populated then background script already populated server info
+    if (this.proxySettingsService.serverArr) {
+      console.log('Servers preloaded by background script');
+      this.hqService.fetchUserStatus().subscribe(res => {
+        init();
+      }, err => {
+        this.toggleCypherpunk(false);
+      });
+    }
+    else { // serverArr isn't populated, populate manually in front end
+      console.log('Servers being manually loaded');
+      this.proxySettingsService.loadServers().then(res => { init(); });
+    }
+  }
 
-    // Grab domain name, favicon and privacy filter settings
-    let callback = (tabs) => {
-      let curTab = tabs[0];
-      let url = curTab.url
-      this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
-
-      if (this.privacyFilterWhitelist[this.domain] === undefined) {
-        this.privacyFilterSwitch = true;
+  getSmartServerName(domain: string) {
+    let fastestCountryServer = (country: string) => {
+      let fastestServer, curServer, latency;
+      let latencyList = this.proxySettingsService.latencyList;
+      let allServers = this.proxySettingsService.servers;
+      // Find fastest server for given country
+      for(let x = 0; x < latencyList.length; x++) {
+        latency = latencyList[x].latency;
+        curServer = allServers[latencyList[x].id];
+        if (curServer.country === country && latency < 9999) {
+          fastestServer = curServer;
+          break;
+        }
       }
-      else if (this.privacyFilterWhitelist[this.domain] === false) {
-        this.privacyFilterSwitch = false;
-      }
 
-      let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
-
-      // favicon appears to be a normal url
-      if (curTab.favIconUrl && curTab.favIconUrl != '' && curTab.favIconUrl.indexOf('chrome://favicon/') == -1) {
-        this.faviconUrl = curTab.favIconUrl;
+      // All servers pinged 9999 or higher, default to fastest US server
+      if (!fastestServer) {
+        for(let y = 0; y < latencyList.length; y++) {
+          latency = latencyList[y].latency;
+          curServer = allServers[latencyList[y].id];
+          if (curServer.country === 'US') {
+            fastestServer = curServer;
+            break;
+          }
+        }
       }
-    };
-    chrome.tabs.query({currentWindow: true, active: true}, callback);
+      // set smart server so we can apply flag if selected
+      this.smartServer = fastestServer;
+      return fastestServer;
+    }
+
+    let match = domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
+    let tld = match && match.length ? match[0] : null;
+    // .au -> AU
+    // .br -> BR
+    // .ca -> CA
+    // .ch -> CH
+    // .de -> DE
+    // .fr -> FR
+    // .uk -> GB
+    // .hk -> HK
+    // .in -> IN
+    // .it -> IT
+    // .jp -> JP
+    // .nl -> NL
+    // .no -> NO
+    // .ru -> RU
+    // .se -> SE
+    // .sg -> SG
+    // .tr -> TR
+    // else -> US
+    if (tld === '.com') {
+      this.smartServerName = fastestCountryServer('US').name;
+    }
+    else if (tld === '.au') {
+      this.smartServerName = fastestCountryServer('AU').name;
+    }
+    else if (tld === '.br') {
+      this.smartServerName = fastestCountryServer('BR').name;
+    }
+    else if (tld === '.ca') {
+      this.smartServerName = fastestCountryServer('CA').name;
+    }
+    else if (tld === '.ch') {
+      this.smartServerName = fastestCountryServer('CH').name;
+    }
+    else if (tld === '.de') {
+      this.smartServerName = fastestCountryServer('DE').name;
+    }
+    else if (tld === '.uk') {
+      this.smartServerName = fastestCountryServer('GB').name;
+    }
+    else if (tld === '.hk') {
+      this.smartServerName = fastestCountryServer('HK').name;
+    }
+    else if (tld === '.in') {
+      this.smartServerName = fastestCountryServer('IN').name;
+    }
+    else if (tld === '.it') {
+      this.smartServerName = fastestCountryServer('IT').name;
+    }
+    else if (tld === '.jp') {
+      this.smartServerName = fastestCountryServer('JP').name;
+    }
+    else if (tld === '.nl') {
+      this.smartServerName = fastestCountryServer('NL').name;
+    }
+    else if (tld === '.no') {
+      this.smartServerName = fastestCountryServer('NO').name;
+    }
+    else if (tld === '.ru') {
+      this.smartServerName = fastestCountryServer('RU').name;
+    }
+    else if (tld === '.se') {
+      this.smartServerName = fastestCountryServer('SE').name;
+    }
+    else if (tld === '.sg') {
+      this.smartServerName = fastestCountryServer('SG').name;
+    }
+    else if (tld === '.tr') {
+      this.smartServerName = fastestCountryServer('TR').name;
+    }
+    else {
+      this.smartServerName = fastestCountryServer('US').name;
+    }
   }
 
   changeProxy(server: any) {
     if (server.level === 'premium' && !this.premiumAccount) { return; }
-    this.selectedProxy = server;
-    this.settingsService.saveSelectedProxy(server);
-    this.proxySettingsService.selectedProxy = server;
     this.proxySettingsService.enableProxy();
   }
 
@@ -175,19 +277,9 @@ export class IndexComponent {
 
   applySmartProxy() {
     console.log('Applying Smart Proxy');
-    let match = this.domain.match(/[.](jp|com)/);
-    let tld = match && match.length ? match[0] : null;
-    // Default to central US server for .com
-    // Default to tokyo for .jp
-    if (tld === '.com' || !tld) {
-      this.selectedRouteServer = this.proxySettingsService.servers['dallas'];
-    }
-    else if (tld === '.jp') {
-      this.selectedRouteServer = this.proxySettingsService.servers['london'];
-    }
-    this.selectedRouteServerName = this.selectedRouteServer.name;
-    this.smartServerName = this.selectedRouteServer.name;
-    this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
+    this.selectedRouteServer = this.smartServer;
+    this.selectedRouteServerName = this.smartServer.name;
+    this.selectedRouteServerFlag = '/assets/flags/svg/flag-' + this.smartServer.country + '.svg';
     this.proxySettingsService.enableProxy();
   }
 
@@ -196,7 +288,6 @@ export class IndexComponent {
     this.selectedRouteServer = this.proxySettingsService.fastestServer;
     this.selectedRouteServerName = this.proxySettingsService.fastestServer.name;
     this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
-    this.proxySettingsService.selectedProxy = this.selectedRouteServer;
     this.proxySettingsService.enableProxy();
   }
 
@@ -218,6 +309,7 @@ export class IndexComponent {
   }
 
   selectedRoutingInit() {
+    console.log(this.indexSettings, this.routing, this.domain, this.routing[this.domain])
     let domainRouteOveride = this.routing[this.domain];
     // If domain has specified routing overrides:
     // Determine if Fastest, Selected Server, or Do not proxy is selected

@@ -25,6 +25,7 @@
     "privacy",
     "proxy",
     "cookies",
+    "management",
     "activeTab",
     "webRequest",
     "webRequestBlocking",

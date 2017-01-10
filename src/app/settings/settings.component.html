@@ -35,13 +35,13 @@
   </div>
  -->
   <!-- Privacy Filter Settings -->
-  <div (click)="goToView('app-privacy-filter')" class="switch-row highlighted clickable bottom-separator">
+<!--   <div (click)="goToView('app-privacy-filter')" class="switch-row highlighted clickable bottom-separator">
     <div class="label half">Privacy Filter Settings</div>
     <div class="switch half">
       <span class="forward-icon">&#x3009;</span>
     </div>
   </div>
-
+ -->
   <!-- User Agent -->
   <div (click)="goToView('app-user-agent')" class="switch-row highlighted clickable bottom-separator">
     <div class="label half">User Agent</div>
@@ -52,7 +52,7 @@
   </div>
 
   <!-- Logout -->
-  <div class="switch-row highlighted clickable bottom-separator">
+  <div (click)="logout()" routerLink="/" routerLinkActive="active" class="switch-row highlighted clickable bottom-separator">
     <div class="label full">Logout</div>
   </div>
 </div>

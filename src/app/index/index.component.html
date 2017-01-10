@@ -34,21 +34,19 @@
         <div class="title">Your<br>Public Location</div>
         <div class="location location--mine">
           <div class="flag-container small">
-            <img src="/assets/flags/jp.svg" />
+            <img class="flag" *ngIf="actualCountryFlag" src="{{ actualCountryFlag }}" />
           </div>
-          <div class="subtitle">Japan</div>
+          <div class="subtitle">{{ actualCountry }}</div>
         </div>
         <div class="location location--public" (click)="toggleRoutingDropdown()">
           <div class="flag-container">
-            <img src="/assets/flags/us.svg" />
+            <img *ngIf="selectedRouteServerFlag" src="{{selectedRouteServerFlag}}" />
           </div>
           <div class="subtitle bold">
-            {{ selectedSmartRouteServerName}}
+            {{ selectedRouteServerName }}
             <br>
-            <!-- <a href="#" (click)="toggleRoutingDropdown()"> -->
-              ( {{smartRouteType()}} )
-              <div class="arrow--down"><img src="/assets/icon-caret--down.svg" alt=""></div>
-            <!-- </a> -->
+              ( {{selectedRouteType()}} )
+              <!--<div class="arrow--down"><img src="/assets/icon-caret--down.svg" alt=""></div>-->
           </div>
         </div>
 
@@ -70,26 +68,26 @@
       </div>
 
       <!-- Smart Routing Dropdown -->
-      <div class="routing-dd" [ngClass]="{'open': showRoutingDropdown, 'closed': !showRoutingDropdown}">
-        <div class="row" (click)="selectSmartRoute('SMART')" [ngClass]="{'checked': selectedSmartRouteOpt === 'SMART' }">{{ proxySettingsService.closestServerName }} (Recommended)</div>
-        <div class="row" (click)="selectSmartRoute('CLOSEST')" [ngClass]="{'checked': selectedSmartRouteOpt === 'CLOSEST' }">{{ proxySettingsService.closestServerName }} (Closest)</div>
-        <div class="row" (click)="selectSmartRoute('SELECTED')" [ngClass]="{'checked': selectedSmartRouteOpt === 'SELECTED' }" routerLink="/selected-server" routerLinkActive="active">
-          {{ selectedSmartRouteOpt === 'SELECTED' && selectedSmartRouteServer ? 'Selected Server: ' + selectedSmartRouteServer.name : 'Selected Server'}}
+      <div class="routing-dd open">
+        <div class="row" (click)="selectRouteType('SMART')" [ngClass]="{'checked': selectedRouteOpt === 'SMART' }">{{ smartServerName }} (Smart Routing)</div>
+        <div class="row" (click)="selectRouteType('FASTEST')" [ngClass]="{'checked': selectedRouteOpt === 'FASTEST' }">{{ proxySettingsService.fastestServerName }} (Fastest)</div>
+        <div class="row" (click)="selectRouteType('SELECTED')" [ngClass]="{'checked': selectedRouteOpt === 'SELECTED' }" routerLink="/selected-server" routerLinkActive="active">
+          {{ selectedRouteOpt === 'SELECTED' && selectedRouteServer ? 'Selected Server: ' + selectedRouteServer.name : 'Selected Server'}}
           <span class="forward-icon">&#x3009;</span>
         </div>
-        <div class="row" (click)="selectSmartRoute('NONE')" [ngClass]="{'checked': selectedSmartRouteOpt === 'NONE' }">{{smartRouteOpts.none.title}}</div>
+        <div class="row" (click)="selectRouteType('NONE')" [ngClass]="{'checked': selectedRouteOpt === 'NONE' }">Do not proxy</div>
       </div>
 
     </div>
 
-    <div *ngIf="cypherpunkEnabled" id="privacy-on-off" class="switch-row large top-separator">
+<!--     <div *ngIf="cypherpunkEnabled" id="privacy-on-off" class="switch-row large top-separator">
       <div id="privacy-label" class="label">Privacy filter for <span [innerHTML]="domain"></span></div>
       <div id="privacy-enabled-switch" class="switch">
         <label class="label-switch">
           <input type="checkbox" [(ngModel)]="privacyFilterSwitch" (ngModelChange)="togglePrivacyFilter($event)" [disabled]="!cypherpunkEnabled" />
           <div class="checkbox"></div>
         </label>
-      </div>
+      </div> -->
 
   </div>
 

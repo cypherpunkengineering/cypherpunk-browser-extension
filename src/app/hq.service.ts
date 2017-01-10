@@ -28,15 +28,20 @@ export class HqService {
   fetchUserStatus(): Observable<any> {
     return this.http.get(this.apiPrefix + '/account/status')
     .map((res:Response) => res.json())
-    .catch((error:any) => Observable.throw(error || 'Error getting account status'));
+    .catch((error:any) => {
+      console.log(error);
+      if (error.status === 403) {
+        chrome.tabs.create({'url': 'https://cypherpunk.com/login'});
+      }
+      return Observable.throw(error || 'Error getting account status');
+    });
   }
 
   findNetworkStatus(): Observable<any> {
     return this.http.get(this.apiPrefix + '/network/status')
-    .map((res:Response) => res.json())
+    .map((res:Response) => res.json()) // TODO: This route should return valid JSON
     .catch((error:any) => Observable.throw(error || 'Error getting network status'));
   }
-
 
   debugCheckSession(): void {
     chrome.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'}, (cookie) => {

@@ -14,7 +14,7 @@ body {
   font-size: rem(14);
   font-weight: 300;
   width: rem(360);
-  height: rem(552);
+  height: rem(502);
   margin: 0;
   padding: 0;
 }
@@ -257,28 +257,40 @@ a {
 .flag-container {
   width: rem(70);
   height: rem(70);
-  border-radius: 4px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-  margin: 0 auto;
   margin-top: rem(20);
-  line-height: rem(100);
+  line-height: rem(88);
+  background: url('/assets/public_location.png');
+  width: rem(105);
+  height: rem(167);
+  background-size: rem(105);
 
   img {
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.5);
-    width: rem(50);
+    margin-top: rem(67);
+    width: rem(44);
+    margin-left: rem(-8);
+    height: rem(28);
   }
 
   &.small {
     width: rem(50);
     height: rem(50);
-    line-height: rem(67);
-    margin-top: rem(30);
+    line-height: rem(60);
+    border-radius: 4px;
+    background: none;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+    margin: 0 auto;
+    margin-top: rem(76);
 
     &.square { line-height: rem(75); }
 
     img {
+      margin-top: 0;
       width: rem(35);
+      height: rem(35);
+      margin-left: 0;
+      &.flag { height: rem(19); }
     }
   }
 }
@@ -295,7 +307,7 @@ a {
 }
 
 .country-select {
-  height: rem(496);
+  height: rem(488);
   width: 100%;
   overflow-y: scroll;
   color: #fff;

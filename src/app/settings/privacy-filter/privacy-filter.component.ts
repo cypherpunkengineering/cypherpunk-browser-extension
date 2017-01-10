@@ -21,22 +21,22 @@ export class PrivacyFilterComponent {
 
   togglePrivacyFilterEnabled(enabled: boolean) {
     this.settingsService.savePrivacyFilterEnabled(enabled);
-    this.browserObj.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    this.browserObj.runtime.sendMessage({ action: "PrivacyFilter" });
   }
 
   toggleBlockAds(enabled: boolean) {
     this.settingsService.savePrivacyFilterAds(enabled);
-    this.browserObj.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    this.browserObj.runtime.sendMessage({ action: "PrivacyFilter" });
   }
 
   toggleBlockTrackers(enabled: boolean) {
     this.settingsService.savePrivacyFilterTrackers(enabled);
-    this.browserObj.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    this.browserObj.runtime.sendMessage({ action: "PrivacyFilter" });
   }
 
   toggleBlockMalware(enabled: boolean) {
     this.settingsService.savePrivacyFilterMalware(enabled);
-    this.browserObj.runtime.sendMessage({ greeting: "PrivacyFilter" });
+    this.browserObj.runtime.sendMessage({ action: "PrivacyFilter" });
   }
 
   goToView(name: string) {

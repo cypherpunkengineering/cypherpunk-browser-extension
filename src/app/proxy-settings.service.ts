@@ -14,12 +14,28 @@ export class ProxySettingsService {
   fastestServer;
   fastestServerName = 'Loading...';
 
+  regionOrder = [
+    "DEV",
+    "NA",
+    "SA",
+    "CR",
+    "EU",
+    "ME",
+    "AF",
+    "AS",
+    "OP"
+  ];
+
   regions = {
-    'NA': 'NORTH AMERICA',
-    'SA': 'CENTRAL & SOUTH AMERICA',
-    'OP': 'OCEANIA & PACIFIC',
-    'EU': 'EUROPE',
-    'AS': 'ASIA & INDIA'
+    "NA": "North America",
+    "SA": "Central & South America",
+    "CR": "Caribbean",
+    "OP": "Oceania & Pacific",
+    "EU": "Europe",
+    "ME": "Middle East",
+    "AF": "Africa",
+    "AS": "Asia & India Subcontinent",
+    "DEV": "Development"
   };
 
   countries = {
@@ -299,7 +315,13 @@ export class ProxySettingsService {
   }
 
   getServerArray() {
-    let regionOrder = { 'NA': 1, 'SA': 2, 'OP': 3, 'EU': 4, 'AS': 5 };
+    let order = {};
+
+    for (let i = 0; i < this.regionOrder.length; i++) {
+      order[this.regionOrder[i]] = i + 1;
+    }
+
+    console.log(order);
 
     let serverArr = [];
     let serverKeys = Object.keys(this.servers);
@@ -307,8 +329,8 @@ export class ProxySettingsService {
 
     // Sort By Region, Country, Name
     serverArr.sort(function(a,b) {
-      if (regionOrder[a.region] < regionOrder[b.region]) return -1;
-      if (regionOrder[a.region] > regionOrder[b.region]) return 1;
+      if (order[a.region] < order[b.region]) return -1;
+      if (order[a.region] > order[b.region]) return 1;
       if (a.country < b.country) return -1;
       if (a.country > b.country) return 1;
       if (a.name < b.name) return -1;

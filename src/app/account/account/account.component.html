@@ -1,6 +1,10 @@
 <div id="sub-menu" class="account" style="color: white">
   <div id="header" routerLink="/" class="bottom-separator">
-    <span class="back-icon">&#x3008;</span>My Account
+    <span class="back-icon">&#x3008;</span>Back
+  </div>
+
+  <div class="account-banner switch-row bottom-separator">
+    My Account
   </div>
 
   <div class="account-info">
@@ -16,11 +20,11 @@
     </div>
 
     <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/account')">
-      <div class="label full">Email</div>
+      <div class="label full">Change Email</div>
     </div>
 
     <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/account')">
-      <div class="label full">Password</div>
+      <div class="label full">Change Password</div>
     </div>
   </section>
 
@@ -28,7 +32,7 @@
     <div class="header bottom-separator">More</div>
 
     <div class="switch-row highlighted clickable bottom-separator" (click)="goToView('app-share')">
-      <div class="label full">Share</div>
+      <div class="label full">Share with a friend</div>
     </div>
 
     <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/feedback')">

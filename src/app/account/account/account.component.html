@@ -1,0 +1,46 @@
+<div id="sub-menu" class="account" style="color: white">
+  <div id="header" routerLink="/" class="bottom-separator">
+    <span class="back-icon">&#x3008;</span>My Account
+  </div>
+
+  <div class="account-info">
+    <div>{{ user.account.email }}</div>
+    <div class="type">{{ user.account.type}}</div>
+  </div>
+
+  <section class="account-menu">
+    <div class="header bottom-separator">Account Settings</div>
+
+    <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/account/upgrade')">
+      <div class="label full">Upgrade to Premium</div>
+    </div>
+
+    <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/account')">
+      <div class="label full">Email</div>
+    </div>
+
+    <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/account')">
+      <div class="label full">Password</div>
+    </div>
+  </section>
+
+  <section class="account-menu">
+    <div class="header bottom-separator">More</div>
+
+    <div class="switch-row highlighted clickable bottom-separator" (click)="goToView('app-share')">
+      <div class="label full">Share</div>
+    </div>
+
+    <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/feedback')">
+      <div class="label full">Feedback</div>
+    </div>
+
+    <div class="switch-row highlighted clickable bottom-separator" (click)="open('https://support.cypherpunk.com/hc')">
+      <div class="label full">Help</div>
+    </div>
+
+    <div class="switch-row highlighted clickable bottom-separator" (click)="logout()">
+      <div class="label full">Log Out</div>
+    </div>
+  </section>
+</div>

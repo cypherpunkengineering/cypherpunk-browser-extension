@@ -1,0 +1,17 @@
+<div id="sub-menu" class="account" style="color: white">
+  <div id="header" (click)="goToView('app-account')" class="bottom-separator">
+    <span class="back-icon">&#x3008;</span>Share
+  </div>
+
+  <div class="switch-row highlighted clickable bottom-separator" (click)="open('https://www.facebook.com/sharer/sharer.php?u=cypherpunk.com')">
+    <div class="label full">Facebook</div>
+  </div>
+
+  <div class="switch-row highlighted clickable bottom-separator" (click)="open('https://twitter.com/home?status=Checkout%20cypherpunk.com')">
+    <div class="label full">Twitter</div>
+  </div>
+
+  <div class="switch-row highlighted clickable bottom-separator" (click)="open('mailto:?subject=Checkout Cypherpunk.com&body=I\'m using Cypherpunk\'s VPN and security products. You should too!')">
+    <div class="label full">Email</div>
+  </div>
+</div>

@@ -135,6 +135,16 @@ export class SettingsService {
     };
   }
 
+  pacScriptSettings() {
+    return {
+      routing: this.localStorageService.get(Keys.ROUTING),
+      defaultRouting: {
+        type: this.localStorageService.get(Keys.ROUTING_TYPE),
+        selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
+      }
+    }
+  }
+
 
   /** Index Settings **/
   indexSettings() {

@@ -31,7 +31,7 @@ export class HqService {
     .catch((error:any) => {
       console.log(error);
       if (error.status === 403) {
-        chrome.tabs.create({'url': 'https://cypherpunk.com/login'});
+        this.browserObj.tabs.create({'url': 'https://cypherpunk.com/login'});
       }
       return Observable.throw(error || 'Error getting account status');
     });
@@ -44,7 +44,7 @@ export class HqService {
   }
 
   debugCheckSession(): void {
-    chrome.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'}, (cookie) => {
+    this.browserObj.cookies.get({url:'https://cypherpunk.com', name: 'cypherpunk.session'}, (cookie) => {
       console.log(cookie);
     });
   }

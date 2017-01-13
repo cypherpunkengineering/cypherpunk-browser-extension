@@ -273,6 +273,7 @@ export class IndexComponent {
     }
 
     this.settingsService.saveRouting(this.routing);
+    this.proxySettingsService.enableProxy();
   }
 
   applySmartProxy() {
@@ -280,7 +281,6 @@ export class IndexComponent {
     this.selectedRouteServer = this.smartServer;
     this.selectedRouteServerName = this.smartServer.name;
     this.selectedRouteServerFlag = '/assets/flags/svg/flag-' + this.smartServer.country + '.svg';
-    this.proxySettingsService.enableProxy();
   }
 
   applyFastestProxy() {
@@ -288,7 +288,6 @@ export class IndexComponent {
     this.selectedRouteServer = this.proxySettingsService.fastestServer;
     this.selectedRouteServerName = this.proxySettingsService.fastestServer.name;
     this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
-    this.proxySettingsService.enableProxy();
   }
 
   applyNoProxy() {
@@ -296,7 +295,6 @@ export class IndexComponent {
     this.selectedRouteServer = undefined;
     this.selectedRouteServerName = 'Unprotected';
     this.selectedRouteServerFlag = this.actualCountryFlag;
-    this.proxySettingsService.disableProxy();
   }
 
   applySelectedProxy(serverId) {
@@ -305,7 +303,6 @@ export class IndexComponent {
     this.selectedRouteServerName = this.selectedRouteServer.name;
     this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
     // selectedSmarRouteServer should already be set by the selected-server view
-    this.proxySettingsService.enableProxy();
   }
 
   selectedRoutingInit() {

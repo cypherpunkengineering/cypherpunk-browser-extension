@@ -287,8 +287,6 @@ export class ProxySettingsService {
 
   loadServers() {
     return new Promise((resolve, reject) => {
-      // this.hqService.login().flatMap(data => { // login
-      //   return this.hqService.fetchUserStatus(); // fetch user credentials
       this.hqService.fetchUserStatus().flatMap(data => {
         this.accountType = data.account.type;
         this.premiumProxyAccount = this.accountType === 'premium';
@@ -308,7 +306,6 @@ export class ProxySettingsService {
           this.fastestServerName = this.fastestServer.name;
           console.log(latencyArray, this.fastestServer, this.fastestServerName);
           resolve();
-
         });
       });
     });
@@ -320,8 +317,6 @@ export class ProxySettingsService {
     for (let i = 0; i < this.regionOrder.length; i++) {
       order[this.regionOrder[i]] = i + 1;
     }
-
-    console.log(order);
 
     let serverArr = [];
     let serverKeys = Object.keys(this.servers);
@@ -346,23 +341,173 @@ export class ProxySettingsService {
     return this.servers[serverId];
   }
 
-  // Do not apply proxy when pinging proxy servers to measure latency
-  generateDirectPingRules() {
-    let rules = "";
-    this.serverArr.forEach(function(server) {
-      if (server.ovHostname) {
-        rules += "if (shExpMatch(host, \"" + server.ovHostname + "\")) return 'DIRECT';\n";
-      }
-    });
-    return rules;
-  }
-
   enableProxy() {
     if (!this.servers) return;
-    chrome.runtime.sendMessage({ action: "ApplyPACScript" });
+    let config = this.generatePACConfig();
+    console.log(config.pacScript.data);
+    chrome.proxy.settings.set({ value: config, scope: 'regular' });
   }
 
   disableProxy() {
-    chrome.runtime.sendMessage({ action: "DisableProxy" });
+    chrome.proxy.settings.set({ value: { mode: "system" }, scope: 'regular' });
   }
+
+  generatePACConfig() {
+    let config = {
+      mode: "pac_script",
+      pacScript: {
+        data: this.generatePACScript()
+      }
+    };
+    this.settingsService.savePacScriptConfig(config);
+    return config;
+  }
+
+  generatePACScript() {
+    // Fetch latest domain specific and default routing settings
+    let pacScriptSettings = this.settingsService.pacScriptSettings();
+    console.log(pacScriptSettings);
+
+    let pacScript = "function FindProxyForURL(url, host) {\n";
+    pacScript += "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n";
+
+    // 1. Generate direct pinging rules for proxy addresses
+    // Do not apply proxy when pinging proxy servers to measure latency
+    pacScript += this.generateDirectPingRules();
+
+    // 2. Iterate through "routing" object and generate domain specific rules
+    pacScript += this.generateDomainSpecificRules(pacScriptSettings);
+
+    // 3. Look at default selected Routing type and generate base rules
+    pacScript += this.generateDefaultRoutingRules(pacScriptSettings.defaultRouting);
+
+    pacScript += "}";
+
+    return pacScript;
+  }
+
+  generateDirectPingRules() {
+    let directPingRules = "";
+    this.serverArr.forEach(function(server) {
+      if (server.ovHostname) {
+        directPingRules += "  if (shExpMatch(host, \"" + server.ovHostname + "\")) return 'DIRECT';\n";
+      }
+    });
+    return directPingRules;
+  }
+
+  generateDomainSpecificRules(pacScriptSettings) {
+    let routing = pacScriptSettings.routing;
+    let defaultRouting = pacScriptSettings.defaultRouting;
+    let domainSpecificRules = "";
+    let domains = Object.keys(routing);
+    let domainSettings;
+    domains.forEach((domain) => {
+      domainSettings = routing[domain];
+      // Fastest: Route to fastest server always
+      if (domainSettings.type === 'FASTEST') {
+        let fastestProxyIp = this.servers[this.latencyList[0].id].httpDefault[0];
+
+        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\")) return 'PROXY " +
+          fastestProxyIp + ":80';\n"
+      }
+      // Selected: Route to the selected server
+      else if (domainSettings.type === 'SELECTED') {
+        let selectedProxyId = domainSettings.serverId;
+        let selectedProxyIp = this.servers[selectedProxyId].httpDefault[0];
+
+        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\")) return 'PROXY " +
+          selectedProxyIp + ":80';\n"
+      }
+      // None: Do not proxy
+      else if (domainSettings.type === 'NONE') {
+        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\")) return 'DIRECT';\n"
+      }
+      // Smart: Route to fastest server for TLD
+      else {
+        let match = domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
+        let tld = match && match.length ? match[0] : null;
+        let countryCode;
+        if (tld) {
+          tld = tld.slice(1); // remove "."
+          countryCode = tld;
+        }
+        else { countryCode = "US"; }
+
+        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\")) return 'PROXY " +
+          this.getSmartServer(countryCode).httpDefault[0] + ":80';\n"
+      }
+    });
+    return domainSpecificRules;
+  }
+
+  generateDefaultRoutingRules(defaultRouting) {
+    let defaultRoutingRules = "";
+
+    // Fastest: Route to fastest server always
+    if (defaultRouting.type === "FASTEST") {
+      let fastestProxyIp = this.servers[this.latencyList[0].id].httpDefault[0];
+      defaultRoutingRules += "  else return 'PROXY " +
+        fastestProxyIp + ":80';\n";
+    }
+    // Selected: Route to the default selected server
+    else if (defaultRouting.type === "SELECTED") {
+      let selectedProxyId = defaultRouting.selected.toString();
+      let selectedProxyIp = this.servers[selectedProxyId].httpDefault[0];
+      defaultRoutingRules += "  else return 'PROXY " +
+        selectedProxyIp + ":80';\n";
+    }
+    // None: Do not proxy
+    else if (defaultRouting.type === "NONE") {
+      defaultRoutingRules += "  else return 'DIRECT';\n";
+    }
+    // Smart: Route to fastest server for each TLD
+    else {
+      let tlds = [
+        "au", "br", "ca", "ch", "de", "fr", "uk", "hk", "in",
+        "it", "jp", "nl", "no", "ru", "se", "sg", "tr", "com"
+      ];
+      tlds.forEach((tld) => {
+        defaultRoutingRules += "  if (shExpMatch(host, \"*." + tld + "\")) return 'PROXY " +
+          this.getSmartServer(tld).httpDefault[0] + ":80';\n"
+      });
+
+      // Default to fastest US server if TLD is unknown
+      defaultRoutingRules += "  else return 'PROXY " +
+        this.getSmartServer("com").httpDefault[0] + ":80';\n";
+    }
+    return defaultRoutingRules;
+  }
+
+  getSmartServer(countryCode) {
+    countryCode = countryCode.toUpperCase();
+
+    // .com -> US and .uk -> GB, all other tlds are direct translations
+    if (countryCode === "COM") { countryCode = "US"; }
+    else if (countryCode === "UK") { countryCode = "GB" }
+
+    let fastestServer, curServer, latency, firstUsServer;
+    // Find fastest server for given country
+    // Latency list is ordered from lowest latency to highest
+    for (let x = 0; x < this.latencyList.length; x++) {
+      latency = this.latencyList[x].latency;
+      curServer = this.servers[this.latencyList[x].id];
+
+      // Store First/Fastest US server we encounter for default case
+      if (!firstUsServer && curServer.country === "US") { firstUsServer = curServer; }
+
+      // Grab fastest server for the given country
+      if (curServer.country === countryCode && latency < 9999) {
+        fastestServer = curServer;
+        break;
+      }
+
+    }
+      // All servers pinged 9999 or higher or there is no proxy
+      // available for the provided TLD, default to first/fastest US Server
+      if (!fastestServer) { fastestServer = firstUsServer; }
+
+    return fastestServer;
+  }
+
 }

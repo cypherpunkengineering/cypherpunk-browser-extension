@@ -68,7 +68,7 @@
       </div>
 
       <!-- Smart Routing Dropdown -->
-      <div class="routing-dd open">
+      <div class="routing-dd" [ngClass]="{'disabled': !validProtocol }">
         <div class="row" (click)="selectRouteType('SMART')" [ngClass]="{'checked': selectedRouteOpt === 'SMART' }">{{ smartServerName }} (Smart Routing)</div>
         <div class="row" (click)="selectRouteType('FASTEST')" [ngClass]="{'checked': selectedRouteOpt === 'FASTEST' }">{{ proxySettingsService.fastestServerName }} (Fastest)</div>
         <div class="row" (click)="selectRouteType('SELECTED')" [ngClass]="{'checked': selectedRouteOpt === 'SELECTED' }" routerLink="/selected-server" routerLinkActive="active">

@@ -117,7 +117,6 @@
 }
 
 .location--public {
-  cursor: pointer;
 
   .arrow--down {
     margin: rem(5) 0;
@@ -139,8 +138,15 @@
     background-color: #29207B;
     overflow: hidden;
     margin-top: rem(23);
-    &.open { height: rem(125); }
-    &.closed { height: 0; }
+    height: rem(125);
+    &.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      .row {
+        cursor: default;
+        &:hover, &.checked:hover { background-color: #29207B; }
+      }
+    }
     .row {
       @include pad(0 rem(10) 0 rem(30));
       @include span-columns(12);

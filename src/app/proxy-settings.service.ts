@@ -359,6 +359,7 @@ export class ProxySettingsService {
         data: this.generatePACScript()
       }
     };
+    this.settingsService.savePacScriptConfig(config);
     return config;
   }
 
@@ -426,10 +427,15 @@ export class ProxySettingsService {
       else {
         let match = domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
         let tld = match && match.length ? match[0] : null;
-        tld = tld.slice(1); // remove "."
+        let countryCode;
+        if (tld) {
+          tld = tld.slice(1); // remove "."
+          countryCode = tld;
+        }
+        else { countryCode = "US"; }
 
         domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\")) return 'PROXY " +
-          this.getSmartServerIp(tld) + ":80';\n"
+          this.getSmartServer(countryCode).httpDefault[0] + ":80';\n"
       }
     });
     return domainSpecificRules;
@@ -463,18 +469,18 @@ export class ProxySettingsService {
       ];
       tlds.forEach((tld) => {
         defaultRoutingRules += "  if (shExpMatch(host, \"*." + tld + "\")) return 'PROXY " +
-          this.getSmartServerIp(tld) + ":80';\n"
+          this.getSmartServer(tld).httpDefault[0] + ":80';\n"
       });
 
       // Default to fastest US server if TLD is unknown
       defaultRoutingRules += "  else return 'PROXY " +
-        this.getSmartServerIp("com") + ":80';\n";
+        this.getSmartServer("com").httpDefault[0] + ":80';\n";
     }
     return defaultRoutingRules;
   }
 
-  getSmartServerIp(tld) {
-    let countryCode = tld.toUpperCase();
+  getSmartServer(countryCode) {
+    countryCode = countryCode.toUpperCase();
 
     // .com -> US and .uk -> GB, all other tlds are direct translations
     if (countryCode === "COM") { countryCode = "US"; }
@@ -501,7 +507,7 @@ export class ProxySettingsService {
       // available for the provided TLD, default to first/fastest US Server
       if (!fastestServer) { fastestServer = firstUsServer; }
 
-    return fastestServer.httpDefault[0];
+    return fastestServer;
   }
 
 }

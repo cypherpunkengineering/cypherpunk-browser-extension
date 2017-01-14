@@ -76,212 +76,18 @@ function getLatency(url, multiplier) {
 }
 
 /* Apply Proxy PAC Script */
+function applyProxy() {
+  var config = localStorage.getItem("cypherpunk.pacScriptConfig");
+  if (!config) { return; }
+  config = JSON.parse(config);
+  console.log('Applying PacScript in BG', config);
+  chrome.proxy.settings.set({ value: config, scope: 'regular' });
+}
 
 function disableProxy() {
   console.log('Disabling Proxy');
   chrome.proxy.settings.set({value: { mode: "system" }, scope: 'regular'});
 }
-
-function applyPACScript() {
-  // Fetch pacConfig From localStorage and apply
-}
-  // chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-
-  //   // 1) Get the domain of url
-  //   // 2) Check against local storage to see proxy type
-  //   // 3) If url doesnt exist in local storage, apply selected default proxy option
-  //   // 4) If url does exist apply saved proxy setting
-
-  //   if (!tabs.length) { return; }
-  //   var url = tabs[0].url;
-  //   console.log('Cypherpunk is enabled', cypherpunkEnabled);
-  //   if (cypherpunkEnabled && url && url !== undefined) {
-
-  //     var domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
-
-  //     var routing = JSON.parse(localStorage.getItem('cypherpunk.routing'));
-  //     var routingSetting = routing[domain];
-
-  //     var proxyServers = JSON.parse(localStorage.getItem('cypherpunk.proxyServers'));
-  //     var latencyList = JSON.parse(localStorage.getItem('cypherpunk.latencyList'));
-
-  //     var defaultRoutingType = JSON.parse(localStorage.getItem('cypherpunk.settings.defaultRouting.type'));
-  //     var routingType = routingSetting ? routingSetting.type : defaultRoutingType;
-  //     var selectedProxy;
-
-  //     console.log('ROUTING TYPE IS:', routingType);
-
-  //     if (routingType === 'SELECTED') {
-  //       console.log('USING SELECTED PROXY');
-  //       var defaultSelectedServerId = JSON.parse(localStorage.getItem('cypherpunk.settings.defaultRouting.selected'));
-  //       // User has custom selection
-  //       if (routingSetting && routingSetting.serverId) {
-  //         selectedProxy = proxyServers[routingSetting.serverId];
-  //       }
-  //       // Default to selected server in settings
-  //       else {
-  //         selectedProxy = proxyServers[defaultSelectedServerId];
-  //       }
-  //     }
-  //     else if (routingType === 'NONE') {
-  //       console.log('USING NO PROXY');
-  //       disableProxy();
-  //     }
-  //     else if (routingType === 'FASTEST') {
-  //       console.log('USING FASTEST PROXY');
-
-  //       // LOOK at latency list grab first server
-  //       selectedProxy = proxyServers[latencyList[0].id];
-  //     }
-  //     else {
-  //       console.log('USING SMART PROXY');
-  //       selectedProxy = getSmartServer(url, proxyServers, latencyList);
-  //     }
-
-  //     if (selectedProxy) {
-  //       console.log('SELECTED PROXY IS:', routingType, selectedProxy);
-  //       var proxyIP = selectedProxy.httpDefault[0];
-  //       var config = {
-  //         mode: "pac_script",
-  //         pacScript: {
-  //           data: "function FindProxyForURL(url, host) {\n" +
-  //                 generateDirectPingRules() +
-  //                 "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n" +
-  //                 "  if (shExpMatch(host, \"*.com\")) return 'PROXY " + proxyIP + ":80';\n" +
-  //                 "  if (shExpMatch(host, \"*.jp\")) return 'PROXY " + proxyIP + ":80';\n" +
-  //                 "  else return 'PROXY " + proxyIP + ":80';\n" +
-  //                 "}"
-  //         }
-  //       };
-  //       console.log('Enabling Proxy');
-  //       chrome.proxy.settings.set({value: config, scope: 'regular'});
-  //     }
-  //     else {
-  //       console.log('SELECTED PROXY IS: NO PROXY');
-  //       disableProxy();
-  //     }
-
-  //   }
-  //   else { disableProxy(); }
-  // });
-
-// function getSmartServer(domain, allServers, latencyList) {
-//   var smartServer;
-//   var fastestCountryServer = (country) => {
-//     var fastestServer, curServer, latency;
-//     // Find fastest server for given country
-//     for(var x = 0; x < latencyList.length; x++) {
-//       latency = latencyList[x].latency;
-//       curServer = allServers[latencyList[x].id];
-//       if (curServer.country === country && latency < 9999) {
-//         fastestServer = curServer;
-//         break;
-//       }
-//     }
-
-//     // All servers pinged 9999 or higher, default to fastest US server
-//     if (!fastestServer) {
-//       for(var y = 0; y < latencyList.length; y++) {
-//         latency = latencyList[y].latency;
-//         curServer = allServers[latencyList[y].id];
-//         if (curServer.country === 'US') {
-//           fastestServer = curServer;
-//           break;
-//         }
-//       }
-//     }
-//     console.log(fastestServer);
-//     return fastestServer;
-//   }
-
-//   var match = domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
-//   var tld = match && match.length ? match[0] : null;
-//   // .au -> AU
-//   // .br -> BR
-//   // .ca -> CA
-//   // .ch -> CH
-//   // .de -> DE
-//   // .fr -> FR
-//   // .uk -> GB
-//   // .hk -> HK
-//   // .in -> IN
-//   // .it -> IT
-//   // .jp -> JP
-//   // .nl -> NL
-//   // .no -> NO
-//   // .ru -> RU
-//   // .se -> SE
-//   // .sg -> SG
-//   // .tr -> TR
-//   // else -> US
-//   if (tld === '.com') {
-//     smartServer = fastestCountryServer('US');
-//   }
-//   else if (tld === '.au') {
-//     smartServer = fastestCountryServer('AU');
-//   }
-//   else if (tld === '.br') {
-//     smartServer = fastestCountryServer('BR');
-//   }
-//   else if (tld === '.ca') {
-//     smartServer = fastestCountryServer('CA');
-//   }
-//   else if (tld === '.ch') {
-//     smartServer = fastestCountryServer('CH');
-//   }
-//   else if (tld === '.de') {
-//     smartServer = fastestCountryServer('DE');
-//   }
-//   else if (tld === '.uk') {
-//     smartServer = fastestCountryServer('GB');
-//   }
-//   else if (tld === '.hk') {
-//     smartServer = fastestCountryServer('HK');
-//   }
-//   else if (tld === '.in') {
-//     smartServer = fastestCountryServer('IN');
-//   }
-//   else if (tld === '.it') {
-//     smartServer = fastestCountryServer('IT');
-//   }
-//   else if (tld === '.jp') {
-//     smartServer = fastestCountryServer('JP');
-//   }
-//   else if (tld === '.nl') {
-//     smartServer = fastestCountryServer('NL');
-//   }
-//   else if (tld === '.no') {
-//     smartServer = fastestCountryServer('NO');
-//   }
-//   else if (tld === '.ru') {
-//     smartServer = fastestCountryServer('RU');
-//   }
-//   else if (tld === '.se') {
-//     smartServer = fastestCountryServer('SE');
-//   }
-//   else if (tld === '.sg') {
-//     smartServer = fastestCountryServer('SG');
-//   }
-//   else if (tld === '.tr') {
-//     smartServer = fastestCountryServer('TR');
-//   }
-//   else {
-//     smartServer = fastestCountryServer('US');
-//   }
-//   return smartServer;
-// }
-
-// // Apply pac script when tab is activated
-// chrome.tabs.onActivated.addListener(function() {
-//   applyPACScript();
-// });
-
-// // Apply pac script when tab url is changed
-// chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-//   if (changeInfo.status == 'loading') { // apply pac script while new url is loading
-//     applyPACScript();
-//   }
-// });
 
 function generateDirectPingRules() {
   var rules = "";
@@ -349,15 +155,16 @@ function loadProxies() {
   });
 }
 
-// Try to load servers even if cypherpunk is not enabled
-if (!cypherpunkEnabled) {
-  loadProxies();
-}
+// Clear cache on url change so ip doesnt leak from previous site
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  if (changeInfo.status == 'loading') { // apply pac script while new url is loading
+    chrome.browsingData.removeCache();
+  }
+});
 
 function init() {
-
+  applyProxy();
   loadProxies();
-
   // Enable force http if it's enabled
   // if (forceHttps) { enableForceHttps(); }
   // else { disableForceHttps(); }
@@ -399,7 +206,11 @@ function destroy() {
 }
 
 if (cypherpunkEnabled) { init(); }
-else { destroy(); }
+else {
+  // Try to load servers even if cypherpunk is not enabled
+  loadProxies();
+  destroy();
+}
 
 // Event Listener Triggers
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
@@ -409,12 +220,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     if (cypherpunkEnabled) { init(); }
     // Cypherpunk is turned off, disable all features
     else { destroy(); }
-  }
-  else if (request.action === 'ApplyPACScript') {
-    applyPACScript();
-  }
-  else if (request.action === 'DisableProxy') {
-    disableProxy();
   }
   else if (request.action === 'UserAgentSpoofing') {
     userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');

@@ -42,6 +42,7 @@ export class IndexComponent {
   actualCountryFlag = '';
   actualCountry = '';
   smartServer;
+  validProtocol = true;
 
   selectedRouteOpts = {
     smart: 'Smart Routing',
@@ -68,24 +69,46 @@ export class IndexComponent {
         let curTab = tabs[0];
         let url = curTab.url
         this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
-        this.getSmartServerName(this.domain);
+        let protocol = url.split("://")[0];
+        this.validProtocol = protocol === 'http' || protocol === 'https';
+        if (url && this.validProtocol) {
+          // Get Smart Route name
+          let match = this.domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
+          let tld = match && match.length ? match[0] : null;
+          let countryCode;
+          if (tld) {
+            tld = tld.slice(1); // remove "."
+            countryCode = tld;
+          }
+          else { countryCode = "US"; }
 
-        // Load which proxy is selected once we have domain info
-        this.selectedRoutingInit();
+          // .com -> US and .uk -> GB, all other tlds are direct translations
+          this.smartServer = this.proxySettingsService.getSmartServer(countryCode);
+          this.smartServerName = this.smartServer.name;
 
-        // if (this.privacyFilterWhitelist[this.domain] === undefined) {
-        //   this.privacyFilterSwitch = true;
-        // }
-        // else if (this.privacyFilterWhitelist[this.domain] === false) {
-        //   this.privacyFilterSwitch = false;
-        // }
+          // Load which proxy is selected once we have domain info
+          this.selectedRoutingInit();
 
-        // Load fav icon
-        let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
+          // if (this.privacyFilterWhitelist[this.domain] === undefined) {
+          //   this.privacyFilterSwitch = true;
+          // }
+          // else if (this.privacyFilterWhitelist[this.domain] === false) {
+          //   this.privacyFilterSwitch = false;
+          // }
 
-        // favicon appears to be a normal url
-        if (curTab.favIconUrl && curTab.favIconUrl != '' && curTab.favIconUrl.indexOf('chrome://favicon/') == -1) {
-          this.faviconUrl = curTab.favIconUrl;
+          // Load fav icon
+          let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
+
+          // favicon appears to be a normal url
+          if (curTab.favIconUrl && curTab.favIconUrl != '' && curTab.favIconUrl.indexOf('chrome://favicon/') == -1) {
+            this.faviconUrl = curTab.favIconUrl;
+          }
+        }
+        // Not on a valid website
+        else {
+          this.smartServerName = 'Unavailable';
+          this.selectedRouteOpt = 'NONE';
+          this.applyNoProxy();
         }
       });
     }
@@ -102,113 +125,6 @@ export class IndexComponent {
     else { // serverArr isn't populated, populate manually in front end
       console.log('Servers being manually loaded');
       this.proxySettingsService.loadServers().then(res => { init(); });
-    }
-  }
-
-  getSmartServerName(domain: string) {
-    let fastestCountryServer = (country: string) => {
-      let fastestServer, curServer, latency;
-      let latencyList = this.proxySettingsService.latencyList;
-      let allServers = this.proxySettingsService.servers;
-      // Find fastest server for given country
-      for(let x = 0; x < latencyList.length; x++) {
-        latency = latencyList[x].latency;
-        curServer = allServers[latencyList[x].id];
-        if (curServer.country === country && latency < 9999) {
-          fastestServer = curServer;
-          break;
-        }
-      }
-
-      // All servers pinged 9999 or higher, default to fastest US server
-      if (!fastestServer) {
-        for(let y = 0; y < latencyList.length; y++) {
-          latency = latencyList[y].latency;
-          curServer = allServers[latencyList[y].id];
-          if (curServer.country === 'US') {
-            fastestServer = curServer;
-            break;
-          }
-        }
-      }
-      // set smart server so we can apply flag if selected
-      this.smartServer = fastestServer;
-      return fastestServer;
-    }
-
-    let match = domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
-    let tld = match && match.length ? match[0] : null;
-    // .au -> AU
-    // .br -> BR
-    // .ca -> CA
-    // .ch -> CH
-    // .de -> DE
-    // .fr -> FR
-    // .uk -> GB
-    // .hk -> HK
-    // .in -> IN
-    // .it -> IT
-    // .jp -> JP
-    // .nl -> NL
-    // .no -> NO
-    // .ru -> RU
-    // .se -> SE
-    // .sg -> SG
-    // .tr -> TR
-    // else -> US
-    if (tld === '.com') {
-      this.smartServerName = fastestCountryServer('US').name;
-    }
-    else if (tld === '.au') {
-      this.smartServerName = fastestCountryServer('AU').name;
-    }
-    else if (tld === '.br') {
-      this.smartServerName = fastestCountryServer('BR').name;
-    }
-    else if (tld === '.ca') {
-      this.smartServerName = fastestCountryServer('CA').name;
-    }
-    else if (tld === '.ch') {
-      this.smartServerName = fastestCountryServer('CH').name;
-    }
-    else if (tld === '.de') {
-      this.smartServerName = fastestCountryServer('DE').name;
-    }
-    else if (tld === '.uk') {
-      this.smartServerName = fastestCountryServer('GB').name;
-    }
-    else if (tld === '.hk') {
-      this.smartServerName = fastestCountryServer('HK').name;
-    }
-    else if (tld === '.in') {
-      this.smartServerName = fastestCountryServer('IN').name;
-    }
-    else if (tld === '.it') {
-      this.smartServerName = fastestCountryServer('IT').name;
-    }
-    else if (tld === '.jp') {
-      this.smartServerName = fastestCountryServer('JP').name;
-    }
-    else if (tld === '.nl') {
-      this.smartServerName = fastestCountryServer('NL').name;
-    }
-    else if (tld === '.no') {
-      this.smartServerName = fastestCountryServer('NO').name;
-    }
-    else if (tld === '.ru') {
-      this.smartServerName = fastestCountryServer('RU').name;
-    }
-    else if (tld === '.se') {
-      this.smartServerName = fastestCountryServer('SE').name;
-    }
-    else if (tld === '.sg') {
-      this.smartServerName = fastestCountryServer('SG').name;
-    }
-    else if (tld === '.tr') {
-      this.smartServerName = fastestCountryServer('TR').name;
-    }
-    else {
-      this.smartServerName = fastestCountryServer('US').name;
     }
   }
 

@@ -31,6 +31,7 @@ class Keys {
   public static PROXY_SERVERS: string = "proxyServers";
   public static PROXY_SERVERS_ARR: string = "proxyServersArr";
   public static PREMIUM_ACCOUNT: string = "premiumAccount";
+  public static PAC_SCRIPT_CONFIG: string = "pacScriptConfig";
 
   // Index vivew
   public static INITIALIZED: string = "intialized";
@@ -69,6 +70,7 @@ class Defaults {
     proxyServers: null,
     proxyServersArr: [],
     premiumAccount: false,
+    pacScriptConfig: null,
     settings: {
       forceHttps: true,
       webRTCLeakProtection: true,
@@ -145,6 +147,9 @@ export class SettingsService {
     }
   }
 
+  savePacScriptConfig(config) {
+    this.localStorageService.set(Keys.PAC_SCRIPT_CONFIG, config);
+  }
 
   /** Index Settings **/
   indexSettings() {

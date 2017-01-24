@@ -50,7 +50,7 @@ export class PingService {
         this.requestImage(url).then(response).catch(response);
 
         // If request times out set latency high, so it's low on the list
-        setTimeout(() => { resolve(999); }, 2000);
+        setTimeout(() => { resolve(99999); }, 4000);
     });
   }
 }

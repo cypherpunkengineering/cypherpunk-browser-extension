@@ -3,6 +3,8 @@ var cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
 var privacyFilterEnabled = localStorage.getItem('cypherpunk.settings.privacyFilter.enabled') === "true";
 var userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
 
+var webRTCLeakProtectionEnabled = localStorage.getItem('cypherpunk.settings.webRTCLeakProtection');
+
 var authUsername, authPassword;
 
 // Remove proxy and settings upon uninstall
@@ -158,7 +160,9 @@ function loadProxies() {
 // Clear cache on url change so ip doesnt leak from previous site
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (changeInfo.status == 'loading') { // apply pac script while new url is loading
-    chrome.browsingData.removeCache();
+    if (chrome.browsingData) {
+      chrome.browsingData.removeCache();
+    }
   }
 });
 
@@ -172,6 +176,9 @@ function init() {
   // Enable user agent spoofing if user agent string supplied
   if (userAgentString) { enableUserAgentSpoofing(); }
   else { disableUserAgentSpoofing(); }
+
+  if (webRTCLeakProtectionEnabled) { toggleWebRTCLeakPrevention(true); }
+  else { toggleWebRTCLeakPrevention(false); }
 
   chrome.browserAction.setIcon({
    path : {
@@ -192,6 +199,7 @@ function destroy() {
   // disableForceHttps();
   disablePrivacyFilter();
   disableProxy();
+  toggleWebRTCLeakPrevention(false);
   chrome.browserAction.setIcon({
     path : {
       "128": "assets/cypherpunk_grey_128.png",
@@ -234,6 +242,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       chrome.tabs.reload(tabs[0].id);
     });
   }
+  else if (request.action === "ToggleWebRTCLeakPrevention") {
+    if (!cypherpunkEnabled) { return; }
+    toggleWebRTCLeakPrevention(request.enabled);
+  }
   // else if (request.action === "ForceHTTPS"){
   //   forceHttps = localStorage.getItem('cypherpunk.settings.forceHttps') === "true"
   //   if (forceHttps) { enableForceHttps(); }
@@ -263,6 +275,15 @@ function enableProxyAuthCredentials() {
   );
 }
 
+
+/** WebRTC Leak Prevention **/
+function toggleWebRTCLeakPrevention(enabled) {
+  console.log(enabled ? 'Enabling' : 'Disabling', 'WebRTC Leak Prevention');
+  var value = enabled ? 'disable_non_proxied_udp' : 'default';
+  chrome.privacy.network.webRTCIPHandlingPolicy.set({
+    value: value
+  });
+}
 
 /** User Agent Spoofing **/
 function spoofUserAgent(details) {

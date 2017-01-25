@@ -176,7 +176,6 @@ function init() {
   // Enable user agent spoofing if user agent string supplied
   if (userAgentString) { enableUserAgentSpoofing(); }
   else { disableUserAgentSpoofing(); }
-
   if (webRTCLeakProtectionEnabled) { toggleWebRTCLeakPrevention(true); }
   else { toggleWebRTCLeakPrevention(false); }
 

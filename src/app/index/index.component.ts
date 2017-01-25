@@ -113,8 +113,8 @@ export class IndexComponent {
       });
     }
     // Initialize proxy servers
-    // If serverArr is populated then background script already populated server info
-    if (this.proxySettingsService.serverArr) {
+    // If latencyList is populated then background script already populated server info
+    if (this.proxySettingsService.latencyList) {
       console.log('Servers preloaded by background script');
       this.hqService.fetchUserStatus().subscribe(res => {
         init();

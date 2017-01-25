@@ -261,10 +261,10 @@ export class ProxySettingsService {
     private pingService: PingService
   ) {
     let serverData = this.settingsService.proxySettingsService();
-    this.servers = serverData.proxyServers;
-    if (this.servers) {
+    this.latencyList = serverData.latencyList;
+    if (this.latencyList) {
+      this.servers = serverData.proxyServers;
       this.serverArr = serverData.proxyServersArr;
-      this.latencyList = serverData.latencyList;
       this.fastestServer = this.servers[serverData.latencyList[0].id];
       this.fastestServerName = this.fastestServer.name;
       this.premiumProxyAccount = serverData.premiumAccount;

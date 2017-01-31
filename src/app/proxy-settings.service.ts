@@ -368,7 +368,14 @@ export class ProxySettingsService {
     let pacScriptSettings = this.settingsService.pacScriptSettings();
     console.log(pacScriptSettings);
 
-    let pacScript = "function FindProxyForURL(url, host) {\n";
+    let pacScript = "function FindProxyForURL(url, host) {\n" +
+      "  /* Normalize the URL for pattern matching */\n" +
+      "  url = url.toLowerCase();\n" +
+      "  host = host.toLowerCase();\n\n" +
+      "  /* Don't proxy local hostnames */\n" +
+      "  if (isPlainHostName(host)) return 'DIRECT';\n\n";
+
+
     pacScript += "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n";
 
     // 1. Generate direct pinging rules for proxy addresses

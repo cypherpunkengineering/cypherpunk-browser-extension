@@ -22,23 +22,30 @@ export class SettingsComponent {
     else if (type === 'SELECTED') { return 'Specific Server'; }
     else { return 'No Proxy'; }
   };
+  webRTCDesc = {
+    DEFAULT: 'Unprotected',
+    DEFAULT_PUBLIC_INTERFACE_ONLY: 'Public Interfaces',
+    DEFAULT_PUBLIC_AND_PRIVATE_INTERFACES: 'Public/Private Interfaces',
+    DISABLE_NON_PROXIED_UDP: 'Non-Proxied UDP'
+  };
+
 // forceHttpsEnabled = this.advancedSettings.forceHttps;
   webRtcLeakProtectionEnabled = this.advancedSettings.webRtcLeakProtection;
   userAgentType = this.advancedSettings.userAgentType;
+  webRTCType = this.webRTCDesc[this.advancedSettings.webRtcLeakProtection.toString()];
 
-  constructor(private settingsService: SettingsService, private proxySettingsService: ProxySettingsService) {}
+
+
+  constructor(private settingsService: SettingsService, private proxySettingsService: ProxySettingsService) {
+  console.log(this.advancedSettings.webRtcLeakProtection);
+
+  }
 
   // toggleForceHttps(enabled: boolean) {
   //   console.log('Force HTTPS:', enabled);
   //   this.settingsService.saveForceHttps(enabled);
   //   this.browserObj.runtime.sendMessage({ action: "ForceHTTPS" });
   // }
-
-  toggleWebRtcLeakProtection(enabled: boolean) {
-    console.log('WebRTC Leak Protection:', enabled);
-    this.settingsService.saveWebRtcLeakProtection(enabled);
-    chrome.runtime.sendMessage({ action: "ToggleWebRTCLeakPrevention", enabled: enabled });
-  }
 
   logout() {
     this.proxySettingsService.disableProxy();

@@ -5,7 +5,6 @@ import { ProxySettingsService } from '../../proxy-settings.service';
 @Component({
   selector: 'app-default-routing',
   templateUrl: './default-routing.component.html',
-  styleUrls: ['./default-routing.component.scss']
 })
 export class DefaultRoutingComponent {
   @Output() changeView = new EventEmitter<string>();

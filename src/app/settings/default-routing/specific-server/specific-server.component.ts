@@ -22,6 +22,8 @@ export class SpecificServerComponent {
 
   selectProxy(server) {
     if (server.level === 'premium' && !this.premiumAccount) { return; }
+    else if (!server.enabled) { return; }
+    else if (!server.httpDefault.length) { return; }
     else {
       this.selectedServerId = server.id;
       this.settingsService.saveRoutingInfo("SELECTED", server.id);

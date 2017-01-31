@@ -3,7 +3,7 @@ var cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
 var privacyFilterEnabled = localStorage.getItem('cypherpunk.settings.privacyFilter.enabled') === "true";
 var userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
 
-var webRTCLeakProtectionEnabled = localStorage.getItem('cypherpunk.settings.webRTCLeakProtection');
+var webRTCLeakProtectionType = JSON.parse(localStorage.getItem('cypherpunk.settings.webRTCLeakProtection'));
 
 var authUsername, authPassword;
 
@@ -174,10 +174,13 @@ function init() {
   // else { disableForceHttps(); }
 
   // Enable user agent spoofing if user agent string supplied
+  userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
   if (userAgentString) { enableUserAgentSpoofing(); }
   else { disableUserAgentSpoofing(); }
-  if (webRTCLeakProtectionEnabled) { toggleWebRTCLeakPrevention(true); }
-  else { toggleWebRTCLeakPrevention(false); }
+
+  webRTCLeakProtectionType = JSON.parse(localStorage.getItem('cypherpunk.settings.webRTCLeakProtection'));
+  if (webRTCLeakProtectionType) { updateWebRTCLeakProtection(webRTCLeakProtectionType); }
+  else { updateWebRTCLeakProtection('DEFAULT'); }
 
   chrome.browserAction.setIcon({
    path : {
@@ -198,7 +201,7 @@ function destroy() {
   // disableForceHttps();
   disablePrivacyFilter();
   disableProxy();
-  toggleWebRTCLeakPrevention(false);
+  updateWebRTCLeakProtection('DEFAULT');
   chrome.browserAction.setIcon({
     path : {
       "128": "assets/cypherpunk_grey_128.png",
@@ -241,9 +244,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       chrome.tabs.reload(tabs[0].id);
     });
   }
-  else if (request.action === "ToggleWebRTCLeakPrevention") {
+  else if (request.action === "UpdateWebRTCPolicy") {
     if (!cypherpunkEnabled) { return; }
-    toggleWebRTCLeakPrevention(request.enabled);
+    webRTCLeakProtectionType = JSON.parse(localStorage.getItem('cypherpunk.settings.webRTCLeakProtection'));
+    updateWebRTCLeakProtection(webRTCLeakProtectionType);
   }
   // else if (request.action === "ForceHTTPS"){
   //   forceHttps = localStorage.getItem('cypherpunk.settings.forceHttps') === "true"
@@ -276,9 +280,9 @@ function enableProxyAuthCredentials() {
 
 
 /** WebRTC Leak Prevention **/
-function toggleWebRTCLeakPrevention(enabled) {
-  console.log(enabled ? 'Enabling' : 'Disabling', 'WebRTC Leak Prevention');
-  var value = enabled ? 'disable_non_proxied_udp' : 'default';
+function updateWebRTCLeakProtection(type) {
+  var value = chrome.privacy.IPHandlingPolicy[type];
+  console.log('Setting WebRTC Leak Prevention to ', value);
   chrome.privacy.network.webRTCIPHandlingPolicy.set({
     value: value
   });

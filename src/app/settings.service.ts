@@ -73,7 +73,7 @@ class Defaults {
     pacScriptConfig: null,
     settings: {
       forceHttps: true,
-      webRTCLeakProtection: true,
+      webRTCLeakProtection: "DISABLE_NON_PROXIED_UDP",
       defaultRouting: {
         type: "SMART",
         selected: null
@@ -227,10 +227,16 @@ export class SettingsService {
     this.localStorageService.set(Keys.FORCE_HTTPS, enabled);
   }
 
-  saveWebRtcLeakProtection(enabled: boolean) {
-    this.localStorageService.set(Keys.WEB_RTC_LEAK_PROTECTION, enabled);
+  /** Advanced Settings > WebRTC Leak Prevention **/
+  webRtcSettings() {
+    return {
+      webRtcLeakProtection: this.localStorageService.get(Keys.WEB_RTC_LEAK_PROTECTION),
+    }
   }
 
+  saveWebRtcLeakProtection(type: string) {
+    this.localStorageService.set(Keys.WEB_RTC_LEAK_PROTECTION, type);
+  }
 
   /** Advanced Settings > Privacy Filter **/
   privacyFilterSettings() {

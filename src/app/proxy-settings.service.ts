@@ -408,20 +408,20 @@ export class ProxySettingsService {
       if (domainSettings.type === 'FASTEST') {
         let fastestProxyIp = this.servers[this.latencyList[0].id].httpDefault[0];
 
-        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\")) return 'PROXY " +
-          fastestProxyIp + ":80';\n"
+        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\") || dnsDomainIs(host, \"." + domain + "\")) return 'PROXY " +
+          fastestProxyIp + ":80';\n";
       }
       // Selected: Route to the selected server
       else if (domainSettings.type === 'SELECTED') {
         let selectedProxyId = domainSettings.serverId;
         let selectedProxyIp = this.servers[selectedProxyId].httpDefault[0];
 
-        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\")) return 'PROXY " +
-          selectedProxyIp + ":80';\n"
+        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\") || dnsDomainIs(host, \"." + domain + "\")) return 'PROXY " +
+          selectedProxyIp + ":80';\n";
       }
       // None: Do not proxy
       else if (domainSettings.type === 'NONE') {
-        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\")) return 'DIRECT';\n"
+        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\") || dnsDomainIs(host, \"." + domain + "\")) return 'DIRECT';\n";
       }
       // Smart: Route to fastest server for TLD
       else {
@@ -433,9 +433,9 @@ export class ProxySettingsService {
           countryCode = tld;
         }
         else { countryCode = "US"; }
-
-        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\")) return 'PROXY " +
-          this.getSmartServer(countryCode).httpDefault[0] + ":80';\n"
+        let smartProxyIP = this.getSmartServer(countryCode).httpDefault[0];
+        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\") || dnsDomainIs(host, \"." + domain + "\")) return 'PROXY " +
+          smartProxyIP + ":80';\n";
       }
     });
     return domainSpecificRules;

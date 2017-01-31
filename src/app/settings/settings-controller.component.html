@@ -6,6 +6,10 @@
   <app-user-agent (changeView)="changeView($event)"></app-user-agent>
 </div>
 
+<div class="view-container child" [@slideIn]="'dynamic'" *ngIf="currentView === 'app-web-rtc'">
+  <app-web-rtc (changeView)="changeView($event)"></app-web-rtc>
+</div>
+
 <div class="view-container child" [@slideIn]="type" *ngIf="currentView === 'app-default-routing'">
   <app-default-routing (changeView)="changeView($event)"></app-default-routing>
 </div>

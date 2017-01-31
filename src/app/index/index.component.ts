@@ -34,6 +34,7 @@ export class IndexComponent {
   cypherpunkEnabled = this.indexSettings.cypherpunkEnabled;
   defaultRouting = this.indexSettings.defaultRouting;
   routing = this.indexSettings.routing;
+  cachedSmartServers = this.indexSettings.cachedSmartServers;
   selectedRouteOpt = 'Loading...';
   selectedRouteServer;
   selectedRouteServerName = 'Loading...';
@@ -43,6 +44,7 @@ export class IndexComponent {
   actualCountry = '';
   smartServer;
   validProtocol = true;
+  countryCode;
 
   selectedRouteOpts = {
     smart: 'Smart Routing',
@@ -56,6 +58,38 @@ export class IndexComponent {
     private proxySettingsService: ProxySettingsService,
     private hqService: HqService
   ) {
+    chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
+      let curTab = tabs[0];
+      let url = curTab.url
+      this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
+      let protocol = url.split("://")[0];
+      this.validProtocol = protocol === 'http' || protocol === 'https';
+      if (this.domain && this.validProtocol) {
+        // Get Smart Route name
+        let match = this.domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
+        let tld = match && match.length ? match[0] : null;
+        if (tld) {
+          tld = tld.slice(1); // remove "."
+          this.countryCode = tld;
+        }
+        else { this.countryCode = "US"; }
+
+        // .com -> US and .uk -> GB, all other tlds are direct translations
+        // Try to preload smart server name from cache
+        if (this.cachedSmartServers) {
+          this.smartServer = this.cachedSmartServers[this.countryCode];
+          this.smartServerName = this.smartServer.name;
+        }
+
+        // Load fav icon
+        let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
+
+        // favicon appears to be a normal url
+        if (curTab.favIconUrl && curTab.favIconUrl != '' && curTab.favIconUrl.indexOf('chrome://favicon/') == -1) {
+          this.faviconUrl = curTab.favIconUrl;
+        }
+      }
+    });
 
     let init = () => {
       if (this.cypherpunkEnabled) { this.proxySettingsService.enableProxy(); }
@@ -65,56 +99,25 @@ export class IndexComponent {
         this.actualCountry = this.proxySettingsService.countries[res.country];
         this.actualCountryFlag = '/assets/flags/svg/flag-' + res.country + '.svg';
       });
-      chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
-        let curTab = tabs[0];
-        let url = curTab.url
-        this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
-        let protocol = url.split("://")[0];
-        this.validProtocol = protocol === 'http' || protocol === 'https';
-        if (url && this.validProtocol) {
-          // Get Smart Route name
-          let match = this.domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
-          let tld = match && match.length ? match[0] : null;
-          let countryCode;
-          if (tld) {
-            tld = tld.slice(1); // remove "."
-            countryCode = tld;
-          }
-          else { countryCode = "US"; }
+      if (this.domain && this.validProtocol) {
+        // Check if the cache updated an update the smart server name if so
+        this.smartServer = this.proxySettingsService.cachedSmartServers[this.countryCode];
+        this.smartServerName = this.smartServer.name;
 
-          // .com -> US and .uk -> GB, all other tlds are direct translations
-          this.smartServer = this.proxySettingsService.getSmartServer(countryCode);
-          this.smartServerName = this.smartServer.name;
+        // Load which proxy is selected once we have domain info
+        this.selectedRoutingInit();
+      }
+      // Not on a valid website
+      else {
+        this.smartServerName = 'Unavailable';
+        this.selectedRouteOpt = 'NONE';
+        this.applyNoProxy();
+      }
+    };
 
-          // Load which proxy is selected once we have domain info
-          this.selectedRoutingInit();
-
-          // if (this.privacyFilterWhitelist[this.domain] === undefined) {
-          //   this.privacyFilterSwitch = true;
-          // }
-          // else if (this.privacyFilterWhitelist[this.domain] === false) {
-          //   this.privacyFilterSwitch = false;
-          // }
-
-          // Load fav icon
-          let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
-
-          // favicon appears to be a normal url
-          if (curTab.favIconUrl && curTab.favIconUrl != '' && curTab.favIconUrl.indexOf('chrome://favicon/') == -1) {
-            this.faviconUrl = curTab.favIconUrl;
-          }
-        }
-        // Not on a valid website
-        else {
-          this.smartServerName = 'Unavailable';
-          this.selectedRouteOpt = 'NONE';
-          this.applyNoProxy();
-        }
-      });
-    }
     // Initialize proxy servers
     // If latencyList is populated then background script already populated server info
-    if (this.proxySettingsService.latencyList) {
+    if (this.proxySettingsService.latencyList && this.proxySettingsService.latencyList.length) {
       console.log('Servers preloaded by background script');
       this.hqService.fetchUserStatus().subscribe(res => {
         init();

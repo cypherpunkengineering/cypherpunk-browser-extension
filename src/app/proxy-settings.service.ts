@@ -14,6 +14,10 @@ export class ProxySettingsService {
   fastestServer;
   fastestServerName = 'Loading...';
 
+  cachedSmartServers = {
+
+  };
+
   regionOrder = [
     "DEV",
     "NA",
@@ -342,7 +346,7 @@ export class ProxySettingsService {
   }
 
   enableProxy() {
-    if (!this.servers) return;
+    if (!this.latencyList || !this.servers) return;
     let config = this.generatePACConfig();
     console.log(config.pacScript.data);
     chrome.proxy.settings.set({ value: config, scope: 'regular' });
@@ -375,8 +379,7 @@ export class ProxySettingsService {
       "  /* Don't proxy local hostnames */\n" +
       "  if (isPlainHostName(host)) return 'DIRECT';\n\n";
 
-
-    pacScript += "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n";
+    pacScript += "  if (shExpMatch(host, \"cypherpunk.privacy.network\")) return 'DIRECT';\n";
 
     // 1. Generate direct pinging rules for proxy addresses
     // Do not apply proxy when pinging proxy servers to measure latency
@@ -475,10 +478,12 @@ export class ProxySettingsService {
         "it", "jp", "nl", "no", "ru", "se", "sg", "tr", "com"
       ];
       tlds.forEach((tld) => {
+        let smartServer = this.getSmartServer(tld);
+        this.cachedSmartServers[tld] = smartServer;
         defaultRoutingRules += "  if (shExpMatch(host, \"*." + tld + "\")) return 'PROXY " +
-          this.getSmartServer(tld).httpDefault[0] + ":80';\n"
+          smartServer.httpDefault[0] + ":80';\n"
       });
-
+      this.settingsService.saveCachedSmartServers(this.cachedSmartServers);
       // Default to fastest US server if TLD is unknown
       defaultRoutingRules += "  else return 'PROXY " +
         this.getSmartServer("com").httpDefault[0] + ":80';\n";

@@ -39,6 +39,7 @@ class Keys {
   public static SMART_ROUTING_ENABLED: string = "smartRoutingEnabled";
   public static PRIVACY_FILTER_WHITELIST: string = "privacyFilterWhitelist";
   public static ROUTING: string = "routing";
+  public static CACHED_SMART_SERVERS: string = "cachedSmartServers";
 
   // Advanced Settings
   public static FORCE_HTTPS: string = "settings.forceHttps";
@@ -71,6 +72,7 @@ class Defaults {
     proxyServersArr: [],
     premiumAccount: false,
     pacScriptConfig: null,
+    cachedSmartServers: null,
     settings: {
       forceHttps: true,
       webRTCLeakProtection: "DISABLE_NON_PROXIED_UDP",
@@ -113,6 +115,7 @@ export class SettingsService {
       this.localStorageService.set(Keys.PREMIUM_ACCOUNT, Defaults.getVal(Keys.PREMIUM_ACCOUNT));
       this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, Defaults.getVal(Keys.SMART_ROUTING_ENABLED));
       this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, Defaults.getVal(Keys.PRIVACY_FILTER_WHITELIST));
+      this.localStorageService.set(Keys.CACHED_SMART_SERVERS, Defaults.getVal(Keys.CACHED_SMART_SERVERS));
       this.localStorageService.set(Keys.ROUTING, Defaults.getVal(Keys.ROUTING));
       this.localStorageService.set(Keys.ROUTING_TYPE, Defaults.getVal(Keys.ROUTING_TYPE));
       this.localStorageService.set(Keys.ROUTING_SELECTED_SERVER, Defaults.getVal(Keys.ROUTING_SELECTED_SERVER));
@@ -147,6 +150,10 @@ export class SettingsService {
     }
   }
 
+  saveCachedSmartServers(smartServers) {
+    this.localStorageService.set(Keys.CACHED_SMART_SERVERS, smartServers);
+  }
+
   savePacScriptConfig(config) {
     this.localStorageService.set(Keys.PAC_SCRIPT_CONFIG, config);
   }
@@ -157,6 +164,7 @@ export class SettingsService {
       cypherpunkEnabled: this.localStorageService.get(Keys.ENABLED),
       smartRoutingEnabled: this.localStorageService.get(Keys.SMART_ROUTING_ENABLED),
       routing: this.localStorageService.get(Keys.ROUTING),
+      cachedSmartServers: this.localStorageService.get(Keys.CACHED_SMART_SERVERS),
       defaultRouting: {
         type: this.localStorageService.get(Keys.ROUTING_TYPE),
         selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)

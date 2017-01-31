@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Rx';
 @Injectable()
 export class HqService {
   options: RequestOptions;
-  apiPrefix: string = 'https://cypherpunk.com/api/v0';
+  apiPrefix: string = 'https://cypherpunk.privacy.network/api/v0';
   browserObj: any = chrome ? chrome : chrome;
 
   constructor (private http: Http) {

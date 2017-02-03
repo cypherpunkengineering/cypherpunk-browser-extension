@@ -1,0 +1,64 @@
+<!-- Tutorial Slides for initial run -->
+<div id="tutorial">
+  <div class="card" [ngClass]="{'visible': tutorial === 1, 'hidden-left': tutorial > 1 }">
+    <h2>How to Enable Proxy?</h2>
+    <div class="image">
+      <img src="/assets/tutorial/tutorial_enable_proxy.png" />
+    </div>
+    <div class="tooltip">
+      Click on the Cypherpunk to activate Privacy Protection
+    </div>
+    <div class="next">
+      <button (click)="tutorial = 2">Next</button>
+    </div>
+  </div>
+
+  <div class="card" [ngClass]="{'visible': tutorial === 2, 'hidden-left': tutorial > 2, 'hidden-right': tutorial < 2 }">
+    <h2>What is CypherPlay?</h2>
+    <div class="image cypherplay">
+      <img src="/assets/tutorial/tutorial_smart_routing.png" />
+    </div>
+    <div class="tooltip">
+      CypherPlay routing mode automatically routes your traffic through the country it belongs in
+    </div>
+    <div class="next">
+      <button (click)="tutorial = 3">Next</button>
+    </div>
+  </div>
+
+  <div class="card" [ngClass]="{'visible': tutorial === 3, 'hidden-left': tutorial > 3, 'hidden-right': tutorial < 3 }">
+    <h2>How to Override Sites?</h2>
+    <div class="image overrides">
+      <img src="/assets/tutorial/tutorial_override_sites.png" />
+    </div>
+    <div class="tooltip">
+      Adjust specific site preferences to override proxy or content filter settings
+    </div>
+    <div class="next">
+      <button (click)="tutorial = 4">Next</button>
+    </div>
+  </div>
+
+  <div class="card" [ngClass]="{'visible': tutorial === 4, 'hidden-right': tutorial < 4 }">
+    <h2>One Final Step</h2>
+    <div class="text">
+      Share anonymized analytics about your VPN connections to help make Cypherpunk Privacy faster and more reliable
+    </div>
+    <div class="image">
+      <img src="/assets/tutorial/tutorial_anonymized_analytics.png" />
+    </div>
+    <div class="next">
+      <button (click)="allowAnalytics()">Allow</button>
+      <div class="deny" (click)="saveTutorialFinished()">Don't Allow</div>
+    </div>
+  </div>
+  <div class="back-btn" *ngIf="tutorial > 1" (click)="tutorial = tutorial - 1">
+    <span class="back-icon">&#x3008;</span><span class="text">Back</span>
+  </div>
+  <div class="dots">
+    <div class="dot" [ngClass]="{'selected': tutorial === 1 }"></div>
+    <div class="dot" [ngClass]="{'selected': tutorial === 2 }"></div>
+    <div class="dot" [ngClass]="{'selected': tutorial === 3 }"></div>
+    <div class="dot" [ngClass]="{'selected': tutorial === 4 }"></div>
+  </div>
+</div>

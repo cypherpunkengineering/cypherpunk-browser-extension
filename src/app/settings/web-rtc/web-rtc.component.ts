@@ -9,8 +9,8 @@ export class WebRtcComponent {
   @Output() changeView = new EventEmitter<string>();
 
   title = 'WebRTC Leak Prevention';
-  userAgentSettings = this.settingsService.webRtcSettings();
-  selectedWebRTCType = this.userAgentSettings.webRtcLeakProtection;
+  webRTCSettings = this.settingsService.webRtcSettings();
+  selectedWebRTCType = this.webRTCSettings.webRtcLeakProtection;
 
   constructor(private settingsService: SettingsService) {}
 

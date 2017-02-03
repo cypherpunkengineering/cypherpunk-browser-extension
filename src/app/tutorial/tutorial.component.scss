@@ -1,0 +1,91 @@
+@import '~bourbon/app/assets/stylesheets/_bourbon';
+@import '~bourbon-neat/app/assets/stylesheets/_neat';
+@import '~bourbon-bitters/app/assets/stylesheets/_variables';
+@import '~bourbon-bitters/app/assets/stylesheets/_buttons';
+
+#tutorial {
+  background: linear-gradient(0, #0E063D rem(108), #040224 rem(108));
+  height: rem(502);
+  .card {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    text-align: center;
+    width: rem(360);
+    &.hidden-left { left: rem(-360); transition: left .25s ease-in-out; }
+    &.hidden-right { left: rem(360); transition: left .25s ease-in-out; }
+    &.visible { left: 0; transition: left .25s ease-in-out; }
+    h2 { text-align: center; width: 100%; color: #fff; font-weight: 500; margin-top: rem(24); }
+    .image {
+      margin-top: rem(16);
+      width: 100%;
+      height: rem(200);
+      line-height: rem(200);
+      img { vertical-align: middle; }
+      &.cypherplay, &.overrides { height: rem(180); line-height: rem(180); }
+    }
+    .text {
+      width: 65%;
+      margin: 0 auto;
+      line-height: rem(21.6);
+      color: lighten(#0E063D, 55%);
+    }
+    .tooltip {
+      margin-top: rem(16);
+      background: #fff;
+      width: 60%;
+      color: #555;
+      border-radius: rem(4);
+      margin-left: auto;
+      font-weight: 500;
+      margin-right: auto;
+      padding: rem(16);
+    }
+    .next {
+      margin-top: rem(24);
+      width: 100%;
+      button {
+        width: rem(165.2);
+        height: rem(41.6);
+        background-color: #1987bd;
+        outline: none;
+        box-shadow: 3px 3px 0px 4px #040224;
+      }
+      .deny {
+        user-select: none;
+        cursor: pointer;
+        z-index: 100;
+        color: lighten(#0E063D, 45%);
+        text-decoration: underline;
+        margin-top: rem(24);
+      }
+    }
+  }
+  .back-btn {
+    position: absolute;
+    bottom: rem(16);
+    left: rem(24);
+    user-select: none;
+    cursor: pointer;
+    z-index: 100;
+    color: lighten(#0E063D, 45%);
+    .text { text-decoration: underline; }
+  }
+  .dots {
+    position: absolute;
+    bottom: rem(16);
+    text-align: center;
+    user-select: none;
+    width: 100%;
+    .dot {
+      display: inline-block;
+      margin: 0 rem(5);
+      background: lighten(#0E063D, 20%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      &.selected { background: lighten(#0E063D, 45%); }
+    }
+  }
+}

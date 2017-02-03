@@ -15,6 +15,7 @@ import { DefaultRoutingComponent } from './settings/default-routing/default-rout
 import { SpecificServerComponent } from './settings/default-routing/specific-server/specific-server.component';
 import { SelectedServerComponent } from './selected-server/selected-server.component';
 import { IndexComponent } from './index/index.component';
+import { TutorialComponent } from './tutorial/tutorial.component';
 import { SettingsControllerComponent } from './settings/settings-controller.component';
 import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
@@ -30,6 +31,7 @@ let localStorageServiceConfig = {
   declarations: [
     AppComponent,
     IndexComponent,
+    TutorialComponent,
     SmartRoutesComponent,
     SettingsComponent,
     PrivacyFilterComponent,

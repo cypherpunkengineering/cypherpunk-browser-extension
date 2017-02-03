@@ -107,7 +107,6 @@ export class SettingsService {
 
     // Settings haven't been initialized yet, set defaults
     if (!initialized) {
-      this.localStorageService.set(Keys.INITIALIZED, Defaults.getVal(Keys.INITIALIZED));
       this.localStorageService.set(Keys.ENABLED, Defaults.getVal(Keys.ENABLED));
       this.localStorageService.set(Keys.LATENCY_LIST, Defaults.getVal(Keys.LATENCY_LIST));
       this.localStorageService.set(Keys.PROXY_SERVERS, Defaults.getVal(Keys.PROXY_SERVERS));
@@ -161,6 +160,7 @@ export class SettingsService {
   /** Index Settings **/
   indexSettings() {
     return {
+      showTutorial: !this.localStorageService.get(Keys.INITIALIZED),
       cypherpunkEnabled: this.localStorageService.get(Keys.ENABLED),
       smartRoutingEnabled: this.localStorageService.get(Keys.SMART_ROUTING_ENABLED),
       routing: this.localStorageService.get(Keys.ROUTING),
@@ -178,6 +178,10 @@ export class SettingsService {
         whitelist: this.localStorageService.get(Keys.PRIVACY_FILTER_WHITELIST)
       }
     }
+  }
+
+  saveTutorialFinished() {
+    this.localStorageService.set(Keys.INITIALIZED, Defaults.getVal(Keys.INITIALIZED));
   }
 
   saveProxyCredentials(username: string, password: string) {

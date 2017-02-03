@@ -46,6 +46,8 @@ export class IndexComponent {
   validProtocol = true;
   countryCode;
 
+  showTutorial = this.indexSettings.showTutorial;
+
   selectedRouteOpts = {
     smart: 'Smart Routing',
     fastest: 'Fastest',
@@ -72,12 +74,12 @@ export class IndexComponent {
           tld = tld.slice(1); // remove "."
           this.countryCode = tld;
         }
-        else { this.countryCode = "US"; }
+        else { this.countryCode = "COM"; } // Default to COM (US)
 
         // .com -> US and .uk -> GB, all other tlds are direct translations
         // Try to preload smart server name from cache
         if (this.cachedSmartServers) {
-          this.smartServer = this.cachedSmartServers[this.countryCode];
+          this.smartServer = this.cachedSmartServers[this.countryCode.toLowerCase()];
           this.smartServerName = this.smartServer.name;
         }
 
@@ -100,9 +102,15 @@ export class IndexComponent {
         this.actualCountryFlag = '/assets/flags/svg/flag-' + res.country + '.svg';
       });
       if (this.domain && this.validProtocol) {
-        // Check if the cache updated an update the smart server name if so
-        this.smartServer = this.proxySettingsService.cachedSmartServers[this.countryCode];
-        this.smartServerName = this.smartServer.name;
+        // Check if the cache updated then update the smart server name if so
+        if (Object.keys(this.proxySettingsService.cachedSmartServers).length) {
+          this.smartServer = this.proxySettingsService.cachedSmartServers[this.countryCode.toLowerCase()];
+          this.smartServerName = this.smartServer.name;
+        }
+        else { // Cache isn't present fetch smart route manually
+          this.smartServer = this.proxySettingsService.getSmartServer(this.countryCode);
+          this.smartServerName = this.smartServer.name;
+        }
 
         // Load which proxy is selected once we have domain info
         this.selectedRoutingInit();
@@ -129,6 +137,10 @@ export class IndexComponent {
       console.log('Servers being manually loaded');
       this.proxySettingsService.loadServers().then(res => { init(); });
     }
+  }
+
+  tutorialVisible(visible: boolean) {
+    this.showTutorial = visible;
   }
 
   changeProxy(server: any) {
@@ -213,7 +225,7 @@ export class IndexComponent {
     console.log('Applying No Proxy');
     this.selectedRouteServer = undefined;
     this.selectedRouteServerName = 'Unprotected';
-    this.selectedRouteServerFlag = this.actualCountryFlag;
+    this.selectedRouteServerFlag = undefined;
   }
 
   applySelectedProxy(serverId) {

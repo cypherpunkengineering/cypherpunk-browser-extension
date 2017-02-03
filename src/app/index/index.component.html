@@ -1,4 +1,4 @@
-<div id="index" [ngClass]="{'cypherpunk-on': cypherpunkEnabled, 'cypherpunk-off': !cypherpunkEnabled,
+<div id="index" *ngIf="!showTutorial" [ngClass]="{'cypherpunk-on': cypherpunkEnabled, 'cypherpunk-off': !cypherpunkEnabled,
   'smart-routing-info': true}">
   <div id="header__main">
     <img class="logo" src="/assets/icon-account.svg" alt="">
@@ -11,16 +11,6 @@
       </label>
     </div>
   </div>
-  <!-- <div id="header-on-off" class="bottom-separator" [ngClass]="{'header-off': !cypherpunkEnabled}">
-    <div id="logo"><div></div></div>
-    <div id="enabled-label">Cypherpunk is {{cypherpunkEnabled ? 'ON' : 'OFF'}}</div>
-    <div id="enabled-switch">
-      <label class="key-switch">
-        <input #enableVpnSwitch [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
-        <div class="checkbox"></div>
-      </label>
-    </div>
-  </div> -->
 
   <!-- Cypherpunk is disabled -->
   <div id="info-disconnected" *ngIf="!cypherpunkEnabled">
@@ -46,7 +36,6 @@
             {{ selectedRouteServerName }}
             <br>
               ( {{selectedRouteType()}} )
-              <!--<div class="arrow--down"><img src="/assets/icon-caret--down.svg" alt=""></div>-->
           </div>
         </div>
 
@@ -80,34 +69,8 @@
 
     </div>
 
-<!--     <div *ngIf="cypherpunkEnabled" id="privacy-on-off" class="switch-row large top-separator">
-      <div id="privacy-label" class="label">Privacy filter for <span [innerHTML]="domain"></span></div>
-      <div id="privacy-enabled-switch" class="switch">
-        <label class="label-switch">
-          <input type="checkbox" [(ngModel)]="privacyFilterSwitch" (ngModelChange)="togglePrivacyFilter($event)" [disabled]="!cypherpunkEnabled" />
-          <div class="checkbox"></div>
-        </label>
-      </div> -->
-
   </div>
-
-
-
-<!--   <div id="header-on-off" class="" [ngClass]="{'header-off': !cypherpunkEnabled}"> -->
-    <!-- <div id="logo"><div></div></div> -->
-
-    <!--
-    <div id="enabled-switch">
-      <label class="key-switch">
-        <div id="enabled-label">Cypherpunk is {{cypherpunkEnabled ? 'ON' : 'OFF'}}</div>
-        <input #enableVpnSwitch [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
-        <div class="checkbox"></div>
-      </label>
-    </div>
-  </div> -->
-
-
-  <!-- <div id="footer">
-    <a routerLink="/advanced-settings" routerLinkActive="active">Advanced Settings</a>
-  </div> -->
 </div>
+
+<!-- Tutorial Component - Visible on initial run -->
+<app-tutorial *ngIf="showTutorial" (tutorialVisible)="tutorialVisible($event)"></app-tutorial>

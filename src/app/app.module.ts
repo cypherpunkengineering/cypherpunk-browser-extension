@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 import { LocalStorageModule } from 'angular-2-local-storage';
 
 import { AppComponent } from './app.component';
-import { SmartRoutesComponent } from './smart-routes/smart-routes.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PrivacyFilterComponent } from './settings/privacy-filter/privacy-filter.component';
 import { UserAgentComponent } from './settings/user-agent/user-agent.component';
@@ -32,7 +31,6 @@ let localStorageServiceConfig = {
     AppComponent,
     IndexComponent,
     TutorialComponent,
-    SmartRoutesComponent,
     SettingsComponent,
     PrivacyFilterComponent,
     UserAgentComponent,
@@ -47,7 +45,6 @@ let localStorageServiceConfig = {
     FormsModule,
     HttpModule,
     RouterModule.forRoot([
-      { path: 'smart-routes', component: SmartRoutesComponent },
       { path: 'settings', component: SettingsControllerComponent },
       { path: 'settings/privacy-filter', component: PrivacyFilterComponent },
       { path: 'settings/user-agent', component: UserAgentComponent },

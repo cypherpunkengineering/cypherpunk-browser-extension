@@ -27,7 +27,6 @@ export class PingService {
     });
   }
 
-
   requestImage(url: string) {
     url = 'https://' + url + ':3128';
     return new Promise((resolve, reject) => {

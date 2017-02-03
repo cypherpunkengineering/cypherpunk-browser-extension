@@ -23,6 +23,5 @@ export class WebRtcComponent {
   goToView(name: string) {
     this.changeView.emit(name);
   }
-
 }
 

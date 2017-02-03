@@ -8,9 +8,7 @@ var webRTCLeakProtectionType = JSON.parse(localStorage.getItem('cypherpunk.setti
 var authUsername, authPassword;
 
 // Remove proxy and settings upon uninstall
-chrome.management.onUninstalled.addListener(() => {
-  destroy();
-});
+chrome.management.onUninstalled.addListener(() => { destroy(); });
 
 /* PROXY SERVER PINGING FUNCTIONALITY */
 var serverArr = JSON.parse(localStorage.getItem('cypherpunk.proxyServersArr'));
@@ -119,7 +117,6 @@ function saveServerArray(servers) {
   for (var i = 0; i < this.regionOrder.length; i++) {
     order[this.regionOrder[i]] = i + 1;
   }
-  console.log(order);
 
   var serverArr = [];
   var serverKeys = Object.keys(servers);
@@ -236,19 +233,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     if (userAgentString) { enableUserAgentSpoofing(); }
     else { disableUserAgentSpoofing(); }
   }
-  else if (request.action === 'PrivacyFilter') {
-    cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
-    if (!cypherpunkEnabled) { return; }
-    // Reload current tab to update blocked requests
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.reload(tabs[0].id);
-    });
-  }
   else if (request.action === "UpdateWebRTCPolicy") {
     if (!cypherpunkEnabled) { return; }
     webRTCLeakProtectionType = JSON.parse(localStorage.getItem('cypherpunk.settings.webRTCLeakProtection'));
     updateWebRTCLeakProtection(webRTCLeakProtectionType);
   }
+  // else if (request.action === 'PrivacyFilter') {
+  //   cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
+  //   if (!cypherpunkEnabled) { return; }
+  //   // Reload current tab to update blocked requests
+  //   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+  //     chrome.tabs.reload(tabs[0].id);
+  //   });
+  // }
   // else if (request.action === "ForceHTTPS"){
   //   forceHttps = localStorage.getItem('cypherpunk.settings.forceHttps') === "true"
   //   if (forceHttps) { enableForceHttps(); }

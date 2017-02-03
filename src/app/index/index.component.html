@@ -28,7 +28,7 @@
           </div>
           <div class="subtitle">{{ actualCountry }}</div>
         </div>
-        <div class="location location--public" (click)="toggleRoutingDropdown()">
+        <div class="location location--public">
           <div class="flag-container">
             <img *ngIf="selectedRouteServerFlag" src="{{selectedRouteServerFlag}}" />
           </div>
@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <!-- Smart Routing Dropdown -->
+      <!-- Routing Options -->
       <div class="routing-dd" [ngClass]="{'disabled': !validProtocol }">
         <div class="row" (click)="selectRouteType('SMART')" [ngClass]="{'checked': selectedRouteOpt === 'SMART' }">{{ smartServerName }} (Smart Routing)</div>
         <div class="row" (click)="selectRouteType('FASTEST')" [ngClass]="{'checked': selectedRouteOpt === 'FASTEST' }">{{ proxySettingsService.fastestServerName }} (Fastest)</div>

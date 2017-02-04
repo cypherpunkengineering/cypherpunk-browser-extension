@@ -110,11 +110,11 @@ export class ProxySettingsService {
     if (!this.latencyList || !this.servers) return;
     let config = this.generatePACConfig();
     console.log(config.pacScript.data);
-    chrome.proxy.settings.set({ value: config, scope: 'regular' });
+    // chrome.proxy.settings.set({ value: config, scope: 'regular' });
   }
 
   disableProxy() {
-    chrome.proxy.settings.set({ value: { mode: "system" }, scope: 'regular' });
+    // chrome.proxy.settings.set({ value: { mode: "system" }, scope: 'regular' });
   }
 
   generatePACConfig() {

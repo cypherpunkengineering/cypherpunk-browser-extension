@@ -25,6 +25,7 @@ import { LocalStorageService } from 'angular-2-local-storage';
 // - ios/android?
 //
 class Keys {
+  public static FIREFOX: string = "firefox";
   public static PROXY_USERNAME: string = "proxy.username";
   public static PROXY_PASSWORD: string = "proxy.password";
   public static LATENCY_LIST: string = "latencyList";
@@ -128,6 +129,8 @@ export class SettingsService {
       this.localStorageService.set(Keys.USER_AGENT_STRING, Defaults.getVal(Keys.USER_AGENT_STRING));
     }
   }
+
+  isFirefox() { return this.localStorageService.get(Keys.FIREFOX); }
 
   /* Proxy Settings Service */
   proxySettingsService() {

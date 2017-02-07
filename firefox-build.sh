@@ -9,3 +9,4 @@ mv angular-cli.json firefox.angular-cli.json
 mv chrome.angular-cli.json angular-cli.json
 
 cp -R firefox-entrypoint/* dist-firefox
+mv dist-firefox/webextension/firefox.manifest.json dist-firefox/webextension/manifest.json

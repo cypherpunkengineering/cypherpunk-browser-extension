@@ -55,6 +55,7 @@ export class ProxySettingsService {
       this.hqService.fetchUserStatus().flatMap(data => {
         this.accountType = data.account.type;
         this.premiumProxyAccount = this.accountType === 'premium';
+        chrome.runtime.sendMessage({ action: "ProxyAuth", authUsername: data.privacy.username, authPassword: data.privacy.password });
         this.settingsService.saveProxyCredentials(data.privacy.username, data.privacy.password);
         return this.hqService.findServers(this.accountType); // fetch proxy server list
       }).subscribe(servers => {
@@ -109,11 +110,12 @@ export class ProxySettingsService {
   enableProxy() {
     if (!this.latencyList || !this.servers) return;
     let config = this.generatePACConfig();
-    console.log(config.pacScript.data);
+    chrome.runtime.sendMessage({ action: 'SetPACScript', pacScript: config.pacScript.data });
     // chrome.proxy.settings.set({ value: config, scope: 'regular' });
   }
 
   disableProxy() {
+    chrome.runtime.sendMessage({ action: 'ResetPACScript'});
     // chrome.proxy.settings.set({ value: { mode: "system" }, scope: 'regular' });
   }
 

@@ -1,5 +1,4 @@
 var cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
-//var forceHttps = localStorage.getItem('cypherpunk.settings.forceHttps') === "true";
 var privacyFilterEnabled = localStorage.getItem('cypherpunk.settings.privacyFilter.enabled') === "true";
 var userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
 

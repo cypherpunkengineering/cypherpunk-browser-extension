@@ -6,6 +6,7 @@
 
 html, body {
   max-height: $app-height;
+  overflow-x: -moz-hidden-unscrollable;
 }
 
 body {

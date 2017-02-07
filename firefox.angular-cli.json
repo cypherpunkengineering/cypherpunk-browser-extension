@@ -9,7 +9,7 @@
       "outDir": "dist-firefox/webextension",
       "assets": [
         "assets",
-        "firefox.manifest.json",
+        "manifest.json",
         "firefox.background.js"
       ],
       "index": "index.html",

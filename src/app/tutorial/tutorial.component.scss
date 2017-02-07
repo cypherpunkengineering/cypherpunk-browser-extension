@@ -5,7 +5,10 @@
 
 #tutorial {
   background: linear-gradient(0, #0E063D rem(108), #040224 rem(108));
+  background: -moz-linear-gradient(90deg, #0E063D rem(108), #040224 rem(108));
   height: rem(502);
+  width: rem(360);
+  overflow: hidden;
   .card {
     position: absolute;
     top: 0;

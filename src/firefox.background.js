@@ -1,7 +1,16 @@
 var authUsername, authPassword;
 var userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
+var cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
 
-// Event Listener Triggers
+/* Try to initialize when background script runs */
+if (cypherpunkEnabled) { init(); }
+else {
+  loadProxies(); // Attempt to load proxy servers even if not enabled
+  destroy();
+}
+
+
+/* Event Listener Triggers */
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.action === "CypherpunkEnabled") {
     cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
@@ -17,6 +26,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 });
 
+/* Proxy Fetching Methods */
 function httpGetAsync(theUrl, callback) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
@@ -44,18 +54,38 @@ function loadProxies() {
   });
 }
 
-loadProxies();
 
+/* PAC Script Methods */
+function applyProxy() {
+  var config = localStorage.getItem("cypherpunk.pacScriptConfig");
+  if (!config) { return };
+  var pacScript = JSON.parse(config).pacScript.data;
+  console.log('Applying PacScript in BG', pacScript);
+  chrome.runtime.sendMessage({ action: "SetPACScript", pacScript: pacScript });
+}
+
+function disableProxy() {
+  chrome.runtime.sendMessage({ action: "ResetPACScript" });
+}
+
+
+/* Init and Teardown methods */
 function init() {
-  console.log('INIT!');
 
-  loadProxies();
+  loadProxies(); // Attempt to fetch Proxy Servers
+  applyProxy(); // Attempt to load PAC Script
 
   // Enable user agent spoofing if user agent string supplied
   var userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
   if (userAgentString) { enableUserAgentSpoofing(); }
   else { disableUserAgentSpoofing(); }
 
+  // Enable/Disable WebRTC leak protection depending on saved setting
+  var webRTCLeakProtectionEnabled = localStorage.getItem('cypherpunk.settings.ffWebRTCLeakProtection') === "true";
+  if (webRTCLeakProtectionEnabled) { enableWebRTCLeakProtection(); }
+  else { disableWebRTCLeakProtection(); }
+
+  // Set icon to colored Cypherpunk
   chrome.browserAction.setIcon({
    path : {
      "128": "assets/cypherpunk_shaded_128.png",
@@ -70,8 +100,11 @@ function init() {
 }
 
 function destroy() {
-  console.log('DESTROY!');
-  disableUserAgentSpoofing();
+  disableProxy(); // Disable PAC Script
+  disableUserAgentSpoofing(); // Disable user agent spoofing
+  disableWebRTCLeakProtection(); // Disable webRTC leak protection
+
+  // Set icon to grey Cypherpunk
   chrome.browserAction.setIcon({
     path : {
       "128": "assets/cypherpunk_grey_128.png",
@@ -86,14 +119,30 @@ function destroy() {
 }
 
 
+/* Clear cache on url change so ip doesn't leak from previous site */
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  if (changeInfo.status == 'loading') {
+    chrome.runtime.sendMessage({ action: "ClearCache" });
+  }
+});
+
+
+/** WebRTC Leak Prevention **/
+function enableWebRTCLeakProtection() {
+  chrome.runtime.sendMessage({ action: "EnableWebRTCLeakProtection" });
+}
+
+function disableWebRTCLeakProtection() {
+  chrome.runtime.sendMessage({ action: "DisableWebRTCLeakProtection" });
+}
+
+
 /** User Agent Spoofing **/
 function spoofUserAgent(details) {
   var headers = details.requestHeaders;
   if (!userAgentString) return;
   for (var i = 0, l = headers.length; i < l; ++i) {
-    console.log(headers[i].name);
     if (headers[i].name === 'User-Agent' || headers[i].name === 'user-agent' ) {
-      console.log('IN HERE!');
       if (userAgentString !== 'false') {
         headers[i].value = userAgentString || headers[i].value;
       }

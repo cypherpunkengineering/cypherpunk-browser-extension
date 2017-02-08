@@ -5,8 +5,6 @@ import { enableProdMode } from '@angular/core';
 import { environment } from './environments/environment';
 import { AppModule } from './app/index';
 
-localStorage.setItem('cypherpunk.firefox', 'true');
-
 if (environment.production) {
   enableProdMode();
 }

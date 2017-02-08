@@ -56,7 +56,6 @@ export class IndexComponent {
     private proxySettingsService: ProxySettingsService,
     private hqService: HqService
   ) {
-    console.log('Browser is Firefox:', this.settingsService.isFirefox());
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
       let curTab = tabs[0];
       let url = curTab.url

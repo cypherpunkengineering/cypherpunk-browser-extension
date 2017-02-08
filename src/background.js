@@ -155,7 +155,7 @@ function loadProxies() {
 
 // Clear cache on url change so ip doesnt leak from previous site
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  if (changeInfo.status == 'loading') { // apply pac script while new url is loading
+  if (changeInfo.status == 'loading') {
     if (chrome.browsingData) {
       chrome.browsingData.removeCache();
     }

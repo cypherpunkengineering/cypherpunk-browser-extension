@@ -110,13 +110,22 @@ export class ProxySettingsService {
   enableProxy() {
     if (!this.latencyList || !this.servers) return;
     let config = this.generatePACConfig();
-    chrome.runtime.sendMessage({ action: 'SetPACScript', pacScript: config.pacScript.data });
-    // chrome.proxy.settings.set({ value: config, scope: 'regular' });
+
+    if (this.settingsService.isFirefox()) { // Firefox has to apply proxy in background script
+      chrome.runtime.sendMessage({ action: 'SetPACScript', pacScript: config.pacScript.data });
+    }
+    else { // Apply PAC Script in Chrome
+      chrome.proxy.settings.set({ value: config, scope: 'regular' });
+    }
   }
 
   disableProxy() {
-    chrome.runtime.sendMessage({ action: 'ResetPACScript'});
-    // chrome.proxy.settings.set({ value: { mode: "system" }, scope: 'regular' });
+    if (this.settingsService.isFirefox()) { // Firefox has to reset proxy in background script
+      chrome.runtime.sendMessage({ action: 'ResetPACScript'});
+    }
+    else { // Rest PAC Script settings in Chrome
+      chrome.proxy.settings.set({ value: { mode: "system" }, scope: 'regular' });
+    }
   }
 
   generatePACConfig() {

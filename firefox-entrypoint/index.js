@@ -4,20 +4,27 @@ const webExtension = require("sdk/webextension");
 
 webExtension.startup().then(api => {
   const {browser} = api;
-
-  console.log('In FireFox Background Script');
+  var base64 = require('sdk/base64');
+  var ref = require('chrome'), Cc = ref.Cc, Ci = ref.Ci;
+  var observerSvc = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
+  var cacheStorageSvc = Cc['@mozilla.org/network/cache-storage-service;1'].getService(Ci.nsICacheStorageService);
   var preferences = require('sdk/preferences/service');
+
+  console.log('In FireFox SDK Script');
+
   var authUsername, authPassword;
 
   browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log(request);
     if (request.action === "ProxyAuth") {
       authUsername = request.authUsername;
       authPassword = request.authPassword;
       createProxyAuthHeader();
     }
+    else if (request.action === "ClearCache") {
+      cacheStorageSvc.clear();
+    }
     else if (request.action === "SetPACScript") {
-      console.log('Setting PAC Script');
+      console.log('Applying Proxy Settings');
       var pac = request.pacScript;
       var pacUri = 'data:text/javascript,' + encodeURIComponent(pac);
       addRequestObserver();
@@ -25,17 +32,32 @@ webExtension.startup().then(api => {
       preferences.set('network.proxy.autoconfig_url', pacUri);
     }
     else if (request.action === "ResetPACScript") {
+      console.log('Reseting Proxy Settings')
       removeRequestObserver();
       preferences.reset('network.proxy.type');
       preferences.reset('network.proxy.autoconfig_url');
+    }
+    else if (request.action === "EnableWebRTCLeakProtection") {
+      console.log('Enabling WebRTC Leak Protection');
+      preferences.set("media.peerconnection.enabled", false);
+      preferences.set("media.peerconnection.turn.disable", true);
+      preferences.set("media.peerconnection.ice.loopback", false);
+      preferences.set("media.peerconnection.use_document_iceservers", false);
+      preferences.set("media.peerconnection.video.enabled", false);
+      preferences.set("media.peerconnection.default_iceservers", '[]');
+    }
+    else if (request.action === "DisableWebRTCLeakProtection") {
+      console.log('Disabling WebRTC Leak Protection');
+      preferences.reset("media.peerconnection.enabled");
+      preferences.reset("media.peerconnection.turn.disable");
+      preferences.reset("media.peerconnection.use_document_iceservers");
+      preferences.reset("media.peerconnection.video.enabled");
+      preferences.reset("media.peerconnection.default_iceservers");
     }
   });
 
   /** Block Proxy Auth Dialog **/
   var headers = null;
-  var ref = require('chrome'), Cc = ref.Cc, Ci = ref.Ci;
-  var observerSvc = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
-  var base64 = require('sdk/base64');
 
   var authObs = {
     observe: function(subject, topic, data) {

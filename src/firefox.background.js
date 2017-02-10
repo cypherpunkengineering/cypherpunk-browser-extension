@@ -3,12 +3,13 @@ var userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string
 var cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
 
 /* Try to initialize when background script runs */
+console.log('In Firefox Background Script');
+
 if (cypherpunkEnabled) { init(); }
 else {
   loadProxies(); // Attempt to load proxy servers even if not enabled
   destroy();
 }
-
 
 /* Event Listener Triggers */
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -38,7 +39,95 @@ function httpGetAsync(theUrl, callback) {
   xmlHttp.send(null);
 }
 
+var serverArr = JSON.parse(localStorage.getItem('cypherpunk.proxyServersArr'));
+
+function updateProxies() {
+  if (!serverArr.length) { return; }
+  loadProxies();
+}
+var hourlyUpdateInterval = 4;
+setInterval(updateProxies, hourlyUpdateInterval * 60 * 60 *1000);
+
+var min = arr => arr.reduce( ( p, c ) => { return ( p < c ? p : c ); } );
+
+function getServerLatencyList(servers, runs, premium) {
+  return Promise.all(servers.map(server => {
+    // Ensure that server is available. If server is premium user must have premium account
+    if (server.httpDefault.length && (server.level === 'premium' && premium || server.level === 'free')) {
+      var promises = [];
+      for (var i = 0; i < runs; i++) { promises.push(this.getLatency(server.ovHostname, 1)); }
+
+      return Promise.all(promises)
+      .then((pings) => {
+        return { id: server.id, latency: this.min(pings) };
+      });
+    }
+    else { return Promise.resolve({ id: server.id, latency: 9999 }); }
+  }))
+  .then(latencyList => {
+    return latencyList.sort((a, b) => { return a.latency - b.latency; });
+  })
+  .then(function(latencyList) {
+    // Keep old list if latency is high for every server
+    if (latencyList[0].latency < 9999) {
+      localStorage.setItem('cypherpunk.latencyList', JSON.stringify(latencyList));
+    }
+    chrome.runtime.sendMessage({ action: "ServersUpdated", latencyList: latencyList });
+    return latencyList;
+  });
+}
+
+function requestImage(url) {
+  url = 'https://' + url + ':3128';
+  return new Promise((resolve, reject) => {
+    var img = new Image();
+    img.onload = () => { resolve(img); };
+    img.onerror = () => { reject(url); };
+    img.src = url + '?random-no-cache=' + Math.floor((1 + Math.random()) * 0x10000).toString(16);
+  });
+}
+
+function getLatency(url, multiplier) {
+  return new Promise((resolve, reject) => {
+    var start = (new Date()).getTime();
+    var response = () => {
+        var delta = ((new Date()).getTime() - start);
+        delta *= (multiplier || 1);
+        resolve(delta);
+    };
+
+    this.requestImage(url).then(response).catch(response);
+
+    // If request times out set latency high, so it's low on the list
+    setTimeout(() => { resolve(99999); }, 4000);
+  });
+}
+
+function saveServerArray(servers) {
+  console.log('Creating server array');
+  var order = {};
+  for (var i = 0; i < regionOrder.length; i++) {
+    order[regionOrder[i]] = i + 1;
+  }
+  var serverArr = [];
+  var serverKeys = Object.keys(servers);
+  serverKeys.forEach((key) => { serverArr.push(servers[key]); });
+  // Sort By Region, Country, Name
+  serverArr.sort((a,b) => {
+    if (order[a.region] < order[b.region]) return -1;
+    if (order[a.region] > order[b.region]) return 1;
+    if (a.country < b.country) return -1;
+    if (a.country > b.country) return 1;
+    if (a.name < b.name) return -1;
+    if (a.name > b.name) return 1;
+    return 0;
+  });
+  localStorage.setItem('cypherpunk.proxyServersArr', JSON.stringify(serverArr));
+  return serverArr;
+}
+
 function loadProxies() {
+  console.log('Loading Proxies');
   // Block auth popup dialog when connected to proxy
   httpGetAsync('https://cypherpunk.privacy.network/api/v0/account/status', (res) => {
     res = JSON.parse(res)
@@ -49,7 +138,9 @@ function loadProxies() {
 
     httpGetAsync('https://cypherpunk.privacy.network/api/v0/location/list/' + res.account.type, (servers) => {
       localStorage.setItem('cypherpunk.proxyServers', servers);
-      console.log('SERVERS SAVED', res.account.type);
+      var serverArr = saveServerArray(JSON.parse(servers));
+      console.log('SERVERS SAVED', res.account.type, serverArr);
+      getServerLatencyList(serverArr, 3, res.account.type);
     });
   });
 }
@@ -71,7 +162,7 @@ function disableProxy() {
 
 /* Init and Teardown methods */
 function init() {
-
+  console.log('INIT!');
   loadProxies(); // Attempt to fetch Proxy Servers
   applyProxy(); // Attempt to load PAC Script
 
@@ -144,7 +235,7 @@ function spoofUserAgent(details) {
   for (var i = 0, l = headers.length; i < l; ++i) {
     if (headers[i].name === 'User-Agent' || headers[i].name === 'user-agent' ) {
       if (userAgentString !== 'false') {
-        headers[i].value = userAgentString || headers[i].value;
+        headers[i].value = JSON.parse(userAgentString) || headers[i].value;
       }
       break;
     }
@@ -166,3 +257,27 @@ function enableUserAgentSpoofing() {
     ['requestHeaders','blocking']
   );
 }
+
+var regionOrder = [
+  "DEV",
+  "NA",
+  "SA",
+  "CR",
+  "EU",
+  "ME",
+  "AF",
+  "AS",
+  "OP"
+];
+
+var regions = {
+  "NA": "North America",
+  "SA": "Central & South America",
+  "CR": "Caribbean",
+  "OP": "Oceania & Pacific",
+  "EU": "Europe",
+  "ME": "Middle East",
+  "AF": "Africa",
+  "AS": "Asia & India Subcontinent",
+  "DEV": "Development"
+};

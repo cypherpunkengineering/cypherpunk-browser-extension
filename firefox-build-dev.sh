@@ -9,6 +9,20 @@ mv firefox.angular-cli.json angular-cli.json
 mv src/manifest.json src/chrome.manifest.json
 mv src/firefox.manifest.json src/manifest.json
 
+# trap ctrl-c and call renameFiles()
+trap renameFiles INT
+
+function renameFiles() {
+  # move original angular-cli.json back
+  mv angular-cli.json firefox.angular-cli.json
+  mv chrome.angular-cli.json angular-cli.json
+
+  # move original manifest.json back
+  mv src/manifest.json src/firefox.manifest.json
+  mv src/chrome.manifest.json src/manifest.json
+  exit 0
+}
+
 # build extension
 ng build
 
@@ -25,3 +39,4 @@ cp -R firefox-entrypoint/* dist-firefox
 
 # done
 exit 0
+

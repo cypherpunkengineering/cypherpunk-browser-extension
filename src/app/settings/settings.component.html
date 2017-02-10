@@ -12,12 +12,23 @@
     </div>
   </div>
 
-  <!-- WebRTC Leak Protection -->
-  <div (click)="goToView('app-web-rtc')" class="switch-row highlighted clickable bottom-separator">
+  <!-- WebRTC Leak Protection - Chrome -->
+  <div *ngIf="!settingsService.isFirefox()" (click)="goToView('app-web-rtc')" class="switch-row highlighted clickable bottom-separator">
     <div class="label half">WebRTC Leak Prevention</div>
     <div class="switch half">
       {{webRTCType}}
       <span class="forward-icon">&#x3009;</span>
+    </div>
+  </div>
+
+  <!-- WebRTC Leak Protection - Firefox -->
+  <div *ngIf="settingsService.isFirefox()" class="switch-row highlighted bottom-separator">
+    <div class="label">WebRTC Leak Protection</div>
+    <div class="switch">
+      <label class="label-switch">
+        <input #ffWebRtcLeakProtection type="checkbox" [(ngModel)]="ffWebRtcLeakProtectionEnabled" (ngModelChange)="toggleFFWebRtcLeakProtection($event)" />
+        <div class="checkbox"></div>
+      </label>
     </div>
   </div>
 

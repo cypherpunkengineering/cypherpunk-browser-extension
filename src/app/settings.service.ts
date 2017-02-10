@@ -44,6 +44,7 @@ class Keys {
   // Advanced Settings
   public static FORCE_HTTPS: string = "settings.forceHttps";
   public static WEB_RTC_LEAK_PROTECTION: string = "settings.webRTCLeakProtection";
+  public static FF_WEB_RTC_LEAK_PROTECTION: string = "settings.ffWebRTCLeakProtection";
 
   // Default Routing
   public static ROUTING_TYPE: string = "settings.defaultRouting.type";
@@ -75,6 +76,7 @@ class Defaults {
     cachedSmartServers: null,
     settings: {
       forceHttps: true,
+      ffWebRTCLeakProtection: true,
       webRTCLeakProtection: "DISABLE_NON_PROXIED_UDP",
       defaultRouting: {
         type: "SMART",
@@ -119,14 +121,29 @@ export class SettingsService {
       this.localStorageService.set(Keys.ROUTING_TYPE, Defaults.getVal(Keys.ROUTING_TYPE));
       this.localStorageService.set(Keys.ROUTING_SELECTED_SERVER, Defaults.getVal(Keys.ROUTING_SELECTED_SERVER));
       this.localStorageService.set(Keys.FORCE_HTTPS, Defaults.getVal(Keys.FORCE_HTTPS));
-      this.localStorageService.set(Keys.WEB_RTC_LEAK_PROTECTION, Defaults.getVal(Keys.WEB_RTC_LEAK_PROTECTION));
       this.localStorageService.set(Keys.PRIVACY_FILTER_ENABLED, Defaults.getVal(Keys.PRIVACY_FILTER_ENABLED));
       this.localStorageService.set(Keys.PRIVACY_FILTER_ADS, Defaults.getVal(Keys.PRIVACY_FILTER_ADS));
       this.localStorageService.set(Keys.PRIVACY_FILTER_TRACKERS, Defaults.getVal(Keys.PRIVACY_FILTER_TRACKERS));
       this.localStorageService.set(Keys.PRIVACY_FILTER_MALWARE, Defaults.getVal(Keys.PRIVACY_FILTER_MALWARE));
       this.localStorageService.set(Keys.USER_AGENT_TYPE, Defaults.getVal(Keys.USER_AGENT_TYPE));
       this.localStorageService.set(Keys.USER_AGENT_STRING, Defaults.getVal(Keys.USER_AGENT_STRING));
+
+      if (this.isFirefox()) {
+        this.localStorageService.set(Keys.FF_WEB_RTC_LEAK_PROTECTION, Defaults.getVal(Keys.FF_WEB_RTC_LEAK_PROTECTION));
+      }
+      else {
+        this.localStorageService.set(Keys.WEB_RTC_LEAK_PROTECTION, Defaults.getVal(Keys.WEB_RTC_LEAK_PROTECTION));
+      }
     }
+  }
+
+  /* Returns if browser is firefox or not */
+  isFirefox() {
+    var isFirefox = false;
+    // browser is defined in firefox, but not chrome
+    try { isFirefox = browser !== undefined; }
+    catch(e) { /* Swallow error for when browser is not defined */ }
+    return isFirefox;
   }
 
   /* Proxy Settings Service */
@@ -224,19 +241,29 @@ export class SettingsService {
 
   /** Advanced Settings **/
   advancedSettings() {
-    return {
+    let settings = {
       defaultRouting: {
         type: this.localStorageService.get(Keys.ROUTING_TYPE),
         selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
       },
       forceHttps: this.localStorageService.get(Keys.FORCE_HTTPS),
-      webRtcLeakProtection: this.localStorageService.get(Keys.WEB_RTC_LEAK_PROTECTION),
       userAgentType: this.localStorageService.get(Keys.USER_AGENT_TYPE)
     }
+    if (this.isFirefox()) {
+      settings["ffWebRtcLeakProtection"] = this.localStorageService.get(Keys.FF_WEB_RTC_LEAK_PROTECTION);
+    }
+    else {
+      settings["webRtcLeakProtection"] = this.localStorageService.get(Keys.WEB_RTC_LEAK_PROTECTION);
+    }
+    return settings;
   }
 
   saveForceHttps(enabled: boolean) {
     this.localStorageService.set(Keys.FORCE_HTTPS, enabled);
+  }
+
+  saveFFWebRtcLeakProtection(enabled: boolean) {
+    this.localStorageService.set(Keys.FF_WEB_RTC_LEAK_PROTECTION, enabled);
   }
 
   /** Advanced Settings > WebRTC Leak Prevention **/

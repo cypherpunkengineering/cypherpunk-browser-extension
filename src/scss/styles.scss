@@ -6,6 +6,8 @@
 
 html, body {
   max-height: $app-height;
+  overflow-x: -moz-hidden-unscrollable;
+  overflow-y: -moz-hidden-unscrollable;
 }
 
 body {
@@ -18,6 +20,17 @@ body {
   margin: 0;
   padding: 0;
 }
+
+@-moz-document url-prefix() {
+  body {
+    overflow-y: -moz-hidden-unscrollable;
+    height: rem(510);
+  }
+  #tutorial {
+    height: rem(510) !important;
+  }
+}
+
 
 ::-webkit-scrollbar {
   width: 4px;

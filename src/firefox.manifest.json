@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+  "name": "Cypherpunk Privacy",
+  "short_name": "Cypherpunk",
+  "version": "0.3.5",
+
+  "description": "Cypherpunk Privacy",
+
+  "browser_action": {
+    "browser_style": false,
+    "default_popup": "index.html",
+    "default_icon": {
+      "128": "assets/cypherpunk_grey_128.png",
+      "96": "assets/cypherpunk_grey_96.png",
+      "64": "assets/cypherpunk_grey_64.png",
+      "48": "assets/cypherpunk_grey_48.png",
+      "32": "assets/cypherpunk_grey_32.png",
+      "24": "assets/cypherpunk_grey_24.png",
+      "16": "assets/cypherpunk_grey_16.png"
+    }
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+
+  "permissions": [
+    "cookies",
+    "management",
+    "activeTab",
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "<all_urls>"
+  ],
+
+  "background": {
+    "scripts": [
+      "firefox.background.js"
+    ]
+  }
+}

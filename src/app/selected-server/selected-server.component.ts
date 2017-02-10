@@ -47,7 +47,8 @@ export class SelectedServerComponent {
     let callback = (tabs) => {
       let curTab = tabs[0];
       let url = curTab.url
-      this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
+      let match = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
+      this.domain = match ? match[1] : null;
 
       let curSmartRoute = this.routing[this.domain];
       if (curSmartRoute) {

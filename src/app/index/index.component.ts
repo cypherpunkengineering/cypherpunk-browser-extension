@@ -59,8 +59,9 @@ export class IndexComponent {
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
       let curTab = tabs[0];
       let url = curTab.url
-      this.domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
-      let protocol = url.split("://")[0];
+      let match = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
+      this.domain = match ? match[1] : null;
+      let protocol = url ? url.split("://")[0] : null;
       this.validProtocol = protocol === 'http' || protocol === 'https';
       if (this.domain && this.validProtocol) {
         // Get Smart Route name

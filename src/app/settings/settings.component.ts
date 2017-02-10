@@ -20,11 +20,19 @@ export class SettingsComponent {
     DISABLE_NON_PROXIED_UDP: 'Non-Proxied UDP'
   };
 
-  webRtcLeakProtectionEnabled = this.advancedSettings.webRtcLeakProtection;
-  userAgentType = this.advancedSettings.userAgentType;
-  webRTCType = this.webRTCDesc[this.advancedSettings.webRtcLeakProtection.toString()];
+  ffWebRtcLeakProtectionEnabled;
+  webRTCType;
 
-  constructor(private settingsService: SettingsService, private proxySettingsService: ProxySettingsService) {}
+  userAgentType = this.advancedSettings.userAgentType;
+
+  constructor(private settingsService: SettingsService, private proxySettingsService: ProxySettingsService) {
+    if (this.settingsService.isFirefox()) {
+      this.ffWebRtcLeakProtectionEnabled = this.advancedSettings["ffWebRtcLeakProtection"];
+    }
+    else {
+      this.webRTCType = this.webRTCDesc[this.advancedSettings["webRtcLeakProtection"]];
+    }
+  }
 
   defaultRouting() {
     let type = this.advancedSettings.defaultRouting.type;
@@ -32,6 +40,17 @@ export class SettingsComponent {
     else if (type === 'FASTEST') { return 'Fastest Server'; }
     else if (type === 'SELECTED') { return 'Specific Server'; }
     else { return 'No Proxy'; }
+  }
+
+  toggleFFWebRtcLeakProtection(enabled: boolean) {
+    console.log('WebRTC Leak Protection:', enabled);
+    this.settingsService.saveFFWebRtcLeakProtection(enabled);
+    if (enabled) {
+      chrome.runtime.sendMessage({ action: "EnableWebRTCLeakProtection" });
+    }
+    else {
+      chrome.runtime.sendMessage({ action: "DisableWebRTCLeakProtection" });
+    }
   }
 
   logout() {

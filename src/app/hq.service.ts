@@ -32,6 +32,7 @@ export class HqService {
       console.log(error);
       if (error.status === 403) {
         this.browserObj.tabs.create({'url': 'https://cypherpunk.com/login'});
+        window.close();
       }
       return Observable.throw(error || 'Error getting account status');
     });

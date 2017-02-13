@@ -27,6 +27,7 @@ export class AccountComponent {
   logout() {
     this.proxySettingsService.disableProxy();
     chrome.cookies.remove({"url": "https://cypherpunk.com", "name": "cypherpunk.session"}, (deleted_cookie) => { console.log("DELETED COOKIE", deleted_cookie); });
+    chrome.cookies.remove({"url": "https://cypherpunk.privacy.network", "name": "cypherpunk.session"}, (deleted_cookie) => { console.log("DELETED COOKIE", deleted_cookie); });
     this.settingsService.saveCypherpunkEnabled(false);
     chrome.runtime.sendMessage({ action: "CypherpunkEnabled" });
   }

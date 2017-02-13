@@ -51,7 +51,6 @@ export class AccountContainerComponent {
   }
 
   changeView(viewName: string) {
-    console.log('change view: ', viewName)
     this.changeDetectorRef.detectChanges();
     this.currentView = viewName;
   }

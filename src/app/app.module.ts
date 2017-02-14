@@ -16,6 +16,10 @@ import { SelectedServerComponent } from './selected-server/selected-server.compo
 import { IndexComponent } from './index/index.component';
 import { TutorialComponent } from './tutorial/tutorial.component';
 import { SettingsControllerComponent } from './settings/settings-controller.component';
+import { AccountContainerComponent } from './account/account-container.component';
+import { AccountComponent } from './account/account/account.component';
+import { ShareComponent } from './account/share/share.component';
+
 import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
 import { SettingsService } from './settings.service';
@@ -38,7 +42,10 @@ let localStorageServiceConfig = {
     DefaultRoutingComponent,
     SpecificServerComponent,
     SelectedServerComponent,
-    SettingsControllerComponent
+    SettingsControllerComponent,
+    AccountComponent,
+    AccountContainerComponent,
+    ShareComponent
   ],
   imports: [
     BrowserModule,
@@ -52,6 +59,7 @@ let localStorageServiceConfig = {
       { path: 'settings/default-routing', component: DefaultRoutingComponent },
       { path: 'advanced-settings/default-routing/specific-server', component: SpecificServerComponent },
       { path: 'selected-server', component: SelectedServerComponent },
+      { path: 'account', component: AccountContainerComponent },
       { path: '', component: IndexComponent }
         // { path: '**', component: PageNotFoundComponent }
     ]),

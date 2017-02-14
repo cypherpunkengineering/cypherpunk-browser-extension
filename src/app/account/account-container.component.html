@@ -1,0 +1,7 @@
+<div class="view-container parent" style="" [@slideIn]="'static'" *ngIf="currentView === 'app-account'">
+  <app-account [user]="user" (changeView)="changeView($event)"></app-account>
+</div>
+
+<div class="view-container child" [@slideIn]="'dynamic'" *ngIf="currentView === 'app-share'">
+  <app-share (changeView)="changeView($event)"></app-share>
+</div>

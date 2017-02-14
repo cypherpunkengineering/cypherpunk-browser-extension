@@ -426,3 +426,42 @@ a {
     }
   }
 }
+
+.account {
+  color: #fff;
+  overflow: auto;
+
+  .account-banner {
+    height: 2.5rem;
+    line-height: 2.5rem;
+    text-align: center;
+    color: #80e0df;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: #010010;
+  }
+
+  .account-info {
+    background-color: #1A1246;
+    font-size: 18px;
+    text-align: center;
+    padding: 20px 0;
+    margin: 0 0 20px;
+    min-height: 94px;
+    .type {
+      margin: 10px 0 0;
+      text-transform: capitalize;
+      color: #f8cf1c;
+    }
+  }
+
+  section.account-menu {
+    margin: 10px 0 20px;
+    .header {
+      height: 2.5rem;
+      line-height: 2.5rem;
+      font-weight: bold;
+      padding: 0 0 0 1.25rem;
+    }
+  }
+}

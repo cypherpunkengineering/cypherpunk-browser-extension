@@ -11,7 +11,7 @@
   color: #fff;
 }
 
-.cypherpunk-on { background: rgb(4, 1, 37); }
+.cypherpunk-on { background-color: #0d1e26; }
 
 .cypherpunk-off {
   background-image: none;
@@ -21,7 +21,7 @@
 #header__main {
   // background-color: #4c8ee1;
   padding: 10px 0;
-  background-color: #0E063D;
+  background-color: $primary-bg;
   text-align: left;
   .logo {
     position: absolute;
@@ -35,6 +35,7 @@
     position: absolute;
     right: rem(80);
     top: rem(16);
+    .gear { width: 24px; }
   }
   .switch {
     position: absolute;
@@ -91,7 +92,7 @@
 }
 
 #info-disconnected {
-  background-color: #040224;
+  background-color: $primary-bg;
   .off-logo { margin-top: rem(48); }
   // .title {
   //   padding-top: rem(60);
@@ -135,7 +136,7 @@
   .routing-dd {
     @include span-columns(12);
     @include transition(height 0.5s);
-    background-color: #29207B;
+    background-color: $primary-bg;
     overflow: hidden;
     margin-top: rem(23);
     height: rem(125);
@@ -144,7 +145,7 @@
       pointer-events: none;
       .row {
         cursor: default;
-        &:hover, &.checked:hover { background-color: #29207B; }
+        &:hover, &.checked:hover { background-color: $primary-bg; }
       }
     }
     .row {
@@ -158,7 +159,7 @@
       .forward-icon { float: right; }
       &:first-child { margin-top: rem(5); }
       &:last-child { margin-bottom: rem(5); }
-      &:hover, &.checked:hover { background-color: darken(#29207B, 5%); }
+      &:hover, &.checked:hover { background-color: darken($primary-bg, 5%); }
       &.checked {
         background: url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
       }

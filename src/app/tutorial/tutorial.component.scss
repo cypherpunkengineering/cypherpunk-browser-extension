@@ -4,8 +4,8 @@
 @import '~bourbon-bitters/app/assets/stylesheets/_buttons';
 
 #tutorial {
-  background: linear-gradient(0, #0E063D rem(108), #040224 rem(108));
-  background: -moz-linear-gradient(90deg, #0E063D rem(108), #040224 rem(108));
+  background: linear-gradient(0, #0d1e26 rem(108), #163238 rem(108));
+  background: -moz-linear-gradient(90deg, #0d1e26 rem(108), #163238 rem(108));
   height: rem(502);
   width: rem(360);
   overflow: hidden;
@@ -32,7 +32,7 @@
       width: 65%;
       margin: 0 auto;
       line-height: rem(21.6);
-      color: lighten(#0E063D, 55%);
+      color: #fff;
     }
     .tooltip {
       margin-top: rem(16);
@@ -53,13 +53,12 @@
         height: rem(41.6);
         background-color: #1987bd;
         outline: none;
-        box-shadow: 3px 3px 0px 4px #040224;
       }
       .deny {
         user-select: none;
         cursor: pointer;
         z-index: 100;
-        color: lighten(#0E063D, 45%);
+        color: #fff;
         text-decoration: underline;
         margin-top: rem(24);
       }
@@ -72,7 +71,7 @@
     user-select: none;
     cursor: pointer;
     z-index: 100;
-    color: lighten(#0E063D, 45%);
+    color: #fff;
     .text { text-decoration: underline; }
   }
   .dots {
@@ -84,12 +83,11 @@
     .dot {
       display: inline-block;
       margin: 0 rem(5);
-      background: lighten(#0E063D, 20%);
+      background: lighten(#163238, 20%);
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      &.selected { background: lighten(#0E063D, 45%); }
+      &.selected { background: lighten(#163238, 45%); }
     }
   }
 }
-

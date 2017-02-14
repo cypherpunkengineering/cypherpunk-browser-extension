@@ -7,9 +7,11 @@ $app-height: 600px;
 $gray-med:        #999;
 $gray-dark-trans: rgba(102, 102, 102, 0.85);
 $color-error:     #292844;
-$overlay--hover:  rgba(#29207B, 0.25);
-$overlay--dark:   #29207B;
+$overlay--hover:  rgba(#0d1e26, 0.25);
+$overlay--dark:   #0d1e26;
+$primary-bg:         #163238;
+$primary-bg-dark:    #0d1e26;
 
 
 // Frames
-$border--separator: 1px solid #483c91;
+$border--separator: 1px solid darken(#010010, 25%);

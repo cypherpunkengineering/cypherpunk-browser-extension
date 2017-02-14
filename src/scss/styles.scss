@@ -11,7 +11,7 @@ html, body {
 }
 
 body {
-  background-color: #040224;
+  background-color: $primary-bg;
   font-family: 'Dosis', sans-serif;
   font-size: rem(14);
   font-weight: 300;
@@ -47,7 +47,7 @@ body {
 #sub-menu {
   width: 100%;
   height: 100%;
-  background-color: #0E063D;
+  background-color: $primary-bg;
 }
 
 /* Reuseable Components */
@@ -60,18 +60,19 @@ body {
   font-size: rem(12);
 }
 
+.page-header { background-color: $primary-bg-dark; }
 
 .double-row {
   @include row;
   clear: both;
   height: rem(75);
   color: #fff;
-  background-color: #1A1246;
+  background-color: $primary-bg;
   cursor: pointer;
 
-  &:hover, &.checked:hover { background-color: darken(#1A1246, 5%); }
+  &:hover, &.checked:hover { background-color: darken($primary-bg, 5%); }
   &.checked {
-    background: #1A1246 url('/assets/checkmarks/icon-circle-check.png') no-repeat rem(10) 32%;
+    background: $primary-bg url('/assets/checkmarks/icon-circle-check.png') no-repeat rem(10) 32%;
   }
   .label {
     @include span-columns(12);
@@ -99,7 +100,7 @@ body {
   }
   &.extended-desc {
     &.checked {
-      background: #1A1246 url('/assets/checkmarks/icon-circle-check.png') no-repeat rem(10) rem(19);
+      background: $primary-bg url('/assets/checkmarks/icon-circle-check.png') no-repeat rem(10) rem(19);
     }
     .desc {
       @include pad(0 rem(32) 0 rem(32));
@@ -109,8 +110,6 @@ body {
     height: initial;
   }
 }
-
-
 
 .switch-row {
   @include row;
@@ -123,18 +122,18 @@ body {
     background-color: #0E063D;
   }
   &.highlighted {
-    background-color: #1A1246;
+    background-color: $primary-bg;
   }
   &.clickable {
     cursor: pointer;
-    &:hover { background-color: darken(#1A1246, 5%); }
+    &:hover { background-color: darken($primary-bg, 5%); }
   }
   &.selectable {
     @include pad(0 0 0 rem(10));
     cursor: pointer;
-    &:hover, &.checked:hover { background-color: darken(#1A1246, 5%); }
+    &:hover, &.checked:hover { background-color: darken($primary-bg, 5%); }
     &.checked {
-      background: #1A1246 url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
+      background: $primary-bg url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
     }
   }
   .label {
@@ -147,7 +146,7 @@ body {
     &.half { @include span-columns(6); }
     &.full { @include span-columns(12); }
   }
-  &.large.top-separator { border-top: solid 2px #040224; }
+  &.large.top-separator { border-top: solid 2px $border--separator; }
   &.large .label {
     height: rem(50);
     line-height: rem(50);
@@ -223,16 +222,16 @@ body {
   $switch-padding: 2px;
   $switch-height: 24px;
   $switch-radius: $switch-height;
-  $switch-background: #29207B;
+  $switch-background: #010010;
   $switch-disabled-background: #ddd;
   $switch-shadow: none; //inset 0px 1px 2px 1px rgba(0, 0, 0, 0.1);
-  $switch-active-color: #29207B;
+  $switch-active-color: #010010;
 
   $knob-size: $switch-height - ($switch-padding * 3);
   $knob-radius: $switch-height - ($switch-padding * 0.2);
   $knob-width: $knob-size;
-  $knob-color: linear-gradient(135deg, #B4B5ED 0%, #B4B5ED 50%, #7974C2 51%, #7974C2 100%);
-  $knob-active-color: linear-gradient(135deg, #4FB9DC 0%, #4FB9DC 50%, #2A89B9 51%, #2A89B9 100%);
+  $knob-color: linear-gradient(135deg, #fff 0%, #fff 50%, #4FB9DC 51%, #4FB9DC 100%);
+  $knob-active-color: linear-gradient(135deg, #fff 0%, #fff 50%, #4FB9DC 51%, #4FB9DC 100%);
   $knob-shadow: none; //0 1px 2px 0 rgba(0, 0, 0, 0.5);
 
   border-radius: $switch-radius;
@@ -395,6 +394,7 @@ a {
     text-align: left;
     font-weight: 200;
     cursor: pointer;
+    background-color: $primary-bg;
     .flag, .name {
       @include display(block);
       display: block;
@@ -438,15 +438,14 @@ a {
     color: #80e0df;
     font-size: 16px;
     font-weight: 500;
-    background-color: #010010;
+    background-color: $primary-bg-dark;
   }
 
   .account-info {
-    background-color: #1A1246;
+    background-color: $primary-bg;
     font-size: 18px;
     text-align: center;
     padding: 20px 0;
-    margin: 0 0 20px;
     min-height: 94px;
     .type {
       margin: 10px 0 0;
@@ -456,12 +455,12 @@ a {
   }
 
   section.account-menu {
-    margin: 10px 0 20px;
     .header {
       height: 2.5rem;
       line-height: 2.5rem;
       font-weight: bold;
       padding: 0 0 0 1.25rem;
+      background-color: $primary-bg-dark;
     }
   }
 }

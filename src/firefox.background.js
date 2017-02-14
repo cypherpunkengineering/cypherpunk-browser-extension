@@ -1,6 +1,6 @@
 var authUsername, authPassword;
 var userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
-var cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
+var cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === 'true';
 
 /* Try to initialize when background script runs */
 console.log('In Firefox Background Script');
@@ -13,8 +13,8 @@ else {
 
 /* Event Listener Triggers */
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.action === "CypherpunkEnabled") {
-    cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
+  if (request.action === 'CypherpunkEnabled') {
+    cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === 'true';
     // Cypherpunk is turned on, enable features based on settings
     if (cypherpunkEnabled) { init(); }
     // Cypherpunk is turned off, disable all features
@@ -35,7 +35,7 @@ function httpGetAsync(theUrl, callback) {
       callback(xmlHttp.responseText);
     }
   };
-  xmlHttp.open("GET", theUrl, true); // true for asynchronous
+  xmlHttp.open('GET', theUrl, true); // true for asynchronous
   xmlHttp.send(null);
 }
 
@@ -114,12 +114,12 @@ function saveServerArray(servers) {
   serverKeys.forEach((key) => { serverArr.push(servers[key]); });
   // Sort By Region, Country, Name
   serverArr.sort((a,b) => {
-    if (order[a.region] < order[b.region]) return -1;
-    if (order[a.region] > order[b.region]) return 1;
-    if (a.country < b.country) return -1;
-    if (a.country > b.country) return 1;
-    if (a.name < b.name) return -1;
-    if (a.name > b.name) return 1;
+    if (order[a.region] < order[b.region]) { return -1; }
+    if (order[a.region] > order[b.region]) { return 1; }
+    if (a.country < b.country) { return -1; }
+    if (a.country > b.country) { return 1; }
+    if (a.name < b.name) { return -1; }
+    if (a.name > b.name) { return 1; }
     return 0;
   });
   localStorage.setItem('cypherpunk.proxyServersArr', JSON.stringify(serverArr));
@@ -130,10 +130,10 @@ function loadProxies() {
   console.log('Loading Proxies');
   // Block auth popup dialog when connected to proxy
   httpGetAsync('https://cypherpunk.privacy.network/api/v0/account/status', (res) => {
-    res = JSON.parse(res)
+    res = JSON.parse(res);
     authUsername = res.privacy.username;
     authPassword = res.privacy.password;
-    chrome.runtime.sendMessage({ action: "ProxyAuth", authUsername: authUsername, authPassword: authPassword });
+    chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: authUsername, authPassword: authPassword });
     localStorage.setItem('cypherpunk.premiumAccount', JSON.stringify(res.account.type === 'premium'));
 
     httpGetAsync('https://cypherpunk.privacy.network/api/v0/location/list/' + res.account.type, (servers) => {
@@ -152,11 +152,11 @@ function applyProxy() {
   if (!config) { return; }
   var pacScript = JSON.parse(config).pacScript.data;
   console.log('Applying PacScript in BG', pacScript);
-  chrome.runtime.sendMessage({ action: "SetPACScript", pacScript: pacScript });
+  chrome.runtime.sendMessage({ action: 'SetPACScript', pacScript: pacScript });
 }
 
 function disableProxy() {
-  chrome.runtime.sendMessage({ action: "ResetPACScript" });
+  chrome.runtime.sendMessage({ action: 'ResetPACScript' });
 }
 
 

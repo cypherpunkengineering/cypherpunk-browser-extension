@@ -172,9 +172,10 @@ export class ProxySettingsService {
     let directPingRules = '';
     this.serverArr.forEach(function(server) {
       if (server.ovHostname) {
-        directPingRules += '  if (shExpMatch(host, "' + server.ovHostname + ')) return \'DIRECT\';\n';
+        directPingRules += '  if (shExpMatch(host, "' + server.ovHostname + '")) return \'DIRECT\';\n';
       }
     });
+
     return directPingRules;
   }
 
@@ -190,7 +191,7 @@ export class ProxySettingsService {
       if (domainSettings.type === 'FASTEST') {
         let fastestProxyIp = this.servers[this.latencyList[0].id].httpDefault[0];
 
-        domainSpecificRules += '  if (shExpMatch(host, "' + domain + ') || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' +
+        domainSpecificRules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' +
           fastestProxyIp + ':80\';\n';
       }
       // Selected: Route to the selected server

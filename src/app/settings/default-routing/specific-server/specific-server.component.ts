@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { ProxySettingsService } from '../../../proxy-settings.service';
 import { SettingsService } from '../../../settings.service';
 
@@ -26,7 +26,7 @@ export class SpecificServerComponent {
     else if (!server.httpDefault.length) { return; }
     else {
       this.selectedServerId = server.id;
-      this.settingsService.saveRoutingInfo("SELECTED", server.id);
+      this.settingsService.saveRoutingInfo('SELECTED', server.id);
       this.proxySettingsService.enableProxy();
     }
   }
@@ -35,4 +35,3 @@ export class SpecificServerComponent {
     this.changeView.emit(name);
   }
 }
-

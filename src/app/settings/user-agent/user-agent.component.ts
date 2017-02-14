@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { SettingsService } from '../../settings.service';
 
 @Component({
@@ -27,7 +27,7 @@ export class UserAgentComponent {
   setUserAgent(type: string) {
     this.selectedUserAgentType = type;
     this.settingsService.saveUserAgent(type, this.userAgentStrings[type.toLowerCase()]);
-    chrome.runtime.sendMessage({ action: "UserAgentSpoofing" });
+    chrome.runtime.sendMessage({ action: 'UserAgentSpoofing' });
   }
 
   goToView(name: string) {
@@ -35,4 +35,3 @@ export class UserAgentComponent {
   }
 
 }
-

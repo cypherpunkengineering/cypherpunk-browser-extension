@@ -1,7 +1,7 @@
-import { Component, NgZone, style, animate, transition, state, trigger } from '@angular/core';
-import { ProxySettingsService } from '../proxy-settings.service';
-import { LocalStorageService } from 'angular-2-local-storage';
 import { SettingsService } from '../settings.service';
+import { LocalStorageService } from 'angular-2-local-storage';
+import { ProxySettingsService } from '../proxy-settings.service';
+import { Component, NgZone, style, animate, transition, state, trigger } from '@angular/core';
 
 @Component({
   selector: 'app-selected-server',
@@ -46,7 +46,7 @@ export class SelectedServerComponent {
 
     let callback = (tabs) => {
       let curTab = tabs[0];
-      let url = curTab.url
+      let url = curTab.url;
       let match = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
       this.domain = match ? match[1] : null;
 
@@ -73,14 +73,13 @@ export class SelectedServerComponent {
     else if (!server.httpDefault.length) { return; }
     else {
       this.selectedServerId = server.id;
-       this.routing[this.domain] = {
-         type: this.routingType,
-         serverId: server.id
-       }
+      this.routing[this.domain] = {
+        type: this.routingType,
+        serverId: server.id
+      };
       this.settingsService.saveRouting(this.routing);
       this.proxySettingsService.enableProxy();
     }
 
   }
 }
-

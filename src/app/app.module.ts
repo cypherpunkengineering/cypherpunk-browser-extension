@@ -25,11 +25,6 @@ import { ProxySettingsService } from './proxy-settings.service';
 import { SettingsService } from './settings.service';
 import { PingService } from './ping.service';
 
-let localStorageServiceConfig = {
-    prefix: 'cypherpunk',
-    storageType: 'localStorage'
-};
-
 @NgModule({
   declarations: [
     AppComponent,

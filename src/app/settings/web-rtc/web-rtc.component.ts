@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { SettingsService } from '../../settings.service';
 
 @Component({
@@ -17,11 +17,10 @@ export class WebRtcComponent {
   setWebRTCIPHandlingPolicy(type: string) {
     this.selectedWebRTCType = type;
     this.settingsService.saveWebRtcLeakProtection(type);
-    chrome.runtime.sendMessage({ action: "UpdateWebRTCPolicy" });
+    chrome.runtime.sendMessage({ action: 'UpdateWebRTCPolicy' });
   }
 
   goToView(name: string) {
     this.changeView.emit(name);
   }
 }
-

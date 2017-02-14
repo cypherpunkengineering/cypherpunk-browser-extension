@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
 import { LocalStorageService } from 'angular-2-local-storage';
 
 // Application Settings
@@ -25,40 +23,40 @@ import { LocalStorageService } from 'angular-2-local-storage';
 // - ios/android?
 //
 class Keys {
-  public static PROXY_USERNAME: string = "proxy.username";
-  public static PROXY_PASSWORD: string = "proxy.password";
-  public static LATENCY_LIST: string = "latencyList";
-  public static PROXY_SERVERS: string = "proxyServers";
-  public static PROXY_SERVERS_ARR: string = "proxyServersArr";
-  public static PREMIUM_ACCOUNT: string = "premiumAccount";
-  public static PAC_SCRIPT_CONFIG: string = "pacScriptConfig";
+  public static PROXY_USERNAME = 'proxy.username';
+  public static PROXY_PASSWORD = 'proxy.password';
+  public static LATENCY_LIST = 'latencyList';
+  public static PROXY_SERVERS = 'proxyServers';
+  public static PROXY_SERVERS_ARR = 'proxyServersArr';
+  public static PREMIUM_ACCOUNT = 'premiumAccount';
+  public static PAC_SCRIPT_CONFIG = 'pacScriptConfig';
 
   // Index vivew
-  public static INITIALIZED: string = "intialized";
-  public static ENABLED: string = "enabled";
-  public static SMART_ROUTING_ENABLED: string = "smartRoutingEnabled";
-  public static PRIVACY_FILTER_WHITELIST: string = "privacyFilterWhitelist";
-  public static ROUTING: string = "routing";
-  public static CACHED_SMART_SERVERS: string = "cachedSmartServers";
+  public static INITIALIZED = 'intialized';
+  public static ENABLED = 'enabled';
+  public static SMART_ROUTING_ENABLED = 'smartRoutingEnabled';
+  public static PRIVACY_FILTER_WHITELIST = 'privacyFilterWhitelist';
+  public static ROUTING = 'routing';
+  public static CACHED_SMART_SERVERS = 'cachedSmartServers';
 
   // Advanced Settings
-  public static FORCE_HTTPS: string = "settings.forceHttps";
-  public static WEB_RTC_LEAK_PROTECTION: string = "settings.webRTCLeakProtection";
-  public static FF_WEB_RTC_LEAK_PROTECTION: string = "settings.ffWebRTCLeakProtection";
+  public static FORCE_HTTPS = 'settings.forceHttps';
+  public static WEB_RTC_LEAK_PROTECTION = 'settings.webRTCLeakProtection';
+  public static FF_WEB_RTC_LEAK_PROTECTION = 'settings.ffWebRTCLeakProtection';
 
   // Default Routing
-  public static ROUTING_TYPE: string = "settings.defaultRouting.type";
-  public static ROUTING_SELECTED_SERVER: string = "settings.defaultRouting.selected";
+  public static ROUTING_TYPE = 'settings.defaultRouting.type';
+  public static ROUTING_SELECTED_SERVER = 'settings.defaultRouting.selected';
 
   // User Agent
-  public static USER_AGENT_TYPE: string = "settings.userAgent.type";
-  public static USER_AGENT_STRING: string = "settings.userAgent.string";
+  public static USER_AGENT_TYPE = 'settings.userAgent.type';
+  public static USER_AGENT_STRING = 'settings.userAgent.string';
 
   // Privacy Filter
-  public static PRIVACY_FILTER_ENABLED: string = "settings.privacyFilter.enabled";
-  public static PRIVACY_FILTER_ADS: string = "settings.privacyFilter.blockAds";
-  public static PRIVACY_FILTER_TRACKERS: string = "settings.privacyFilter.blockTrackers";
-  public static PRIVACY_FILTER_MALWARE: string = "settings.privacyFilter.blockMalware";
+  public static PRIVACY_FILTER_ENABLED = 'settings.privacyFilter.enabled';
+  public static PRIVACY_FILTER_ADS = 'settings.privacyFilter.blockAds';
+  public static PRIVACY_FILTER_TRACKERS = 'settings.privacyFilter.blockTrackers';
+  public static PRIVACY_FILTER_MALWARE = 'settings.privacyFilter.blockMalware';
 }
 
 class Defaults {
@@ -77,9 +75,9 @@ class Defaults {
     settings: {
       forceHttps: true,
       ffWebRTCLeakProtection: true,
-      webRTCLeakProtection: "DISABLE_NON_PROXIED_UDP",
+      webRTCLeakProtection: 'DISABLE_NON_PROXIED_UDP',
       defaultRouting: {
-        type: "SMART",
+        type: 'SMART',
         selected: null
       },
       privacyFilter: {
@@ -89,14 +87,14 @@ class Defaults {
         blockMalware: true
       },
       userAgent: {
-        type: "DEFAULT",
+        type: 'DEFAULT',
         string: false
       }
     }
   };
 
   public static getVal(keyPath) {
-    return keyPath.split('.').reduce((o,i)=>o[i], Defaults.CONFIG);
+    return keyPath.split('.').reduce((o, i) => o[i], Defaults.CONFIG);
   };
 }
 
@@ -139,10 +137,10 @@ export class SettingsService {
 
   /* Returns if browser is firefox or not */
   isFirefox() {
-    var isFirefox = false;
+    let isFirefox = false;
     // browser is defined in firefox, but not chrome
     try { isFirefox = browser !== undefined; }
-    catch(e) { /* Swallow error for when browser is not defined */ }
+    catch (e) { /* Swallow error for when browser is not defined */ }
     return isFirefox;
   }
 
@@ -163,7 +161,7 @@ export class SettingsService {
         type: this.localStorageService.get(Keys.ROUTING_TYPE),
         selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
       }
-    }
+    };
   }
 
   saveCachedSmartServers(smartServers) {
@@ -194,7 +192,7 @@ export class SettingsService {
         enabled: this.localStorageService.get(Keys.PRIVACY_FILTER_ENABLED),
         whitelist: this.localStorageService.get(Keys.PRIVACY_FILTER_WHITELIST)
       }
-    }
+    };
   }
 
   saveTutorialFinished() {
@@ -225,7 +223,7 @@ export class SettingsService {
   }
 
   savePrivacyFilterWhitelist(list: Object) {
-    this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, list)
+    this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, list);
   }
 
   saveRouting(routes: Object) {
@@ -236,7 +234,7 @@ export class SettingsService {
   selectedServerSettings() {
     return {
       routing: this.localStorageService.get(Keys.ROUTING)
-    }
+    };
   }
 
   /** Advanced Settings **/
@@ -248,12 +246,12 @@ export class SettingsService {
       },
       forceHttps: this.localStorageService.get(Keys.FORCE_HTTPS),
       userAgentType: this.localStorageService.get(Keys.USER_AGENT_TYPE)
-    }
+    };
     if (this.isFirefox()) {
-      settings["ffWebRtcLeakProtection"] = this.localStorageService.get(Keys.FF_WEB_RTC_LEAK_PROTECTION);
+      settings['ffWebRtcLeakProtection'] = this.localStorageService.get(Keys.FF_WEB_RTC_LEAK_PROTECTION);
     }
     else {
-      settings["webRtcLeakProtection"] = this.localStorageService.get(Keys.WEB_RTC_LEAK_PROTECTION);
+      settings['webRtcLeakProtection'] = this.localStorageService.get(Keys.WEB_RTC_LEAK_PROTECTION);
     }
     return settings;
   }
@@ -270,7 +268,7 @@ export class SettingsService {
   webRtcSettings() {
     return {
       webRtcLeakProtection: this.localStorageService.get(Keys.WEB_RTC_LEAK_PROTECTION),
-    }
+    };
   }
 
   saveWebRtcLeakProtection(type: string) {
@@ -284,7 +282,7 @@ export class SettingsService {
       blockAds: this.localStorageService.get(Keys.PRIVACY_FILTER_ADS),
       blockTrackers: this.localStorageService.get(Keys.PRIVACY_FILTER_TRACKERS),
       blockMalware: this.localStorageService.get(Keys.PRIVACY_FILTER_MALWARE)
-    }
+    };
   }
 
   savePrivacyFilterEnabled(enabled: boolean) {
@@ -309,7 +307,7 @@ export class SettingsService {
     return {
       userAgentType: this.localStorageService.get(Keys.USER_AGENT_TYPE),
       userAgentString: this.localStorageService.get(Keys.USER_AGENT_STRING)
-    }
+    };
   }
 
   saveUserAgent(type: string, agentString: string) {
@@ -323,7 +321,7 @@ export class SettingsService {
     return {
       type: this.localStorageService.get(Keys.ROUTING_TYPE),
       selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
-    }
+    };
   }
 
   saveRoutingInfo(type: any, selected: string) {

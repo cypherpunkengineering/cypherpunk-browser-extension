@@ -31,10 +31,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 function httpGetAsync(theUrl, callback) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+    if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
       callback(xmlHttp.responseText);
     }
-  }
+  };
   xmlHttp.open("GET", theUrl, true); // true for asynchronous
   xmlHttp.send(null);
 }
@@ -88,7 +88,7 @@ function requestImage(url) {
 }
 
 function getLatency(url, multiplier) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     var start = (new Date()).getTime();
     var response = () => {
         var delta = ((new Date()).getTime() - start);
@@ -149,7 +149,7 @@ function loadProxies() {
 /* PAC Script Methods */
 function applyProxy() {
   var config = localStorage.getItem("cypherpunk.pacScriptConfig");
-  if (!config) { return };
+  if (!config) { return; }
   var pacScript = JSON.parse(config).pacScript.data;
   console.log('Applying PacScript in BG', pacScript);
   chrome.runtime.sendMessage({ action: "SetPACScript", pacScript: pacScript });
@@ -212,7 +212,7 @@ function destroy() {
 
 /* Clear cache on url change so ip doesn't leak from previous site */
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  if (changeInfo.status == 'loading') {
+  if (changeInfo.status === 'loading') {
     chrome.runtime.sendMessage({ action: "ClearCache" });
   }
 });

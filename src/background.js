@@ -59,7 +59,7 @@ function requestImage(url) {
 }
 
 function getLatency(url, multiplier) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     var start = (new Date()).getTime();
     var response = () => {
         var delta = ((new Date()).getTime() - start);
@@ -91,10 +91,10 @@ function disableProxy() {
 function httpGetAsync(theUrl, callback) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+    if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
       callback(xmlHttp.responseText);
     }
-  }
+  };
   xmlHttp.open("GET", theUrl, true); // true for asynchronous
   xmlHttp.send(null);
 }
@@ -128,7 +128,7 @@ function saveServerArray(servers) {
 function loadProxies() {
   // Block auth popup dialog when connected to proxy
   httpGetAsync('https://cypherpunk.privacy.network/api/v0/account/status', (res) => {
-    res = JSON.parse(res)
+    res = JSON.parse(res);
     authUsername = res.privacy.username;
     authPassword = res.privacy.password;
     enableProxyAuthCredentials();
@@ -144,7 +144,7 @@ function loadProxies() {
 
 // Clear cache on url change so ip doesnt leak from previous site
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  if (changeInfo.status == 'loading') {
+  if (changeInfo.status === 'loading') {
     if (chrome.browsingData) {
       chrome.browsingData.removeCache();
     }
@@ -278,7 +278,7 @@ function spoofUserAgent(details) {
   var headers = details.requestHeaders;
   if (!userAgentString) return;
   for(var i = 0, l = headers.length; i < l; ++i) {
-    if( headers[i].name == 'User-Agent' ) {
+    if( headers[i].name === 'User-Agent' ) {
       if (userAgentString !== 'false') {
         headers[i].value = JSON.parse(userAgentString) || headers[i].value;
       }
@@ -306,7 +306,7 @@ function enableUserAgentSpoofing() {
 
 /** Privacy Filter **/
 // TODO: Change back to true once we have api providing url list
-function cancelRequest(details) { return { cancel: false }; };
+function cancelRequest(details) { return { cancel: false }; }
 
 function disablePrivacyFilter() {
   console.log('Disabling Privacy Filter');
@@ -321,7 +321,7 @@ function enablePrivacyFilter() {
     { urls: ["<all_urls>"] },
     ["blocking"]
   );
-};
+}
 
 // Enable privacy filter if it's enabled
 chrome.tabs.onActivated.addListener(function (tab) {

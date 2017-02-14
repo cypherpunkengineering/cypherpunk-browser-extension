@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
-import { LocalStorageService } from 'angular-2-local-storage';
+import { Http } from '@angular/http';
 import { HqService } from './hq.service';
-import { SettingsService } from './settings.service';
-import { Observable } from 'rxjs/Rx';
+import { Injectable } from '@angular/core';
 import { PingService } from './ping.service';
+import { SettingsService } from './settings.service';
+import { LocalStorageService } from 'angular-2-local-storage';
 
 @Injectable()
 export class ProxySettingsService {
@@ -37,7 +36,7 @@ export class ProxySettingsService {
 
     // If app is updated by background script while open
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.action === "ServersUpdated") {
+      if (request.action === 'ServersUpdated') {
         console.log('SERVERS UPDATED');
         let updatedServerData = this.settingsService.proxySettingsService();
         this.servers = updatedServerData.proxyServers;
@@ -55,7 +54,7 @@ export class ProxySettingsService {
       this.hqService.fetchUserStatus().flatMap(data => {
         this.accountType = data.account.type;
         this.premiumProxyAccount = this.accountType === 'premium';
-        chrome.runtime.sendMessage({ action: "ProxyAuth", authUsername: data.privacy.username, authPassword: data.privacy.password });
+        chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: data.privacy.username, authPassword: data.privacy.password });
         this.settingsService.saveProxyCredentials(data.privacy.username, data.privacy.password);
         return this.hqService.findServers(this.accountType); // fetch proxy server list
       }).subscribe(servers => {
@@ -73,7 +72,7 @@ export class ProxySettingsService {
           console.log(latencyArray, this.fastestServer, this.fastestServerName);
           resolve();
         });
-      }, error => { reject(error); })
+      }, error => { reject(error); });
     });
   }
 
@@ -89,13 +88,13 @@ export class ProxySettingsService {
     serverKeys.forEach((key: any) => { serverArr.push(this.servers[key]); });
 
     // Sort By Region, Country, Name
-    serverArr.sort(function(a,b) {
-      if (order[a.region] < order[b.region]) return -1;
-      if (order[a.region] > order[b.region]) return 1;
-      if (a.country < b.country) return -1;
-      if (a.country > b.country) return 1;
-      if (a.name < b.name) return -1;
-      if (a.name > b.name) return 1;
+    serverArr.sort(function(a, b) {
+      if (order[a.region] < order[b.region]) { return -1; };
+      if (order[a.region] > order[b.region]) { return 1; }
+      if (a.country < b.country) { return -1; }
+      if (a.country > b.country) { return 1; }
+      if (a.name < b.name) { return -1; }
+      if (a.name > b.name) { return 1; }
       return 0;
     });
 
@@ -103,12 +102,12 @@ export class ProxySettingsService {
   }
 
   getServer(serverId: any) {
-    if (!serverId || !this.servers) return {};
+    if (!serverId || !this.servers) { return {}; }
     return this.servers[serverId];
   }
 
   enableProxy() {
-    if (!this.latencyList || !this.servers) return;
+    if (!this.latencyList || !this.servers) { return; }
     let config = this.generatePACConfig();
 
     if (this.settingsService.isFirefox()) { // Firefox has to apply proxy in background script
@@ -124,13 +123,13 @@ export class ProxySettingsService {
       chrome.runtime.sendMessage({ action: 'ResetPACScript'});
     }
     else { // Rest PAC Script settings in Chrome
-      chrome.proxy.settings.set({ value: { mode: "system" }, scope: 'regular' });
+      chrome.proxy.settings.set({ value: { mode: 'system' }, scope: 'regular' });
     }
   }
 
   generatePACConfig() {
     let config = {
-      mode: "pac_script",
+      mode: 'pac_script',
       pacScript: {
         data: this.generatePACScript()
       }
@@ -144,15 +143,15 @@ export class ProxySettingsService {
     let pacScriptSettings = this.settingsService.pacScriptSettings();
     console.log(pacScriptSettings);
 
-    let pacScript = "function FindProxyForURL(url, host) {\n" +
-      "  /* Normalize the URL for pattern matching */\n" +
-      "  url = url.toLowerCase();\n" +
-      "  host = host.toLowerCase();\n\n" +
-      "  /* Don't proxy local hostnames */\n" +
-      "  if (isPlainHostName(host)) return 'DIRECT';\n\n" +
-      "  /* Don't proxy connection to cypherpunk domains */\n" +
-      "  if (shExpMatch(host, \"cypherpunk.privacy.network\")) return 'DIRECT';\n" +
-      "  if (shExpMatch(host, \"cypherpunk.com\")) return 'DIRECT';\n";
+    let pacScript = 'function FindProxyForURL(url, host) {\n' +
+      '  /* Normalize the URL for pattern matching */\n' +
+      '  url = url.toLowerCase();\n' +
+      '  host = host.toLowerCase();\n\n' +
+      '  /* Don\'t proxy local hostnames */\n' +
+      '  if (isPlainHostName(host)) return \'DIRECT\';\n\n' +
+      '  /* Don\'t proxy connection to cypherpunk domains */\n' +
+      '  if (shExpMatch(host, "cypherpunk.privacy.network")) return \'DIRECT\';\n' +
+      '  if (shExpMatch(host, "cypherpunk.com")) return \'DIRECT\';\n';
 
     // 1. Generate direct pinging rules for proxy addresses
     // Do not apply proxy when pinging proxy servers to measure latency
@@ -164,16 +163,16 @@ export class ProxySettingsService {
     // 3. Look at default selected Routing type and generate base rules
     pacScript += this.generateDefaultRoutingRules(pacScriptSettings.defaultRouting);
 
-    pacScript += "}";
+    pacScript += '}';
 
     return pacScript;
   }
 
   generateDirectPingRules() {
-    let directPingRules = "";
+    let directPingRules = '';
     this.serverArr.forEach(function(server) {
       if (server.ovHostname) {
-        directPingRules += "  if (shExpMatch(host, \"" + server.ovHostname + "\")) return 'DIRECT';\n";
+        directPingRules += '  if (shExpMatch(host, "' + server.ovHostname + ')) return \'DIRECT\';\n';
       }
     });
     return directPingRules;
@@ -182,7 +181,7 @@ export class ProxySettingsService {
   generateDomainSpecificRules(pacScriptSettings) {
     let routing = pacScriptSettings.routing;
     let defaultRouting = pacScriptSettings.defaultRouting;
-    let domainSpecificRules = "";
+    let domainSpecificRules = '';
     let domains = Object.keys(routing);
     let domainSettings;
     domains.forEach((domain) => {
@@ -191,20 +190,20 @@ export class ProxySettingsService {
       if (domainSettings.type === 'FASTEST') {
         let fastestProxyIp = this.servers[this.latencyList[0].id].httpDefault[0];
 
-        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\") || dnsDomainIs(host, \"." + domain + "\")) return 'PROXY " +
-          fastestProxyIp + ":80';\n";
+        domainSpecificRules += '  if (shExpMatch(host, "' + domain + ') || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' +
+          fastestProxyIp + ':80\';\n';
       }
       // Selected: Route to the selected server
       else if (domainSettings.type === 'SELECTED') {
         let selectedProxyId = domainSettings.serverId;
         let selectedProxyIp = this.servers[selectedProxyId].httpDefault[0];
 
-        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\") || dnsDomainIs(host, \"." + domain + "\")) return 'PROXY " +
-          selectedProxyIp + ":80';\n";
+        domainSpecificRules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' +
+          selectedProxyIp + ':80\';\n';
       }
       // None: Do not proxy
       else if (domainSettings.type === 'NONE') {
-        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\") || dnsDomainIs(host, \"." + domain + "\")) return 'DIRECT';\n";
+        domainSpecificRules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'DIRECT\';\n';
       }
       // Smart: Route to fastest server for TLD
       else {
@@ -215,51 +214,51 @@ export class ProxySettingsService {
           tld = tld.slice(1); // remove "."
           countryCode = tld;
         }
-        else { countryCode = "US"; }
+        else { countryCode = 'US'; }
         let smartProxyIP = this.getSmartServer(countryCode).httpDefault[0];
-        domainSpecificRules += "  if (shExpMatch(host, \"" + domain + "\") || dnsDomainIs(host, \"." + domain + "\")) return 'PROXY " +
-          smartProxyIP + ":80';\n";
+        domainSpecificRules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' +
+          smartProxyIP + ':80\';\n';
       }
     });
     return domainSpecificRules;
   }
 
   generateDefaultRoutingRules(defaultRouting) {
-    let defaultRoutingRules = "";
+    let defaultRoutingRules = '';
 
     // Fastest: Route to fastest server always
-    if (defaultRouting.type === "FASTEST") {
+    if (defaultRouting.type === 'FASTEST') {
       let fastestProxyIp = this.servers[this.latencyList[0].id].httpDefault[0];
-      defaultRoutingRules += "  else return 'PROXY " +
-        fastestProxyIp + ":80';\n";
+      defaultRoutingRules += '  else return \'PROXY ' +
+        fastestProxyIp + ':80\';\n';
     }
     // Selected: Route to the default selected server
-    else if (defaultRouting.type === "SELECTED") {
+    else if (defaultRouting.type === 'SELECTED') {
       let selectedProxyId = defaultRouting.selected.toString();
       let selectedProxyIp = this.servers[selectedProxyId].httpDefault[0];
-      defaultRoutingRules += "  else return 'PROXY " +
-        selectedProxyIp + ":80';\n";
+      defaultRoutingRules += '  else return \'PROXY ' +
+        selectedProxyIp + ':80\';\n';
     }
     // None: Do not proxy
-    else if (defaultRouting.type === "NONE") {
-      defaultRoutingRules += "  else return 'DIRECT';\n";
+    else if (defaultRouting.type === 'NONE') {
+      defaultRoutingRules += '  else return \'DIRECT\';\n';
     }
     // Smart: Route to fastest server for each TLD
     else {
       let tlds = [
-        "au", "br", "ca", "ch", "de", "fr", "uk", "hk", "in",
-        "it", "jp", "nl", "no", "ru", "se", "sg", "tr", "com"
+        'au', 'br', 'ca', 'ch', 'de', 'fr', 'uk', 'hk', 'in',
+        'it', 'jp', 'nl', 'no', 'ru', 'se', 'sg', 'tr', 'com'
       ];
       tlds.forEach((tld) => {
         let smartServer = this.getSmartServer(tld);
         this.cachedSmartServers[tld] = smartServer;
-        defaultRoutingRules += "  if (shExpMatch(host, \"*." + tld + "\")) return 'PROXY " +
-          smartServer.httpDefault[0] + ":80';\n"
+        defaultRoutingRules += '  if (shExpMatch(host, "*.' + tld + '")) return \'PROXY ' +
+          smartServer.httpDefault[0] + ':80\';\n';
       });
       this.settingsService.saveCachedSmartServers(this.cachedSmartServers);
       // Default to fastest US server if TLD is unknown
-      defaultRoutingRules += "  else return 'PROXY " +
-        this.getSmartServer("com").httpDefault[0] + ":80';\n";
+      defaultRoutingRules += '  else return \'PROXY ' +
+        this.getSmartServer('com').httpDefault[0] + ':80\';\n';
     }
     return defaultRoutingRules;
   }
@@ -268,8 +267,8 @@ export class ProxySettingsService {
     countryCode = countryCode.toUpperCase();
 
     // .com -> US and .uk -> GB, all other tlds are direct translations
-    if (countryCode === "COM") { countryCode = "US"; }
-    else if (countryCode === "UK") { countryCode = "GB" }
+    if (countryCode === 'COM') { countryCode = 'US'; }
+    else if (countryCode === 'UK') { countryCode = 'GB'; }
 
     let fastestServer, curServer, latency, firstUsServer;
     // Find fastest server for given country
@@ -279,7 +278,7 @@ export class ProxySettingsService {
       curServer = this.servers[this.latencyList[x].id];
 
       // Store First/Fastest US server we encounter for default case
-      if (!firstUsServer && curServer.country === "US") { firstUsServer = curServer; }
+      if (!firstUsServer && curServer.country === 'US') { firstUsServer = curServer; }
 
       // Grab fastest server for the given country
       if (curServer.country === countryCode && latency < 9999) {
@@ -295,239 +294,239 @@ export class ProxySettingsService {
   }
 
   regionOrder = [
-    "DEV",
-    "NA",
-    "SA",
-    "CR",
-    "EU",
-    "ME",
-    "AF",
-    "AS",
-    "OP"
+    'DEV',
+    'NA',
+    'SA',
+    'CR',
+    'EU',
+    'ME',
+    'AF',
+    'AS',
+    'OP'
   ];
 
   regions = {
-    "NA": "North America",
-    "SA": "Central & South America",
-    "CR": "Caribbean",
-    "OP": "Oceania & Pacific",
-    "EU": "Europe",
-    "ME": "Middle East",
-    "AF": "Africa",
-    "AS": "Asia & India Subcontinent",
-    "DEV": "Development"
+    'NA': 'North America',
+    'SA': 'Central & South America',
+    'CR': 'Caribbean',
+    'OP': 'Oceania & Pacific',
+    'EU': 'Europe',
+    'ME': 'Middle East',
+    'AF': 'Africa',
+    'AS': 'Asia & India Subcontinent',
+    'DEV': 'Development'
   };
 
   countries = {
-    "US": "United States",
-    "CA": "Canada",
-    "MX": "Mexico",
-    "AR": "Argentina",
-    "BR": "Brazil",
-    "CL": "Chile",
-    "CO": "Colombia",
-    "CR": "Costa Rica",
-    "EC": "Ecuador",
-    "GT": "Guatemala",
-    "PA": "Panama",
-    "PE": "Peru",
-    "UY": "Uruguay",
-    "VE": "Venezuela, Bolivarian Republic of",
-    "BZ": "Belize",
-    "BO": "Bolivia, Plurinational State of",
-    "SV": "El Salvador",
-    "GF": "French Guiana",
-    "GY": "Guyana",
-    "HN": "Honduras",
-    "NI": "Nicaragua",
-    "PY": "Paraguay",
-    "SR": "Suriname",
-    "AW": "Aruba",
-    "BS": "Bahamas",
-    "BB": "Barbados",
-    "BM": "Bermuda",
-    "DO": "Dominican Republic",
-    "HT": "Haiti",
-    "JM": "Jamaica",
-    "PR": "Puerto Rico",
-    "TT": "Trinidad and Tobago",
-    "VI": "Virgin Islands, U.S.",
-    "AI": "Anguilla",
-    "AG": "Antigua and Barbuda",
-    "BQ": "Bonaire, Sint Eustatius and Saba",
-    "VG": "Virgin Islands, British",
-    "KY": "Cayman Islands",
-    "CW": "Curaçao",
-    "DM": "Dominica",
-    "GD": "Grenada",
-    "GP": "Guadeloupe",
-    "MQ": "Martinique",
-    "MS": "Montserrat",
-    "MF": "Saint Martin (French part)",
-    "SX": "Sint Maarten (Dutch part)",
-    "KN": "Saint Kitts and Nevis",
-    "LC": "Saint Lucia",
-    "VC": "Saint Vincent and the Grenadines",
-    "TC": "Turks and Caicos Islands",
-    "AS": "American Samoa",
-    "AU": "Australia",
-    "FJ": "Fiji",
-    "GU": "Guam",
-    "NZ": "New Zealand",
-    "MP": "Northern Mariana Islands",
-    "VU": "Vanuatu",
-    "WF": "Wallis and Futuna",
-    "CK": "Cook Islands",
-    "PF": "French Polynesia",
-    "MH": "Marshall Islands",
-    "FM": "Micronesia, Federated States of",
-    "NC": "New Caledonia",
-    "PW": "Palau",
-    "PG": "Papua New Guinea",
-    "BE": "Belgium",
-    "FR": "France",
-    "DE": "Germany",
-    "IT": "Italy",
-    "ES": "Spain",
-    "CH": "Switzerland",
-    "NL": "Netherlands",
-    "TR": "Turkey",
-    "GB": "United Kingdom",
-    "AL": "Albania",
-    "AM": "Armenia",
-    "AT": "Austria",
-    "AZ": "Azerbaijan",
-    "BY": "Belarus",
-    "BA": "Bosnia and Herzegovina",
-    "BG": "Bulgaria",
-    "HR": "Croatia",
-    "CY": "Cyprus",
-    "CZ": "Czech Republic",
-    "DK": "Denmark",
-    "EE": "Estonia",
-    "FO": "Faroe Islands",
-    "FI": "Finland",
-    "GE": "Georgia",
-    "GI": "Gibraltar",
-    "GR": "Greece",
-    "GL": "Greenland",
-    "HU": "Hungary",
-    "IS": "Iceland",
-    "IE": "Ireland",
-    "KZ": "Kazakhstan",
-    "LV": "Latvia",
-    "LI": "Liechtenstein",
-    "LT": "Lithuania",
-    "LU": "Luxembourg",
-    "MK": "Macedonia, the former Yugoslav Republic of",
-    "MT": "Malta",
-    "MD": "Moldova, Republic of",
-    "MC": "Monaco",
-    "ME": "Montenegro",
-    "NO": "Norway",
-    "PL": "Poland",
-    "PT": "Portugal",
-    "RO": "Romania",
-    "RU": "Russian Federation",
-    "SM": "San Marino",
-    "RS": "Serbia",
-    "SK": "Slovakia",
-    "SI": "Slovenia",
-    "SE": "Sweden",
-    "TM": "Turkmenistan",
-    "UA": "Ukraine",
-    "UZ": "Uzbekistan",
-    "VA": "Holy See (Vatican City State)",
-    "BH": "Bahrain",
-    "KW": "Kuwait",
-    "OM": "Oman",
-    "QA": "Qatar",
-    "SA": "Saudi Arabia",
-    "AE": "United Arab Emirates",
-    "EG": "Egypt",
-    "IR": "Iran, Islamic Republic of",
-    "IQ": "Iraq",
-    "IL": "Israel",
-    "JO": "Jordan",
-    "LB": "Lebanon",
-    "SY": "Syrian Arab Republic",
-    "YE": "Yemen",
-    "BW": "Botswana",
-    "KE": "Kenya",
-    "MW": "Malawi",
-    "MA": "Morocco",
-    "MZ": "Mozambique",
-    "NA": "Namibia",
-    "NG": "Nigeria",
-    "ZA": "South Africa",
-    "SZ": "Swaziland",
-    "ZM": "Zambia",
-    "DZ": "Algeria",
-    "AO": "Angola",
-    "BJ": "Benin",
-    "BF": "Burkina Faso",
-    "BI": "Burundi",
-    "CM": "Cameroon",
-    "CV": "Cape Verde",
-    "CF": "Central African Republic",
-    "TD": "Chad",
-    "CG": "Congo",
-    "CD": "Congo, the Democratic Republic of the",
-    "DJ": "Djibouti",
-    "GQ": "Equatorial Guinea",
-    "ER": "Eritrea",
-    "ET": "Ethiopia",
-    "GA": "Gabon",
-    "GM": "Gambia",
-    "GH": "Ghana",
-    "GN": "Guinea",
-    "GW": "Guinea-Bissau",
-    "CI": "Côte d'Ivoire",
-    "LS": "Lesotho",
-    "LR": "Liberia",
-    "LY": "Libya",
-    "MG": "Madagascar",
-    "ML": "Mali",
-    "MR": "Mauritania",
-    "MU": "Mauritius",
-    "NE": "Niger",
-    "RE": "Réunion",
-    "RW": "Rwanda",
-    "SN": "Senegal",
-    "SC": "Seychelles",
-    "SL": "Sierra Leone",
-    "SO": "Somalia",
-    "SD": "Sudan",
-    "TZ": "Tanzania, United Republic of",
-    "TG": "Togo",
-    "TN": "Tunisia",
-    "UG": "Uganda",
-    "ZW": "Zimbabwe",
-    "CN": "China",
-    "HK": "Hong Kong",
-    "IN": "India",
-    "ID": "Indonesia",
-    "JP": "Japan",
-    "MY": "Malaysia",
-    "PH": "Philippines",
-    "SG": "Singapore",
-    "KR": "Korea, Republic of",
-    "TW": "Taiwan, Province of China",
-    "TH": "Thailand",
-    "AF": "Afghanistan",
-    "BD": "Bangladesh",
-    "BT": "Bhutan",
-    "BN": "Brunei Darussalam",
-    "KH": "Cambodia",
-    "KG": "Kyrgyzstan",
-    "LA": "Lao People's Democratic Republic",
-    "MO": "Macao",
-    "MV": "Maldives",
-    "MN": "Mongolia",
-    "NP": "Nepal",
-    "PK": "Pakistan",
-    "LK": "Sri Lanka",
-    "VN": "Viet Nam"
+    'US': 'United States',
+    'CA': 'Canada',
+    'MX': 'Mexico',
+    'AR': 'Argentina',
+    'BR': 'Brazil',
+    'CL': 'Chile',
+    'CO': 'Colombia',
+    'CR': 'Costa Rica',
+    'EC': 'Ecuador',
+    'GT': 'Guatemala',
+    'PA': 'Panama',
+    'PE': 'Peru',
+    'UY': 'Uruguay',
+    'VE': 'Venezuela, Bolivarian Republic of',
+    'BZ': 'Belize',
+    'BO': 'Bolivia, Plurinational State of',
+    'SV': 'El Salvador',
+    'GF': 'French Guiana',
+    'GY': 'Guyana',
+    'HN': 'Honduras',
+    'NI': 'Nicaragua',
+    'PY': 'Paraguay',
+    'SR': 'Suriname',
+    'AW': 'Aruba',
+    'BS': 'Bahamas',
+    'BB': 'Barbados',
+    'BM': 'Bermuda',
+    'DO': 'Dominican Republic',
+    'HT': 'Haiti',
+    'JM': 'Jamaica',
+    'PR': 'Puerto Rico',
+    'TT': 'Trinidad and Tobago',
+    'VI': 'Virgin Islands, U.S.',
+    'AI': 'Anguilla',
+    'AG': 'Antigua and Barbuda',
+    'BQ': 'Bonaire, Sint Eustatius and Saba',
+    'VG': 'Virgin Islands, British',
+    'KY': 'Cayman Islands',
+    'CW': 'Curaçao',
+    'DM': 'Dominica',
+    'GD': 'Grenada',
+    'GP': 'Guadeloupe',
+    'MQ': 'Martinique',
+    'MS': 'Montserrat',
+    'MF': 'Saint Martin (French part)',
+    'SX': 'Sint Maarten (Dutch part)',
+    'KN': 'Saint Kitts and Nevis',
+    'LC': 'Saint Lucia',
+    'VC': 'Saint Vincent and the Grenadines',
+    'TC': 'Turks and Caicos Islands',
+    'AS': 'American Samoa',
+    'AU': 'Australia',
+    'FJ': 'Fiji',
+    'GU': 'Guam',
+    'NZ': 'New Zealand',
+    'MP': 'Northern Mariana Islands',
+    'VU': 'Vanuatu',
+    'WF': 'Wallis and Futuna',
+    'CK': 'Cook Islands',
+    'PF': 'French Polynesia',
+    'MH': 'Marshall Islands',
+    'FM': 'Micronesia, Federated States of',
+    'NC': 'New Caledonia',
+    'PW': 'Palau',
+    'PG': 'Papua New Guinea',
+    'BE': 'Belgium',
+    'FR': 'France',
+    'DE': 'Germany',
+    'IT': 'Italy',
+    'ES': 'Spain',
+    'CH': 'Switzerland',
+    'NL': 'Netherlands',
+    'TR': 'Turkey',
+    'GB': 'United Kingdom',
+    'AL': 'Albania',
+    'AM': 'Armenia',
+    'AT': 'Austria',
+    'AZ': 'Azerbaijan',
+    'BY': 'Belarus',
+    'BA': 'Bosnia and Herzegovina',
+    'BG': 'Bulgaria',
+    'HR': 'Croatia',
+    'CY': 'Cyprus',
+    'CZ': 'Czech Republic',
+    'DK': 'Denmark',
+    'EE': 'Estonia',
+    'FO': 'Faroe Islands',
+    'FI': 'Finland',
+    'GE': 'Georgia',
+    'GI': 'Gibraltar',
+    'GR': 'Greece',
+    'GL': 'Greenland',
+    'HU': 'Hungary',
+    'IS': 'Iceland',
+    'IE': 'Ireland',
+    'KZ': 'Kazakhstan',
+    'LV': 'Latvia',
+    'LI': 'Liechtenstein',
+    'LT': 'Lithuania',
+    'LU': 'Luxembourg',
+    'MK': 'Macedonia, the former Yugoslav Republic of',
+    'MT': 'Malta',
+    'MD': 'Moldova, Republic of',
+    'MC': 'Monaco',
+    'ME': 'Montenegro',
+    'NO': 'Norway',
+    'PL': 'Poland',
+    'PT': 'Portugal',
+    'RO': 'Romania',
+    'RU': 'Russian Federation',
+    'SM': 'San Marino',
+    'RS': 'Serbia',
+    'SK': 'Slovakia',
+    'SI': 'Slovenia',
+    'SE': 'Sweden',
+    'TM': 'Turkmenistan',
+    'UA': 'Ukraine',
+    'UZ': 'Uzbekistan',
+    'VA': 'Holy See (Vatican City State)',
+    'BH': 'Bahrain',
+    'KW': 'Kuwait',
+    'OM': 'Oman',
+    'QA': 'Qatar',
+    'SA': 'Saudi Arabia',
+    'AE': 'United Arab Emirates',
+    'EG': 'Egypt',
+    'IR': 'Iran, Islamic Republic of',
+    'IQ': 'Iraq',
+    'IL': 'Israel',
+    'JO': 'Jordan',
+    'LB': 'Lebanon',
+    'SY': 'Syrian Arab Republic',
+    'YE': 'Yemen',
+    'BW': 'Botswana',
+    'KE': 'Kenya',
+    'MW': 'Malawi',
+    'MA': 'Morocco',
+    'MZ': 'Mozambique',
+    'NA': 'Namibia',
+    'NG': 'Nigeria',
+    'ZA': 'South Africa',
+    'SZ': 'Swaziland',
+    'ZM': 'Zambia',
+    'DZ': 'Algeria',
+    'AO': 'Angola',
+    'BJ': 'Benin',
+    'BF': 'Burkina Faso',
+    'BI': 'Burundi',
+    'CM': 'Cameroon',
+    'CV': 'Cape Verde',
+    'CF': 'Central African Republic',
+    'TD': 'Chad',
+    'CG': 'Congo',
+    'CD': 'Congo, the Democratic Republic of the',
+    'DJ': 'Djibouti',
+    'GQ': 'Equatorial Guinea',
+    'ER': 'Eritrea',
+    'ET': 'Ethiopia',
+    'GA': 'Gabon',
+    'GM': 'Gambia',
+    'GH': 'Ghana',
+    'GN': 'Guinea',
+    'GW': 'Guinea-Bissau',
+    'CI': 'Côte d\'Ivoire',
+    'LS': 'Lesotho',
+    'LR': 'Liberia',
+    'LY': 'Libya',
+    'MG': 'Madagascar',
+    'ML': 'Mali',
+    'MR': 'Mauritania',
+    'MU': 'Mauritius',
+    'NE': 'Niger',
+    'RE': 'Réunion',
+    'RW': 'Rwanda',
+    'SN': 'Senegal',
+    'SC': 'Seychelles',
+    'SL': 'Sierra Leone',
+    'SO': 'Somalia',
+    'SD': 'Sudan',
+    'TZ': 'Tanzania, United Republic of',
+    'TG': 'Togo',
+    'TN': 'Tunisia',
+    'UG': 'Uganda',
+    'ZW': 'Zimbabwe',
+    'CN': 'China',
+    'HK': 'Hong Kong',
+    'IN': 'India',
+    'ID': 'Indonesia',
+    'JP': 'Japan',
+    'MY': 'Malaysia',
+    'PH': 'Philippines',
+    'SG': 'Singapore',
+    'KR': 'Korea, Republic of',
+    'TW': 'Taiwan, Province of China',
+    'TH': 'Thailand',
+    'AF': 'Afghanistan',
+    'BD': 'Bangladesh',
+    'BT': 'Bhutan',
+    'BN': 'Brunei Darussalam',
+    'KH': 'Cambodia',
+    'KG': 'Kyrgyzstan',
+    'LA': 'Lao People\'s Democratic Republic',
+    'MO': 'Macao',
+    'MV': 'Maldives',
+    'MN': 'Mongolia',
+    'NP': 'Nepal',
+    'PK': 'Pakistan',
+    'LK': 'Sri Lanka',
+    'VN': 'Viet Nam'
   };
 
 }

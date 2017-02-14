@@ -1,8 +1,7 @@
-import { Component, Input, Output, style, animate, transition, state, trigger } from '@angular/core';
-import { ProxySettingsService } from '../proxy-settings.service';
-import { Subject } from 'rxjs/Subject';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
+import { ProxySettingsService } from '../proxy-settings.service';
+import { Component, style, animate, transition, state, trigger } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -58,10 +57,10 @@ export class IndexComponent {
   ) {
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
       let curTab = tabs[0];
-      let url = curTab.url
+      let url = curTab.url;
       let match = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
       this.domain = match ? match[1] : null;
-      let protocol = url ? url.split("://")[0] : null;
+      let protocol = url ? url.split('://')[0] : null;
       this.validProtocol = protocol === 'http' || protocol === 'https';
       if (this.domain && this.validProtocol) {
         // Get Smart Route name
@@ -71,7 +70,7 @@ export class IndexComponent {
           tld = tld.slice(1); // remove "."
           this.countryCode = tld;
         }
-        else { this.countryCode = "COM"; } // Default to COM (US)
+        else { this.countryCode = 'COM'; } // Default to COM (US)
 
         // .com -> US and .uk -> GB, all other tlds are direct translations
         // Try to preload smart server name from cache
@@ -81,8 +80,9 @@ export class IndexComponent {
         }
 
         // Load fav icon
-        let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
-        if (curTab.favIconUrl && curTab.favIconUrl != '' && curTab.favIconUrl.indexOf('chrome://favicon/') == -1) {
+        // not sure if this is actually used
+        // let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
+        if (curTab.favIconUrl && curTab.favIconUrl !== '' && curTab.favIconUrl.indexOf('chrome://favicon/') === -1) {
           this.faviconUrl = curTab.favIconUrl;
         }
       }
@@ -148,7 +148,7 @@ export class IndexComponent {
   toggleCypherpunk(enabled: boolean) {
     this.cypherpunkEnabled = enabled;
     this.settingsService.saveCypherpunkEnabled(enabled);
-    chrome.runtime.sendMessage({ action: "CypherpunkEnabled" });
+    chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
 
     if (enabled) { this.proxySettingsService.enableProxy(); }
     else { this.proxySettingsService.disableProxy(); }
@@ -194,8 +194,8 @@ export class IndexComponent {
   selectedRoutingInit() {
     // Check if override for domain exists, apply override settings if it does
     let override = this.routing[this.domain];
-    let type : string = override ? override.type : this.defaultRouting.type;
-    let selectedServerId : string = override ? override.serverId : this.defaultRouting.selected;
+    let type: string = override ? override.type : this.defaultRouting.type;
+    let selectedServerId: string = override ? override.serverId : this.defaultRouting.selected;
     this.selectedRouteOpt = type;
 
     switch (type) {
@@ -244,4 +244,3 @@ export class IndexComponent {
   }
 
 }
-

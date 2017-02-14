@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { SettingsService } from '../../settings.service';
 import { ProxySettingsService } from '../../proxy-settings.service';
 
@@ -29,4 +29,3 @@ export class DefaultRoutingComponent {
     this.changeView.emit(name);
   }
 }
-

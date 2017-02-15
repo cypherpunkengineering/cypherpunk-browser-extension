@@ -24,7 +24,7 @@ function renameFiles() {
 }
 
 # build extension
-ng build --aot
+./node_modules/angular-cli/bin/ng build --aot
 
 # move original angular-cli.json back
 mv angular-cli.json firefox.angular-cli.json

@@ -24,7 +24,7 @@ function renameFiles() {
 }
 
 # build extension
-ng build
+./node_modules/angular-cli/bin/ng build
 
 # move original angular-cli.json back
 mv angular-cli.json firefox.angular-cli.json
@@ -39,4 +39,3 @@ cp -R firefox-entrypoint/* dist-firefox
 
 # done
 exit 0
-

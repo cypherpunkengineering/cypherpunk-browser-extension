@@ -60,6 +60,7 @@ body {
   font-size: rem(18);
   font-weight: bold;
   text-align: center;
+  border-bottom: 2px solid #1b474b;
   span { float: left; }
 }
 
@@ -384,11 +385,28 @@ a {
   .region {
     @include pad(0 rem(30));
     @include span-columns(12);
-    background-color: $overlay--dark;
+    background-color: $primary-bg;
     height: rem(32);
+    color: #8dfffc;
+    font-size: rem(14);
     line-height: rem(32);
-    font-size: rem(12);
-    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    position: relative;
+    margin-bottom: 10px;
+    &:after {
+      content: ' ';
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid $primary-bg;
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      right: 0;
+      margin: auto;
+      z-index: 2;
+    }
   }
 
   .location-row {
@@ -399,7 +417,7 @@ a {
     text-align: left;
     font-weight: 200;
     cursor: pointer;
-    background-color: $primary-bg;
+    background-color: $primary-bg-dark;
     .flag, .name {
       @include display(block);
       display: block;
@@ -408,26 +426,33 @@ a {
     .flag { padding-top: rem(6); }
     .name { margin-left: rem(8); }
     .premium {
-      background: linear-gradient(329deg, #f8cf1c, #f8e71c, #f8cf1c);
-      border-radius: rem(5) 0 rem(5) 0;
-      padding: rem(1) rem(3);
-      color: darken(#f8cf1c, 40%);
-      font-weight: 800;
+      background: #010011;
+      border-radius: 2px;
+      padding: 1px 3px;
+      color: #ffe49a;
       position: relative;
       top: rem(-1);
-      font-size: rem(10);
+      font-size: rem(12);
       margin-left: rem(10);
+      border: 1px solid #ff7857;
     }
     .unavailable {
       font-weight: 400;
-      font-size: rem(10);
+      font-size: rem(12);
       margin-left: rem(10);
-      opacity: 0.45;
+      background-color: #010011;
+      padding: 1px 3px;
+      border-radius: 2px;
+      color: #19474c;
     }
     &.disabled .flag, &.disabled .name, &.disabled .premium { opacity: 0.45; }
-    &:hover, &.checked:hover { background-color: $overlay--hover; }
+    &:hover { background-color: $primary-bg-light; }
+    &:hover.disabled { background-color: $primary-bg-dark; }
     &.checked {
-      background: url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
+      background-color: #010011;
+      color: #ffe49a;
+      border-top: 1px solid #5e5a5a;
+      border-bottom: 1px solid #5e5a5a;
     }
   }
 }

@@ -19,17 +19,21 @@
 }
 
 #header__main {
-  // background-color: #4c8ee1;
+  height: 55px;
   padding: 10px 0;
   background-color: $primary-bg;
   text-align: left;
+  border-bottom: 2px solid #19474c;
+
   .logo {
     position: absolute;
-    left: rem(20);
+    left: rem(16);
     top: rem(16);
+    height: 25px;
   }
   .title {
-    margin-left: rem(52);
+    height: 20px;
+    margin: 8px 0 0 52px;
   }
   .btn__settings {
     position: absolute;
@@ -86,9 +90,6 @@
     line-height: rem(56);
     text-align: center;
   }
-}
-
-#info-connected {
 }
 
 #info-disconnected {

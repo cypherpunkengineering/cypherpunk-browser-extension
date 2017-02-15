@@ -14,8 +14,8 @@
           <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
         </span>
         <span class="name">{{server.name}}</span>
-        <span *ngIf="server.level === 'premium'" class="premium">PREMIUM</span>
-        <span *ngIf="!server.httpDefault.length" class="unavailable">UNAVAILABLE</span>
+        <span *ngIf="server.level === 'premium'" class="premium">Premium</span>
+        <span *ngIf="!server.httpDefault.length" class="unavailable">Unavailable</span>
       </div>
     </div>
   </div>

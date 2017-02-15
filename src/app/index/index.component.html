@@ -1,13 +1,17 @@
 <div id="index" *ngIf="!showTutorial" [ngClass]="{'cypherpunk-on': cypherpunkEnabled, 'cypherpunk-off': !cypherpunkEnabled,
   'smart-routing-info': true}">
   <div id="header__main">
+
     <a routerLink="/account">
-      <img class="logo" src="/assets/icon-account.svg" alt="">
+      <img class="logo" src="/assets/account.png">
     </a>
-    <img class="title" src="/assets/header-logo-big.svg" alt="">
+
+    <img class="title" src="/assets/logo.png">
+
     <a routerLink="/settings" class="btn__settings">
       <img class="gear" src="/assets/gear.png" alt="">
     </a>
+
     <div id="cypher-punk-enabled-switch" class="switch">
       <label class="label-switch">
         <input #enableCypherpunk [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />

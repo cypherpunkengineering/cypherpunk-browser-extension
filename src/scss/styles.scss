@@ -11,7 +11,7 @@ html, body {
 }
 
 body {
-  background-color: $primary-bg;
+  background-color: $primary-bg-dark;
   font-family: 'Dosis', sans-serif;
   font-size: rem(14);
   font-weight: 300;
@@ -47,7 +47,7 @@ body {
 #sub-menu {
   width: 100%;
   height: 100%;
-  background-color: $primary-bg;
+  background-color: $primary-bg-dark;
 }
 
 /* Reuseable Components */
@@ -57,22 +57,25 @@ body {
   line-height: rem(56);
   cursor: pointer;
   color: #fff;
-  font-size: rem(12);
+  font-size: rem(18);
+  font-weight: bold;
+  text-align: center;
+  span { float: left; }
 }
 
-.page-header { background-color: $primary-bg-dark; }
+.page-header { background-color: $primary-bg; }
 
 .double-row {
   @include row;
   clear: both;
   height: rem(75);
   color: #fff;
-  background-color: $primary-bg;
+  background-color: $primary-bg-light;
   cursor: pointer;
 
-  &:hover, &.checked:hover { background-color: darken($primary-bg, 5%); }
+  &:hover, &.checked:hover { background-color: darken($primary-bg-light, 5%); }
   &.checked {
-    background: $primary-bg url('/assets/checkmarks/icon-circle-check.png') no-repeat rem(10) 32%;
+    background: $primary-bg-light url('/assets/checkmarks/icon-circle-check.png') no-repeat rem(10) 32%;
   }
   .label {
     @include span-columns(12);
@@ -90,6 +93,7 @@ body {
     height: rem(40);
     line-height: rem(52);
     text-align: right;
+    color: #8dfffc;
   }
   .desc {
     @include span-columns(12);
@@ -100,7 +104,7 @@ body {
   }
   &.extended-desc {
     &.checked {
-      background: $primary-bg url('/assets/checkmarks/icon-circle-check.png') no-repeat rem(10) rem(19);
+      background: $primary-bg-light url('/assets/checkmarks/icon-circle-check.png') no-repeat rem(10) rem(19);
     }
     .desc {
       @include pad(0 rem(32) 0 rem(32));
@@ -122,18 +126,18 @@ body {
     background-color: #0E063D;
   }
   &.highlighted {
-    background-color: $primary-bg;
+    background-color: $primary-bg-light;
   }
   &.clickable {
     cursor: pointer;
-    &:hover { background-color: darken($primary-bg, 5%); }
+    &:hover { background-color: darken($primary-bg-light, 5%); }
   }
   &.selectable {
     @include pad(0 0 0 rem(10));
     cursor: pointer;
-    &:hover, &.checked:hover { background-color: darken($primary-bg, 5%); }
+    &:hover, &.checked:hover { background-color: darken($primary-bg-light, 5%); }
     &.checked {
-      background: $primary-bg url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
+      background: $primary-bg-light url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
     }
   }
   .label {
@@ -162,6 +166,7 @@ body {
     height: rem(24);
     line-height: rem(24);
     text-align: right;
+    color: #8dfffc;
     &.half { @include span-columns(6); }
   }
 }
@@ -179,7 +184,7 @@ body {
   @include display(inline-block);
   margin-right: rem(-10);
   margin-left: rem(12);
-  color: rgba(169, 169, 169, 0.5);
+  color: #8dfffc;
   font-size: rem(11);
 }
 

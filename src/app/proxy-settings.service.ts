@@ -130,9 +130,7 @@ export class ProxySettingsService {
   generatePACConfig() {
     let config = {
       mode: 'pac_script',
-      pacScript: {
-        data: this.generatePACScript()
-      }
+      pacScript: { data: this.generatePACScript() }
     };
     this.settingsService.savePacScriptConfig(config);
     return config;
@@ -141,7 +139,6 @@ export class ProxySettingsService {
   generatePACScript() {
     // Fetch latest domain specific and default routing settings
     let pacScriptSettings = this.settingsService.pacScriptSettings();
-    console.log(pacScriptSettings);
 
     let pacScript = 'function FindProxyForURL(url, host) {\n' +
       '  /* Normalize the URL for pattern matching */\n' +
@@ -181,7 +178,6 @@ export class ProxySettingsService {
 
   generateDomainSpecificRules(pacScriptSettings) {
     let routing = pacScriptSettings.routing;
-    let defaultRouting = pacScriptSettings.defaultRouting;
     let domainSpecificRules = '';
     let domains = Object.keys(routing);
     let domainSettings;
@@ -271,9 +267,9 @@ export class ProxySettingsService {
     if (countryCode === 'COM') { countryCode = 'US'; }
     else if (countryCode === 'UK') { countryCode = 'GB'; }
 
-    let fastestServer, curServer, latency, firstUsServer;
     // Find fastest server for given country
     // Latency list is ordered from lowest latency to highest
+    let fastestServer, curServer, latency, firstUsServer;
     for (let x = 0; x < this.latencyList.length; x++) {
       latency = this.latencyList[x].latency;
       curServer = this.servers[this.latencyList[x].id];
@@ -287,9 +283,10 @@ export class ProxySettingsService {
         break;
       }
     }
-      // All servers pinged 9999 or higher or there is no proxy
-      // available for the provided TLD, default to first/fastest US Server
-      if (!fastestServer) { fastestServer = firstUsServer; }
+
+    // All servers pinged 9999 or higher or there is no proxy
+    // available for the provided TLD, default to first/fastest US Server
+    if (!fastestServer) { fastestServer = firstUsServer; }
 
     return fastestServer;
   }

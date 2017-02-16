@@ -135,6 +135,7 @@ function loadProxies() {
     localStorage.setItem('cypherpunk.premiumAccount', JSON.stringify(res.account.type === 'premium'));
 
     httpGetAsync('https://cypherpunk.privacy.network/api/v0/location/list/' + res.account.type, (servers) => {
+      console.log('servers: ', servers);
       localStorage.setItem('cypherpunk.proxyServers', servers);
       getServerLatencyList(saveServerArray(JSON.parse(servers)), 3, res.account.type);
       console.log('SERVERS SAVED', res.account.type);

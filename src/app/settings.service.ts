@@ -100,9 +100,7 @@ class Defaults {
 
 @Injectable()
 export class SettingsService {
-  constructor (
-    private localStorageService: LocalStorageService
-  ) {
+  constructor (private localStorageService: LocalStorageService) {
     let initialized = this.localStorageService.get(Keys.INITIALIZED);
 
     // Settings haven't been initialized yet, set defaults

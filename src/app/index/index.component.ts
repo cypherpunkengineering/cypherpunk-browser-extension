@@ -93,19 +93,16 @@ export class IndexComponent {
     if (this.proxySettingsService.latencyList && this.proxySettingsService.latencyList.length) {
       console.log('Servers data preloaded by background script');
       this.hqService.fetchUserStatus()
-      .subscribe(res => {
-        this.init();
-      }, err => {
-        this.toggleCypherpunk(false);
-      });
+      .subscribe(
+        res => { this.init(); },
+        err => { this.toggleCypherpunk(false); }
+      );
     }
     else { // latencyList isn't populated, populate manually in front end
       console.log('Server data being manually loaded');
       this.proxySettingsService.loadServers()
       .then(res => { this.init(); })
-      .catch(err => {
-        this.toggleCypherpunk(false);
-      });
+      .catch(err => { this.toggleCypherpunk(false); });
     }
   }
 
@@ -180,12 +177,11 @@ export class IndexComponent {
       case 'FASTEST':
         this.applyFastestProxy();
         break;
-      case 'NONE':
       default:
         this.applyNoProxy();
     }
 
-    console.log('Applying Selected Routing Type');
+    console.log('Applying Selected Routing Type: ' + type);
     this.settingsService.saveRouting(this.routing);
     this.proxySettingsService.enableProxy();
   }
@@ -209,7 +205,6 @@ export class IndexComponent {
       case 'FASTEST':
         this.applyFastestProxy();
         break;
-      case 'NONE':
       default:
         this.applyNoProxy();
     }

@@ -17,10 +17,8 @@ import { Component, style, animate, transition, state, trigger } from '@angular/
     ])
   ]
 })
-
 export class IndexComponent {
   // Misc Vars
-  title = 'Index';
   validProtocol = true;
   faviconUrl = undefined;
   regions = this.proxySettingsService.regions;

@@ -60,9 +60,7 @@
     width: 100%;
   }
 
-  label {
-    cursor: pointer;
-  }
+  label { cursor: pointer; }
 
   &.header-off { background-color: $color-error; }
   #logo {
@@ -114,25 +112,18 @@
   // }
 }
 :host { width: 100%; display: block; }
-.panel__main {
-  padding-top: 1.5rem;
-}
+.panel__main { padding-top: 1.5rem; }
 
 .location--public {
-
   .arrow--down {
     margin: rem(5) 0;
-
-    img {
-      width: rem(16);
-    }
+    img { width: rem(16); }
   }
 }
 
 #smart-routing-info {
   @include pad(rem(20) 0);
   height: rem(298);
-
 
   .routing-dd {
     @include span-columns(12);

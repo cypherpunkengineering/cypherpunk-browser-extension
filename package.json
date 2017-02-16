@@ -43,6 +43,7 @@
     "@types/node": "^6.0.42",
     "angular-cli": "1.0.0-beta.22-1",
     "codelyzer": "~2.0.0-beta.1",
+    "extract-text-webpack-plugin": "2.0.0-beta.5",
     "jasmine-core": "2.5.2",
     "jasmine-spec-reporter": "2.5.0",
     "jpm": "^1.2.2",

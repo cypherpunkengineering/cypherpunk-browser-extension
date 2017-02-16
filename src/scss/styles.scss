@@ -157,9 +157,7 @@ body {
     line-height: rem(50);
     background-color: transparent;
   }
-  &.large .label-switch {
-    margin-top: 5px;
-  }
+  &.large .label-switch { margin-top: 5px; }
   .switch {
     @include span-columns(3);
     @include omega;

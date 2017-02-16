@@ -1,10 +1,10 @@
 {
-  "title": "Cypherpunk",
-  "name": "cypherpunk-browser-extension-firefox",
+  "title": "Cypherpunk Privacy",
+  "name": "cypherpunk-privacy-firefox",
   "version": "0.0.1",
-  "description": "Cypherpunk",
+  "description": "Cypherpunk Privacy",
   "main": "index.js",
-  "author": "Cypherpunk",
+  "author": "Cypherpunk Partners, slf.",
   "hasEmbeddedWebExtension": true,
   "engines": {
     "firefox": ">=38.0a1",

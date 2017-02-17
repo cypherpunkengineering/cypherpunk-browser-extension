@@ -22,13 +22,9 @@ export class IndexComponent {
   // Misc Vars
   validProtocol = true;
   faviconUrl = undefined;
-  // regions = this.proxySettingsService.regions;
-  // premiumAccount = this.proxySettingsService.premiumProxyAccount;
 
   // Settings Vars
   indexSettings = this.settingsService.indexSettings();
-  // proxyCredentials = this.indexSettings.proxyCredentials;
-  // privacyFilterWhitelist = this.indexSettings.privacyFilter.whitelist;
   cypherpunkEnabled = this.indexSettings.cypherpunkEnabled;
   defaultRouting = this.indexSettings.defaultRouting;
   routing = this.indexSettings.routing;
@@ -173,7 +169,7 @@ export class IndexComponent {
     if (type === 'SELECTED') { return this.router.navigate(['/selected-server']); }
 
     // create proxy binding from this domain to proxy type
-    this.routing[this.domain] = { type: type };
+    // this.routing[this.domain] = { type: type };
 
     switch (type) {
       case 'SMART':
@@ -193,16 +189,21 @@ export class IndexComponent {
     }
 
     console.log('Applying Selected Routing Type: ' + type);
-    this.settingsService.saveRouting(this.routing); // save proxy binding
+    // this.settingsService.saveRouting(this.routing); // save proxy binding
+    this.settingsService.saveRoutingInfo(type, null);
     this.proxySettingsService.enableProxy(); // process proxy binding
   }
 
   /* Looks at stored settings and preselects correct routing type in the UI */
   selectedRoutingInit() {
     // Check if override for domain exists, apply override settings if it does
-    let override = this.routing[this.domain];
-    let type: string = override ? override.type : this.defaultRouting.type;
-    let selectedServerId: string = override ? override.serverId : this.defaultRouting.selected;
+    let type: string;
+    let typeObject = this.defaultRouting.type;
+    if (typeObject) { type = typeObject.toString(); }
+
+    let serverId: string;
+    let serverIdObject = this.defaultRouting.selected;
+    if (serverIdObject) { serverId = serverIdObject.toString(); }
     this.selectedRouteOpt = type;
 
     switch (type) {
@@ -210,8 +211,7 @@ export class IndexComponent {
         this.applySmartProxy();
         break;
       case 'SELECTED':
-        selectedServerId = override ? override.serverId : this.defaultRouting.selected.toString();
-        this.applySelectedProxy(selectedServerId);
+        this.applySelectedProxy(serverId);
         break;
       case 'FASTEST':
         this.applyFastestProxy();
@@ -267,9 +267,9 @@ export class IndexComponent {
   }
 
   applySelectedProxy(serverId) {
+    if (!serverId) { return; }
     this.selectedRouteServer = this.proxySettingsService.servers[serverId];
     this.selectedRouteServerName = this.selectedRouteServer.name;
     this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
   }
-
 }

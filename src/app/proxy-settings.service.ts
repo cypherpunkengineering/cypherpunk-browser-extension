@@ -151,6 +151,8 @@ export class ProxySettingsService {
 
     pacScript += '}';
 
+    console.log(pacScript);
+
     return pacScript;
   }
 
@@ -233,7 +235,7 @@ export class ProxySettingsService {
       }
     }
     // FastestUS: Route to fastest US server always
-    if (defaultRouting.type === 'FASTESTUS') {
+    else if (defaultRouting.type === 'FASTESTUS') {
       let fastestUSServer = this.getFastestUSServer();
       if (fastestUSServer) {
         let fastestUSServerIp = fastestUSServer.httpDefault[0];
@@ -241,7 +243,7 @@ export class ProxySettingsService {
       }
     }
     // FastestUK: Route to fastest UK server always
-    if (defaultRouting.type === 'FASTESTUK') {
+    else if (defaultRouting.type === 'FASTESTUK') {
       let fastestUKServer = this.getFastestUKServer();
       if (fastestUKServer) {
         let fastestUKServerIp = fastestUKServer.httpDefault[0];
@@ -318,7 +320,7 @@ export class ProxySettingsService {
   getFastestUKServer() {
     if (!this.servers || !this.latencyList) { return null; }
     let latencyServer = this.latencyList.find((serverLatency) => {
-      return this.servers[serverLatency.id].country === 'UK';
+      return this.servers[serverLatency.id].country === 'GB';
     });
     if (!latencyServer) { return null; }
     return this.servers[latencyServer.id];

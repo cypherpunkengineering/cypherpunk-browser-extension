@@ -27,10 +27,10 @@ export class SelectedServerComponent {
   browserObj: any = chrome ? chrome : chrome;
 
   title = 'Selected Server';
-  domain;
+  domain: string;
+  selectedServerId: string;
   premiumAccount = this.proxySettingsService.premiumProxyAccount;
   serverArr = this.proxySettingsService.serverArr;
-  selectedServerId;
   regions = this.proxySettingsService.regions;
 
   selectedServerSettings = this.settingsService.selectedServerSettings();
@@ -43,27 +43,34 @@ export class SelectedServerComponent {
     private localStorageService: LocalStorageService,
     private proxySettingsService: ProxySettingsService
   ) {
-
-    let callback = (tabs) => {
-      let curTab = tabs[0];
-      let url = curTab.url;
-      let match = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
-      this.domain = match ? match[1] : null;
-
-      let curSmartRoute = this.routing[this.domain];
-      if (curSmartRoute) {
-        this.zone.run(() => {
-          this.selectedServerId = curSmartRoute.serverId;
-        });
-      }
-    };
-    if (chrome) { // Chrome
-      this.browserObj.tabs.query({currentWindow: true, active: true}, callback);
+    if (settingsService.defaultRoutingSettings().selected) {
+      this.selectedServerId = settingsService.defaultRoutingSettings().selected.toString();
     }
-    else { // FF
-      this.browserObj.tabs.query({currentWindow: true, active: true})
-      .then(callback);
-    }
+    // set current smart selected server
+    // let callback = (tabs) => {
+    //   let curTab = tabs[0];
+    //   let url = curTab.url;
+    //   let match = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
+    //   this.domain = match ? match[1] : null;
+    //
+    //   let curSmartRoute = this.routing[this.domain];
+    //   if (curSmartRoute) {
+    //     this.zone.run(() => {
+    //       this.selectedServerId = curSmartRoute.serverId;
+    //     });
+    //   }
+    // };
+    //
+    //
+    // if (chrome) { // Chrome
+    //   this.browserObj.tabs.query({currentWindow: true, active: true}, callback);
+    // }
+    // else { // FF
+    //   this.browserObj.tabs.query({currentWindow: true, active: true})
+    //   .then(callback);
+    // }
+
+
   }
 
   selectProxy(server) {
@@ -72,11 +79,12 @@ export class SelectedServerComponent {
     else if (!server.httpDefault.length) { return; }
     else {
       this.selectedServerId = server.id;
-      this.routing[this.domain] = {
-        type: this.routingType,
-        serverId: server.id
-      };
-      this.settingsService.saveRouting(this.routing);
+      // this.routing[this.domain] = {
+      //   type: this.routingType,
+      //   serverId: server.id
+      // };
+      // this.settingsService.saveRouting(this.routing);
+      this.settingsService.saveRoutingInfo(this.routingType, server.id);
       this.proxySettingsService.enableProxy();
     }
 

@@ -93,7 +93,7 @@
           </div>
 
           <div class="third">
-            <div class="button disabled">
+            <div class="button" (click)="selectRouteType('FASTESTUK')" [ngClass]="{'checked': selectedRouteOpt === 'FASTESTUK' }">
               <div class="icon">
                 <img src="/assets/flags/48/GB.png" alt="">
               </div>
@@ -103,7 +103,7 @@
           </div>
 
           <div class="third">
-            <div class="button disabled">
+            <div class="button" (click)="selectRouteType('FASTESTUS')" [ngClass]="{'checked': selectedRouteOpt === 'FASTESTUS' }">
               <div class="icon">
                 <img src="/assets/flags/48/US.png" alt="">
               </div>
@@ -135,7 +135,7 @@
           </div>
 
           <div class="third">
-            <div class="button" (click)="selectRouteType('SELECTED')" [ngClass]="{'checked': selectedRouteOpt === 'SELECTED' }" routerLink="/selected-server">
+            <div class="button" (click)="selectRouteType('SELECTED')" [ngClass]="{'checked': selectedRouteOpt === 'SELECTED' }">
               <div class="icon more">
                 <img src="/assets/index-more.png" alt="">
               </div>

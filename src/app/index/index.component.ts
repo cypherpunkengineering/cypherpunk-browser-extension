@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
 import { ProxySettingsService } from '../proxy-settings.service';
@@ -21,13 +22,13 @@ export class IndexComponent {
   // Misc Vars
   validProtocol = true;
   faviconUrl = undefined;
-  regions = this.proxySettingsService.regions;
-  premiumAccount = this.proxySettingsService.premiumProxyAccount;
+  // regions = this.proxySettingsService.regions;
+  // premiumAccount = this.proxySettingsService.premiumProxyAccount;
 
   // Settings Vars
   indexSettings = this.settingsService.indexSettings();
-  proxyCredentials = this.indexSettings.proxyCredentials;
-  privacyFilterWhitelist = this.indexSettings.privacyFilter.whitelist;
+  // proxyCredentials = this.indexSettings.proxyCredentials;
+  // privacyFilterWhitelist = this.indexSettings.privacyFilter.whitelist;
   cypherpunkEnabled = this.indexSettings.cypherpunkEnabled;
   defaultRouting = this.indexSettings.defaultRouting;
   routing = this.indexSettings.routing;
@@ -49,17 +50,21 @@ export class IndexComponent {
   smartServerName = 'Loading...';
 
   constructor(
+    private router: Router,
+    private hqService: HqService,
     private settingsService: SettingsService,
-    private proxySettingsService: ProxySettingsService,
-    private hqService: HqService
+    private proxySettingsService: ProxySettingsService
   ) {
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
       let curTab = tabs[0];
       let url = curTab.url;
+
       let match = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
       this.domain = match ? match[1] : null;
+
       let protocol = url ? url.split('://')[0] : null;
       this.validProtocol = protocol === 'http' || protocol === 'https';
+
       if (this.domain && this.validProtocol) {
         // Get Smart Route name
         let match = this.domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
@@ -154,6 +159,8 @@ export class IndexComponent {
     let selectedRouteOpts = {
       smart: 'Smart Routing',
       fastest: 'Fastest',
+      fastestuk: 'Fastest UK',
+      fastestus: 'Fastest US',
       selected: 'Selected Server',
       none: 'No Proxy'
     };
@@ -162,10 +169,10 @@ export class IndexComponent {
 
   /* Selects routing type, when user selects a type via the UI */
   selectRouteType(type: string) {
-    // 'SELECTED' type is set by the selected-server view
-    if (type === 'SELECTED') { return; }
-    this.selectedRouteServer = undefined;
     this.selectedRouteOpt = type;
+    if (type === 'SELECTED') { return this.router.navigate(['/selected-server']); }
+
+    // create proxy binding from this domain to proxy type
     this.routing[this.domain] = { type: type };
 
     switch (type) {
@@ -175,13 +182,19 @@ export class IndexComponent {
       case 'FASTEST':
         this.applyFastestProxy();
         break;
+      case 'FASTESTUK':
+        this.applyFastestUKProxy();
+        break;
+      case 'FASTESTUS':
+        this.applyFastestUSProxy();
+        break;
       default:
         this.applyNoProxy();
     }
 
     console.log('Applying Selected Routing Type: ' + type);
-    this.settingsService.saveRouting(this.routing);
-    this.proxySettingsService.enableProxy();
+    this.settingsService.saveRouting(this.routing); // save proxy binding
+    this.proxySettingsService.enableProxy(); // process proxy binding
   }
 
   /* Looks at stored settings and preselects correct routing type in the UI */
@@ -203,37 +216,60 @@ export class IndexComponent {
       case 'FASTEST':
         this.applyFastestProxy();
         break;
+      case 'FASTESTUK':
+        this.applyFastestUKProxy();
+        break;
+      case 'FASTESTUS':
+        this.applyFastestUSProxy();
+        break;
       default:
         this.applyNoProxy();
     }
   }
 
   applySmartProxy() {
-    console.log('Smart Proxy');
     this.selectedRouteServer = this.smartServer;
     this.selectedRouteServerName = this.smartServer.name;
     this.selectedRouteServerFlag = '/assets/flags/svg/flag-' + this.smartServer.country + '.svg';
   }
 
-  applySelectedProxy(serverId) {
-    console.log('Selected Proxy', serverId);
-    this.selectedRouteServer = this.proxySettingsService.servers[serverId];
-    this.selectedRouteServerName = this.selectedRouteServer.name;
-    this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
+  applyFastestProxy() {
+    let fastestServer = this.proxySettingsService.getFastestServer();
+    if (fastestServer) {
+      this.selectedRouteServer = fastestServer;
+      this.selectedRouteServerName = fastestServer.name;
+      this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + fastestServer.country + '.svg';
+    }
   }
 
-  applyFastestProxy() {
-    console.log('Fastest Proxy');
-    this.selectedRouteServer = this.proxySettingsService.fastestServer;
-    this.selectedRouteServerName = this.proxySettingsService.fastestServer.name;
-    this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
+  applyFastestUSProxy() {
+    let usServer = this.proxySettingsService.getFastestUSServer();
+    if (usServer) {
+      this.selectedRouteServer = usServer;
+      this.selectedRouteServerName = usServer.name;
+      this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + usServer.country + '.svg';
+    }
+  }
+
+  applyFastestUKProxy() {
+    let ukServer = this.proxySettingsService.getFastestUKServer();
+    if (ukServer) {
+      this.selectedRouteServer = ukServer;
+      this.selectedRouteServerName = ukServer.name;
+      this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + ukServer.country + '.svg';
+    }
   }
 
   applyNoProxy() {
-    console.log('No Proxy');
     this.selectedRouteServer = undefined;
     this.selectedRouteServerName = 'Unprotected';
     this.selectedRouteServerFlag = undefined;
+  }
+
+  applySelectedProxy(serverId) {
+    this.selectedRouteServer = this.proxySettingsService.servers[serverId];
+    this.selectedRouteServerName = this.selectedRouteServer.name;
+    this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
   }
 
 }

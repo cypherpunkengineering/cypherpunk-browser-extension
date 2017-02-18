@@ -38,7 +38,9 @@ export class LoginComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    this.renderer.invokeElementMethod(this.emailInput.nativeElement, 'focus');
+    setTimeout(() => {
+      this.renderer.invokeElementMethod(this.emailInput.nativeElement, 'focus');
+    }, 500);
   }
 
   checkEmail() {
@@ -50,6 +52,10 @@ export class LoginComponent implements AfterViewInit {
       (data) => {
         this.emailClassList = ['left'];
         this.loginClassList = ['middle'];
+
+        setTimeout(() => {
+          this.renderer.invokeElementMethod(this.passwordInput.nativeElement, 'focus');
+        }, 500);
       },
       (error) => {
         if (error.status === 401) {

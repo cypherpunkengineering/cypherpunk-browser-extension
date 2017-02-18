@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class HqService {
@@ -8,7 +9,7 @@ export class HqService {
   apiPrefix = 'https://cypherpunk.privacy.network/api/v0';
   browserObj: any = chrome ? chrome : chrome;
 
-  constructor (private http: Http) {
+  constructor (private http: Http, private router: Router) {
     let headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
     this.options = new RequestOptions({ headers: headers, withCredentials: true });
   }
@@ -27,15 +28,12 @@ export class HqService {
       .catch((error: any) => Observable.throw(error || 'login Error'));
   }
 
-  fetchUserStatus(): Observable<any> {
+  fetchUserStatus() {
     return this.http.get(this.apiPrefix + '/account/status')
     .map((res: Response) => res.json())
     .catch((error: any) => {
       console.log(error);
-      if (error.status === 403) {
-        this.browserObj.tabs.create({'url': 'https://cypherpunk.com/login'});
-        window.close();
-      }
+      if (error.status === 403) { return this.router.navigate(['/login']); }
       return Observable.throw(error || 'Error getting account status');
     });
   }
@@ -44,6 +42,18 @@ export class HqService {
     return this.http.get(this.apiPrefix + '/network/status')
     .map((res: Response) => res.json()) // TODO: This route should return valid JSON
     .catch((error: any) => Observable.throw(error || 'Error getting network status'));
+  }
+
+  identifyEmail(body, options): Observable<any> {
+    return this.http.post(this.apiPrefix + '/account/identify/email', body, options)
+    .catch((error: any) => { return Observable.throw(error); });
+  }
+
+  login(body, options) {
+    let url = this.apiPrefix + '/account/authenticate/userpasswd';
+    options.withCredentials = true;
+    return this.http.post(url, body, options)
+    .map((res: Response) => { return res.json(); });
   }
 
   debugCheckSession(): void {

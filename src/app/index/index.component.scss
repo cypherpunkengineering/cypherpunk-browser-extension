@@ -63,7 +63,7 @@
       text-align: center;
       position: relative;
       z-index: 2;
-      &.last { @include omega; }
+      &.last { @include omega; cursor: pointer; }
 
       .flag-container {
         width: rem(70);

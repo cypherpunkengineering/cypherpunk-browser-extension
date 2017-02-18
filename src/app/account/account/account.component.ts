@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ProxySettingsService } from '../../proxy-settings.service';
+import { Router } from '@angular/router';
 import { SettingsService } from '../../settings.service';
+import { ProxySettingsService } from '../../proxy-settings.service';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-account',
@@ -11,8 +12,9 @@ export class AccountComponent {
   @Output() changeView = new EventEmitter<string>();
 
   constructor(
-    private proxySettingsService: ProxySettingsService,
-    private settingsService: SettingsService
+    private router: Router,
+    private settingsService: SettingsService,
+    private proxySettingsService: ProxySettingsService
   ) { }
 
   open(url: string) {
@@ -26,10 +28,14 @@ export class AccountComponent {
 
   logout() {
     this.proxySettingsService.disableProxy();
-    chrome.cookies.remove({'url': 'https://cypherpunk.com', 'name': 'cypherpunk.session'}, (deleted_cookie) => { console.log('DELETED COOKIE', deleted_cookie); });
-    chrome.cookies.remove({'url': 'https://cypherpunk.privacy.network', 'name': 'cypherpunk.session'}, (deleted_cookie) => { console.log('DELETED COOKIE', deleted_cookie); });
+    let config = { 'url': 'https://cypherpunk.privacy.network', 'name': 'cypherpunk.session' };
+    chrome.cookies.remove(config, (deleted_cookie) => {
+      console.log('DELETED COOKIE', deleted_cookie);
+      this.router.navigate(['/login']);
+    });
     this.settingsService.saveCypherpunkEnabled(false);
     chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
+
   }
 
   goToView(name: string) {

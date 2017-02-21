@@ -61,7 +61,6 @@ export class ProxySettingsService {
         .then((latencyArray) => {
           this.settingsService.saveLatencyList(latencyArray);
           this.latencyList = latencyArray;
-          console.log(latencyArray);
           resolve();
         });
       }, error => { reject(error); });

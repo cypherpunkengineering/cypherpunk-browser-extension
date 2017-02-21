@@ -23,15 +23,19 @@ import { LocalStorageService } from 'angular-2-local-storage';
 // - ios/android?
 //
 class Keys {
+  // Account Info
+  public static ACCOUNT_TYPE = 'account.type';
   public static PROXY_USERNAME = 'proxy.username';
   public static PROXY_PASSWORD = 'proxy.password';
+
+  // Server settings
   public static LATENCY_LIST = 'latencyList';
   public static PROXY_SERVERS = 'proxyServers';
   public static PROXY_SERVERS_ARR = 'proxyServersArr';
   public static PREMIUM_ACCOUNT = 'premiumAccount';
   public static PAC_SCRIPT_CONFIG = 'pacScriptConfig';
 
-  // Index vivew
+  // Index view
   public static INITIALIZED = 'intialized';
   public static ENABLED = 'enabled';
   public static SMART_ROUTING_ENABLED = 'smartRoutingEnabled';
@@ -72,6 +76,7 @@ class Defaults {
     premiumAccount: false,
     pacScriptConfig: null,
     cachedSmartServers: null,
+    accountType: 'free',
     settings: {
       forceHttps: true,
       ffWebRTCLeakProtection: true,
@@ -109,6 +114,7 @@ export class SettingsService {
       this.localStorageService.set(Keys.LATENCY_LIST, Defaults.getVal(Keys.LATENCY_LIST));
       this.localStorageService.set(Keys.PROXY_SERVERS, Defaults.getVal(Keys.PROXY_SERVERS));
       this.localStorageService.set(Keys.PROXY_SERVERS_ARR, Defaults.getVal(Keys.PROXY_SERVERS_ARR));
+      this.localStorageService.set(Keys.ACCOUNT_TYPE, Defaults.getVal(Keys.ACCOUNT_TYPE));
       this.localStorageService.set(Keys.PREMIUM_ACCOUNT, Defaults.getVal(Keys.PREMIUM_ACCOUNT));
       this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, Defaults.getVal(Keys.SMART_ROUTING_ENABLED));
       this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, Defaults.getVal(Keys.PRIVACY_FILTER_WHITELIST));
@@ -148,7 +154,8 @@ export class SettingsService {
       latencyList: this.localStorageService.get(Keys.LATENCY_LIST),
       proxyServers: this.localStorageService.get(Keys.PROXY_SERVERS),
       proxyServersArr: this.localStorageService.get(Keys.PROXY_SERVERS_ARR),
-      premiumAccount: this.localStorageService.get(Keys.PREMIUM_ACCOUNT)
+      premiumAccount: this.localStorageService.get(Keys.PREMIUM_ACCOUNT),
+      accountType: this.localStorageService.get(Keys.ACCOUNT_TYPE)
     };
   }
 
@@ -160,6 +167,10 @@ export class SettingsService {
         selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
       }
     };
+  }
+
+  saveAccountType(accountType: string) {
+    this.localStorageService.set(Keys.ACCOUNT_TYPE, accountType);
   }
 
   saveCachedSmartServers(smartServers) {
@@ -212,7 +223,6 @@ export class SettingsService {
   }
 
   saveCypherpunkEnabled(enabled: boolean) {
-    console.log('CypherPunk Saving bool', enabled);
     this.localStorageService.set(Keys.ENABLED, enabled);
   }
 

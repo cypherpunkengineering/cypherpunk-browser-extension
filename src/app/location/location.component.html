@@ -1,22 +1,71 @@
 <div id="sub-menu">
   <div id="header" routerLink="/" routerLinkActive="active" class="bottom-separator">
-    <span class="back-icon">&#x3008;</span>{{title}}
+    <span class="back-icon">&#x3008;</span>CypherPlay Location
   </div>
 
-  <div class="country-select">
-    <div *ngFor="let server of serverArr; let i = index;">
-      <div class="region" *ngIf="i === 0 || (!(i === 0) && serverArr[i-1].region !== server.region)">
-        {{regions[server.region]}}
+  <!-- Site info, Ads, and Malware -->
+  <section>
+    <div class="section-header">Properties</div>
+
+    <div class="site">
+      <div class="left">
+        <img *ngIf="favIconUrl" src="{{favIconUrl}}" />
       </div>
 
-      <div class="location-row" (click)="selectProxy(server)" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
-        <span class="flag">
-          <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
-        </span>
-        <span class="name">{{server.name}}</span>
-        <span *ngIf="server.level === 'premium'" class="premium">Premium</span>
-        <span *ngIf="!server.httpDefault.length" class="unavailable">Unavailable</span>
+      <div class="right">
+        <div class="site-name">{{siteName}}</div>
+
+        <div class="site-url">{{siteUrl}}</div>
       </div>
     </div>
-  </div>
+
+    <div class="ads">
+      <div class="ads-text left">
+        Block Ads
+      </div>
+
+      <div class="switch right">
+        <label class="label-switch">
+          <input #enableCypherpunk [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="malware">
+      <div class="malware-text left">
+        Block Malware
+      </div>
+
+      <div class="switch right">
+        <label class="label-switch">
+          <input #enableCypherpunk [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- Select Server -->
+  <section>
+    <div class="section-header">Always Use Server</div>
+
+    <div class="country-select">
+      <div *ngFor="let server of serverArr; let i = index;">
+        <div class="region" *ngIf="i === 0 || (!(i === 0) && serverArr[i-1].region !== server.region)">
+          {{regions[server.region]}}
+        </div>
+
+        <div class="location-row" (click)="selectProxy(server)" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
+          <span class="flag">
+            <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
+          </span>
+          <span class="name">{{server.name}}</span>
+          <span *ngIf="server.level === 'premium'" class="premium">Premium</span>
+          <span *ngIf="!server.httpDefault.length" class="unavailable">Unavailable</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </div>

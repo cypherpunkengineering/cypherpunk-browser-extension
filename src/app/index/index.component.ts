@@ -93,7 +93,10 @@ export class IndexComponent {
       console.log('Servers data preloaded by background script');
       this.hqService.fetchUserStatus()
       .subscribe(
-        res => { this.init(); },
+        res => {
+          this.settingsService.saveAccountType(res.account.type);
+          this.init();
+         },
         err => { this.toggleCypherpunk(false); }
       );
     }

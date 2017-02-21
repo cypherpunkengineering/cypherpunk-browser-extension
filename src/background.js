@@ -133,6 +133,7 @@ function loadProxies() {
     authPassword = res.privacy.password;
     enableProxyAuthCredentials();
     localStorage.setItem('cypherpunk.premiumAccount', JSON.stringify(res.account.type === 'premium'));
+    localStorage.setItem('cypherpunk.account.type', res.account.type);
 
     httpGetAsync('https://cypherpunk.privacy.network/api/v0/location/list/' + res.account.type, (servers) => {
       console.log('servers: ', servers);

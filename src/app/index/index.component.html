@@ -54,7 +54,7 @@
       </div>
 
       <div class="location last" routerLink="/location">
-        <div class="flag-container small square">
+        <div class="flag-container small square" routerLink="/location">
           <img *ngIf="faviconUrl" src="{{faviconUrl}}" />
         </div>
         <div class="subtitle" [innerHTML]="domain"></div>

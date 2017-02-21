@@ -30,10 +30,12 @@ export class HqService {
 
   fetchUserStatus() {
     return this.http.get(this.apiPrefix + '/account/status')
-    .map((res: Response) => res.json())
+    .map((res: Response) => { return res.json(); })
     .catch((error: any) => {
-      console.log(error);
-      if (error.status === 403) { return this.router.navigate(['/login']); }
+      if (error.status === 403) {
+        this.router.navigate(['/login']);
+        return Observable.throw('No Account Found');
+      }
       return Observable.throw(error || 'Error getting account status');
     });
   }

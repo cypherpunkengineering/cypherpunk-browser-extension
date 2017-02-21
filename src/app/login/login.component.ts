@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
-import { Component, style, animate, transition, state, trigger, ViewChild, ElementRef, AfterViewInit, Renderer } from '@angular/core';
+import { Component, style, animate, transition, state, trigger, ViewChild, ElementRef, Renderer } from '@angular/core';
 
 @Component({
   templateUrl: './login.component.html',
@@ -16,7 +16,7 @@ import { Component, style, animate, transition, state, trigger, ViewChild, Eleme
     ])
   ]
 })
-export class LoginComponent implements AfterViewInit {
+export class LoginComponent {
   @ViewChild('emailInput') emailInput: ElementRef;
   @ViewChild('passwordInput') passwordInput: ElementRef;
   type = 'dynamic';
@@ -37,12 +37,6 @@ export class LoginComponent implements AfterViewInit {
     private renderer: Renderer
   ) {}
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.renderer.invokeElementMethod(this.emailInput.nativeElement, 'focus');
-    }, 500);
-  }
-
   checkEmail() {
     if (!this.user.email) { return; }
 
@@ -50,6 +44,7 @@ export class LoginComponent implements AfterViewInit {
     this.hqService.identifyEmail(body, {})
     .subscribe(
       (data) => {
+        this.currentView = 'login';
         this.emailClassList = ['left'];
         this.loginClassList = ['middle'];
 
@@ -59,6 +54,7 @@ export class LoginComponent implements AfterViewInit {
       },
       (error) => {
         if (error.status === 401) {
+          this.currentView = 'register';
           this.emailClassList = ['left'];
           this.registerClassList = ['middle'];
         }
@@ -81,6 +77,7 @@ export class LoginComponent implements AfterViewInit {
   }
 
   goToEmail() {
+    this.currentView = 'email';
     this.emailClassList = ['middle'];
     this.loginClassList = ['right'];
     this.registerClassList = ['right'];

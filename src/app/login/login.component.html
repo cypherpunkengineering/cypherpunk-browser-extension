@@ -20,8 +20,8 @@
       </div>
 
       <div class="email-input">
-        <input #emailInput type="email" [(ngModel)]="user.email" (keyup.enter)="checkEmail()">
-        <button (click)="checkEmail()">&#8250;</button>
+        <input #emailInput type="email" [(ngModel)]="user.email" (keyup.enter)="checkEmail()" [disabled]="currentView !== 'email'" autofocus>
+        <button (click)="checkEmail()" [disabled]="currentView !== 'email'">&#8250;</button>
       </div>
     </div>
 
@@ -37,8 +37,8 @@
       </div>
 
       <div class="login-input">
-        <input #passwordInput type="password" [(ngModel)]="user.password" placeholder="Password" (keyup.enter)="login()" autofocus>
-        <button (click)="login()">&#8250;</button>
+        <input #passwordInput type="password" [(ngModel)]="user.password" placeholder="Password" (keyup.enter)="login()" [disabled]="currentView !== 'login'">
+        <button (click)="login()" [disabled]="currentView !== 'login'">&#8250;</button>
       </div>
 
       <div class="login-back" (click)="goToEmail()">
@@ -47,28 +47,28 @@
     </div>
 
     <div id="register" class="window" [ngClass]="registerClassList">
-    <div class="banner">
-      <div class="banner-text">
-        Welcome,
+      <div class="banner">
+        <div class="banner-text">
+          Welcome,
+        </div>
+
+        <div class="logo">
+          {{ user.email }}
+        </div>
       </div>
 
-      <div class="logo">
-        {{ user.email }}
+      <div class="email-text">
+        Please input your email to begin<br>
+      </div>
+
+      <div class="email-input">
+        <input type="email" [(ngModel)]="user.email" [disabled]="currentView !== 'register'">
+        <button (click)="checkEmail()" [disabled]="currentView !== 'register'">&#8250;</button>
+      </div>
+
+      <div class="back" (click)="goToEmail()">
+        Back
       </div>
     </div>
-
-    <div class="email-text">
-      Please input your email to begin<br>
-    </div>
-
-    <div class="email-input">
-      <input type="email" [(ngModel)]="user.email">
-      <button (click)="checkEmail()">&#8250;</button>
-    </div>
-
-    <div class="back" (click)="goToEmail()">
-      Back
-    </div>
-  </div>
   </div>
 </div>

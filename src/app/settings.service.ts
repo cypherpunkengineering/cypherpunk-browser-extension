@@ -76,7 +76,9 @@ class Defaults {
     premiumAccount: false,
     pacScriptConfig: null,
     cachedSmartServers: null,
-    accountType: 'free',
+    account: {
+      type: 'free'
+    },
     settings: {
       forceHttps: true,
       ffWebRTCLeakProtection: true,

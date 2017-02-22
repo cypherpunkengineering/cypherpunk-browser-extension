@@ -46,23 +46,50 @@
     </div>
   </section>
 
-  <!-- Select Server -->
+  <!-- Proxy Modes -->
   <section>
-    <div class="section-header">Always Use Server</div>
+    <div class="section-header">Select Proxy Mode</div>
 
-    <div class="country-select">
-      <div *ngFor="let server of serverArr; let i = index;">
-        <div class="region" *ngIf="i === 0 || (!(i === 0) && serverArr[i-1].region !== server.region)">
-          {{regions[server.region]}}
-        </div>
+    <div class="country-select kill-height">
+      <div class="location-row" (click)="useCypherplay()" [ngClass]="{'checked': proxyMode === 'SMART' }">
+        <span class="name">CypherPlay</span>
+      </div>
 
-        <div class="location-row" (click)="selectProxy(server)" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
-          <span class="flag">
-            <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
-          </span>
-          <span class="name">{{server.name}}</span>
-          <span *ngIf="server.level === 'premium'" class="premium">Premium</span>
-          <span *ngIf="!server.httpDefault.length" class="unavailable">Unavailable</span>
+      <div class="location-row" (click)="useFastest()" [ngClass]="{'checked': proxyMode === 'FASTEST' }">
+        <span class="name">Fastest</span>
+      </div>
+
+      <div class="location-row" (click)="useFastestUK()" [ngClass]="{'checked': proxyMode === 'FASTESTUK' }">
+        <span class="name">Fastest UK</span>
+      </div>
+
+      <div class="location-row" (click)="useFastestUS()" [ngClass]="{'checked': proxyMode === 'FASTESTUS' }">
+        <span class="name">Fastest US</span>
+      </div>
+
+      <div class="location-row" (click)="useNoProxy()" [ngClass]="{'checked': proxyMode === 'NONE' }">
+        <span class="name">No Proxy</span>
+      </div>
+
+      <div class="location-row" (click)="useServer()">
+        <span class="name" *ngIf="!showServers">Select Server</span>
+        <span class="name" *ngIf="showServers">Hide Servers</span>
+      </div>
+
+      <div *ngIf="showServers">
+        <div *ngFor="let server of serverArr; let i = index;">
+          <div class="region" *ngIf="i === 0 || (!(i === 0) && serverArr[i-1].region !== server.region)">
+            {{regions[server.region]}}
+          </div>
+
+          <div class="location-row kill-height" (click)="selectProxy(server)" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
+            <span class="flag">
+              <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
+            </span>
+            <span class="name">{{server.name}}</span>
+            <span *ngIf="server.level === 'premium'" class="premium">Premium</span>
+            <span *ngIf="!server.httpDefault.length" class="unavailable">Unavailable</span>
+          </div>
         </div>
       </div>
     </div>

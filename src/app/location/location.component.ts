@@ -23,16 +23,19 @@ import { Component, NgZone, style, animate, transition, state, trigger } from '@
    ]
 })
 export class LocationComponent {
+  routing: any;
+  defaultRouting: any;
+  accountType: string;
+
   siteName: string;
   siteUrl: string;
   favIconUrl: string;
 
-  accountType: string;
-  regions;
+  proxyMode: string;
+  showServers = false;
+  regions = {};
   serverArr = [];
   selectedServerId: string;
-  routing;
-  defaultRouting;
 
   constructor(
     private zone: NgZone,
@@ -61,6 +64,7 @@ export class LocationComponent {
       }
 
       // start with default
+      this.proxyMode = this.defaultRouting.type.toString();
       if (this.defaultRouting.selected) {
         this.selectedServerId = this.defaultRouting.selected.toString();
       }
@@ -68,12 +72,63 @@ export class LocationComponent {
       // load from localStorage if exists
       let curSmartRoute = this.routing[this.siteUrl];
       if (curSmartRoute) {
-        this.zone.run(() => { this.selectedServerId = curSmartRoute.serverId; });
+        this.proxyMode = curSmartRoute.type;
+        this.selectedServerId = curSmartRoute.serverId;
       }
+
+      if (this.proxyMode === 'SELECTED') { this.showServers = true; }
     });
   }
 
+  useCypherplay() {
+    this.proxyMode = 'SMART';
+    this.selectedServerId = '';
+    this.showServers = false;
+    this.routing[this.siteUrl] = { type: 'SMART', serverId: '' };
+    this.settingsService.saveRouting(this.routing);
+    this.proxySettingsService.enableProxy();
+  }
+
+  useFastest() {
+    this.proxyMode = 'FASTEST';
+    this.selectedServerId = '';
+    this.showServers = false;
+    this.routing[this.siteUrl] = { type: 'FASTEST', serverId: '' };
+    this.settingsService.saveRouting(this.routing);
+    this.proxySettingsService.enableProxy();
+  }
+
+  useFastestUK() {
+    this.proxyMode = 'FASTESTUK';
+    this.selectedServerId = '';
+    this.showServers = false;
+    this.routing[this.siteUrl] = { type: 'FASTESTUK', serverId: '' };
+    this.settingsService.saveRouting(this.routing);
+    this.proxySettingsService.enableProxy();
+  }
+
+  useFastestUS() {
+    this.proxyMode = 'FASTESTUS';
+    this.selectedServerId = '';
+    this.showServers = false;
+    this.routing[this.siteUrl] = { type: 'FASTESTUS', serverId: '' };
+    this.settingsService.saveRouting(this.routing);
+    this.proxySettingsService.enableProxy();
+  }
+
+  useNoProxy() {
+    this.proxyMode = 'NONE';
+    this.selectedServerId = '';
+    this.showServers = false;
+    this.routing[this.siteUrl] = { type: 'NONE', serverId: '' };
+    this.settingsService.saveRouting(this.routing);
+    this.proxySettingsService.enableProxy();
+  }
+
+  useServer() { this.showServers = !this.showServers; }
+
   selectProxy(server) {
+    this.proxyMode = 'SELECTED';
     let valid: any = true;
     if (server.level === 'premium' && this.accountType === 'free') { valid = 'premium'; }
     else if (!server.enabled) { valid = 'enabled'; }

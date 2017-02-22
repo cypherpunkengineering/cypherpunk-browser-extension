@@ -1,6 +1,6 @@
 @import '../../scss/variables';
 
-:host { z-index: 2; width: 100%; height: 100%; display: block; position: absolute; }
+:host { z-index: 2; width: 100%; height: 100%; display: block; position: absolute; overflow: auto; }
 
 .section-header {
   color: #8dfffc;
@@ -23,7 +23,7 @@
 
   .right {
     float: left;
-    width: 300px;
+    width: 295px;
     padding: 10px 0 0 10px;
 
     .site-name {
@@ -61,6 +61,10 @@
   color: #fff;
   overflow: auto;
   border-bottom: 1px solid #0d1e26;
-  
+
   .malware-text { padding-top: 5px; }
 }
+
+.country-select.kill-height { height: auto; }
+.location-row.kill-height { height: auto; }
+.location-row.kill-height span:first-child { height: 24px; }

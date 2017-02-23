@@ -6,16 +6,20 @@
 #tutorial {
   background: linear-gradient(0, #0d1e26 rem(108), #163238 rem(108));
   background: -moz-linear-gradient(90deg, #0d1e26 rem(108), #163238 rem(108));
-  height: rem(502);
-  width: rem(360);
+  height: 100%;
+  width: 100%;
+  position:relative;
   overflow: hidden;
+
   .card {
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
+    left: 0;
     text-align: center;
-    width: rem(360);
+    width: 100%;
+
     &.hidden-left { left: rem(-360); transition: left .25s ease-in-out; }
     &.hidden-right { left: rem(360); transition: left .25s ease-in-out; }
     &.visible { left: 0; transition: left .25s ease-in-out; }

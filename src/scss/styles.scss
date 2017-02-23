@@ -5,7 +5,6 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body {
-  max-height: $app-height;
   overflow-x: -moz-hidden-unscrollable;
   overflow-y: -moz-hidden-unscrollable;
 }
@@ -16,7 +15,7 @@ body {
   font-size: rem(14);
   font-weight: 300;
   width: rem(360);
-  height: rem(502);
+  height: rem(560);
   margin: 0;
   padding: 0;
 }
@@ -24,10 +23,10 @@ body {
 @-moz-document url-prefix() {
   body {
     overflow-y: -moz-hidden-unscrollable;
-    height: rem(510);
+    height: rem(560);
   }
   #tutorial {
-    height: rem(510) !important;
+    height: rem(560) !important;
   }
 }
 
@@ -335,7 +334,7 @@ a {
 .country-select {
   height: rem(488);
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   color: #fff;
   font-weight: 200;
 

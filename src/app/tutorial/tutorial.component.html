@@ -55,6 +55,7 @@
   <div class="back-btn" *ngIf="tutorial > 1" (click)="tutorial = tutorial - 1">
     <span class="back-icon">&#x3008;</span><span class="text">Back</span>
   </div>
+
   <div class="dots">
     <div class="dot" [ngClass]="{'selected': tutorial === 1 }"></div>
     <div class="dot" [ngClass]="{'selected': tutorial === 2 }"></div>

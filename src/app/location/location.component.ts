@@ -31,6 +31,10 @@ export class LocationComponent {
   siteUrl: string;
   favIconUrl: string;
 
+  privacyFilterWhitelist = {};
+  blockAds = true;
+  blockMalware = true;
+
   proxyMode: string;
   showServers = false;
   regions = {};
@@ -48,7 +52,7 @@ export class LocationComponent {
     this.serverArr = this.proxySettingsService.serverArr;
     this.routing = this.settingsService.selectedServerSettings().routing;
     this.defaultRouting = this.settingsService.defaultRoutingSettings();
-    this.accountType = this.settingsService.proxySettingsService().accountType.toString();
+    this.accountType = this.settingsService.proxySettingsService().accountType;
 
     // load site information
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
@@ -63,21 +67,46 @@ export class LocationComponent {
         this.favIconUrl = tabs[0].favIconUrl;
       }
 
-      // start with default
-      this.proxyMode = this.defaultRouting.type.toString();
-      if (this.defaultRouting.selected) {
-        this.selectedServerId = this.defaultRouting.selected.toString();
+      // load proxy settings from localStorage if exists
+      let localRouting = this.routing[this.siteUrl];
+      if (localRouting) {
+        this.proxyMode = localRouting.type;
+        this.selectedServerId = localRouting.serverId;
+        if (this.proxyMode === 'SELECTED') { this.showServers = true; }
       }
 
-      // load from localStorage if exists
-      let curSmartRoute = this.routing[this.siteUrl];
-      if (curSmartRoute) {
-        this.proxyMode = curSmartRoute.type;
-        this.selectedServerId = curSmartRoute.serverId;
-      }
+      // load privacy settings from localStorage if exists
+      let privacySettings = this.settingsService.privacyFilterSettings();
+      this.privacyFilterWhitelist = privacySettings.whitelist;
 
-      if (this.proxyMode === 'SELECTED') { this.showServers = true; }
+      let localPrivacySettings = this.privacyFilterWhitelist[this.siteUrl];
+      if (localPrivacySettings) {
+        this.blockAds = localPrivacySettings.blockAds;
+        this.blockMalware = localPrivacySettings.blockMalware;
+      }
+      else {
+        this.blockAds = privacySettings.blockAds;
+        this.blockMalware = privacySettings.blockMalware;
+      }
     });
+  }
+
+  toggleBlockAds(enabled: boolean) {
+    let currentEntry = this.privacyFilterWhitelist[this.siteUrl];
+    if (currentEntry) { currentEntry.blockAds = enabled; }
+    else { currentEntry = { blockAds: enabled, blockMalware: this.blockMalware }; }
+    this.privacyFilterWhitelist[this.siteUrl] = currentEntry;
+    this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
+    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
+  }
+
+  toggleBlockMalware(enabled: boolean) {
+    let currentEntry = this.privacyFilterWhitelist[this.siteUrl];
+    if (currentEntry) { currentEntry.blockMalware = enabled; }
+    else { currentEntry = { blockAds: this.blockAds, blockMalware: enabled }; }
+    this.privacyFilterWhitelist[this.siteUrl] = currentEntry;
+    this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
+    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
   }
 
   useCypherplay() {

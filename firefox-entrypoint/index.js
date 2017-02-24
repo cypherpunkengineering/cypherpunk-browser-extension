@@ -26,7 +26,7 @@ var authObs = {
 };
 
 function createProxyAuthHeader() {
-  credentials = base64.encode(authUsername + ":" + authPassword);
+  var credentials = base64.encode(authUsername + ":" + authPassword);
   return headers = [['Proxy-Authorization', "Basic " + credentials, false]];
 }
 
@@ -41,7 +41,7 @@ function removeRequestObserver() {
 }
 
 function resetPACScript() {
-  console.log('Reseting Proxy Settings')
+  console.log('Reseting Proxy Settings');
   removeRequestObserver();
   preferences.reset('network.proxy.type');
   preferences.reset('network.proxy.autoconfig_url');

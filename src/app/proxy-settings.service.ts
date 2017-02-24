@@ -251,7 +251,7 @@ export class ProxySettingsService {
     }
     // Selected: Route to the default selected server
     else if (defaultRouting.type === 'SELECTED') {
-      let selectedProxyId = defaultRouting.selected.toString();
+      let selectedProxyId = defaultRouting.selected;
       let selectedProxyIp = this.servers[selectedProxyId].httpDefault[0];
       defaultRoutingRules += '  else return \'PROXY ' +
         selectedProxyIp + ':80\';\n';

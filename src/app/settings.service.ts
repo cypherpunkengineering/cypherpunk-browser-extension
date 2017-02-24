@@ -1,27 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LocalStorageService } from 'angular-2-local-storage';
 
-// Application Settings
-// Smart routing on/off
-// Privacy filter on/off
-//
-// Advanced Settings
-// Routing Type:
-// - Smart routing
-// - Fastest server
-// - Specific country
-// - Do not proxy (direct)
-// Force HTTPS
-// WebRTC Leak Protection
-// Privacy Filter Settings:
-// - Enable/disable
-// - Block ads
-// - Block trackers
-// - Block malware
-// User Agent:
-// - private
-// - ios/android?
-//
 class Keys {
   // Account Info
   public static ACCOUNT_TYPE = 'account.type';
@@ -36,11 +15,10 @@ class Keys {
   public static PAC_SCRIPT_CONFIG = 'pacScriptConfig';
 
   // Index view
-  public static INITIALIZED = 'intialized';
   public static ENABLED = 'enabled';
-  public static SMART_ROUTING_ENABLED = 'smartRoutingEnabled';
-  public static PRIVACY_FILTER_WHITELIST = 'privacyFilterWhitelist';
   public static ROUTING = 'routing';
+  public static INITIALIZED = 'intialized';
+  public static SMART_ROUTING_ENABLED = 'smartRoutingEnabled';
   public static CACHED_SMART_SERVERS = 'cachedSmartServers';
 
   // Advanced Settings
@@ -57,9 +35,8 @@ class Keys {
   public static USER_AGENT_STRING = 'settings.userAgent.string';
 
   // Privacy Filter
-  public static PRIVACY_FILTER_ENABLED = 'settings.privacyFilter.enabled';
+  public static PRIVACY_FILTER_WHITELIST = 'privacyFilterWhitelist';
   public static PRIVACY_FILTER_ADS = 'settings.privacyFilter.blockAds';
-  public static PRIVACY_FILTER_TRACKERS = 'settings.privacyFilter.blockTrackers';
   public static PRIVACY_FILTER_MALWARE = 'settings.privacyFilter.blockMalware';
 }
 
@@ -88,9 +65,7 @@ class Defaults {
         selected: null
       },
       privacyFilter: {
-        enabled: false,
         blockAds: true,
-        blockTrackers: true,
         blockMalware: true
       },
       userAgent: {
@@ -125,9 +100,7 @@ export class SettingsService {
       this.localStorageService.set(Keys.ROUTING_TYPE, Defaults.getVal(Keys.ROUTING_TYPE));
       this.localStorageService.set(Keys.ROUTING_SELECTED_SERVER, Defaults.getVal(Keys.ROUTING_SELECTED_SERVER));
       this.localStorageService.set(Keys.FORCE_HTTPS, Defaults.getVal(Keys.FORCE_HTTPS));
-      this.localStorageService.set(Keys.PRIVACY_FILTER_ENABLED, Defaults.getVal(Keys.PRIVACY_FILTER_ENABLED));
       this.localStorageService.set(Keys.PRIVACY_FILTER_ADS, Defaults.getVal(Keys.PRIVACY_FILTER_ADS));
-      this.localStorageService.set(Keys.PRIVACY_FILTER_TRACKERS, Defaults.getVal(Keys.PRIVACY_FILTER_TRACKERS));
       this.localStorageService.set(Keys.PRIVACY_FILTER_MALWARE, Defaults.getVal(Keys.PRIVACY_FILTER_MALWARE));
       this.localStorageService.set(Keys.USER_AGENT_TYPE, Defaults.getVal(Keys.USER_AGENT_TYPE));
       this.localStorageService.set(Keys.USER_AGENT_STRING, Defaults.getVal(Keys.USER_AGENT_STRING));
@@ -157,7 +130,7 @@ export class SettingsService {
       proxyServers: this.localStorageService.get(Keys.PROXY_SERVERS),
       proxyServersArr: this.localStorageService.get(Keys.PROXY_SERVERS_ARR),
       premiumAccount: this.localStorageService.get(Keys.PREMIUM_ACCOUNT),
-      accountType: this.localStorageService.get(Keys.ACCOUNT_TYPE)
+      accountType: <string>this.localStorageService.get(Keys.ACCOUNT_TYPE)
     };
   }
 
@@ -192,16 +165,12 @@ export class SettingsService {
       routing: this.localStorageService.get(Keys.ROUTING),
       cachedSmartServers: this.localStorageService.get(Keys.CACHED_SMART_SERVERS),
       defaultRouting: {
-        type: this.localStorageService.get(Keys.ROUTING_TYPE),
-        selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
+        type: <string>this.localStorageService.get(Keys.ROUTING_TYPE),
+        selected: <string>this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
       },
       proxyCredentials: {
         username: this.localStorageService.get(Keys.PROXY_USERNAME),
         password: this.localStorageService.get(Keys.PROXY_PASSWORD)
-      },
-      privacyFilter: {
-        enabled: this.localStorageService.get(Keys.PRIVACY_FILTER_ENABLED),
-        whitelist: this.localStorageService.get(Keys.PRIVACY_FILTER_WHITELIST)
       }
     };
   }
@@ -230,10 +199,6 @@ export class SettingsService {
 
   saveSmartRoutingEnabled(enabled: boolean) {
     this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, enabled);
-  }
-
-  savePrivacyFilterWhitelist(list: Object) {
-    this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, list);
   }
 
   saveRouting(routes: Object) {
@@ -288,23 +253,18 @@ export class SettingsService {
   /** Advanced Settings > Privacy Filter **/
   privacyFilterSettings() {
     return {
-      enabled: this.localStorageService.get(Keys.PRIVACY_FILTER_ENABLED),
-      blockAds: this.localStorageService.get(Keys.PRIVACY_FILTER_ADS),
-      blockTrackers: this.localStorageService.get(Keys.PRIVACY_FILTER_TRACKERS),
-      blockMalware: this.localStorageService.get(Keys.PRIVACY_FILTER_MALWARE)
+      whitelist: this.localStorageService.get(Keys.PRIVACY_FILTER_WHITELIST),
+      blockAds: <boolean>this.localStorageService.get(Keys.PRIVACY_FILTER_ADS),
+      blockMalware: <boolean>this.localStorageService.get(Keys.PRIVACY_FILTER_MALWARE)
     };
   }
 
-  savePrivacyFilterEnabled(enabled: boolean) {
-    this.localStorageService.set(Keys.PRIVACY_FILTER_ENABLED, enabled);
+  savePrivacyFilterWhitelist(list: Object) {
+    this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, list);
   }
 
   savePrivacyFilterAds(enabled: boolean) {
     this.localStorageService.set(Keys.PRIVACY_FILTER_ADS, enabled);
-  }
-
-  savePrivacyFilterTrackers(enabled: boolean) {
-    this.localStorageService.set(Keys.PRIVACY_FILTER_TRACKERS, enabled);
   }
 
   savePrivacyFilterMalware(enabled: boolean) {
@@ -329,8 +289,8 @@ export class SettingsService {
   /** Advanced Settings > Default Routing/Specific Server **/
   defaultRoutingSettings() {
     return {
-      type: this.localStorageService.get(Keys.ROUTING_TYPE),
-      selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
+      type: <string>this.localStorageService.get(Keys.ROUTING_TYPE),
+      selected: <string>this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
     };
   }
 

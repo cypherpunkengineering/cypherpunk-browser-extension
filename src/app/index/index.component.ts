@@ -200,13 +200,8 @@ export class IndexComponent {
   /* Looks at stored settings and preselects correct routing type in the UI */
   selectedRoutingInit() {
     // Check if override for domain exists, apply override settings if it does
-    let type: string;
-    let typeObject = this.defaultRouting.type;
-    if (typeObject) { type = typeObject.toString(); }
-
-    let serverId: string;
-    let serverIdObject = this.defaultRouting.selected;
-    if (serverIdObject) { serverId = serverIdObject.toString(); }
+    let type: string = this.defaultRouting.type;
+    let serverId: string = this.defaultRouting.selected;
     this.selectedRouteOpt = type;
 
     switch (type) {

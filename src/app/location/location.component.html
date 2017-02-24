@@ -26,7 +26,7 @@
 
       <div class="switch right">
         <label class="label-switch">
-          <input #enableCypherpunk [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
+          <input [(ngModel)]="blockAds" (ngModelChange)="toggleBlockAds($event)" type="checkbox" />
           <div class="checkbox"></div>
         </label>
       </div>
@@ -39,7 +39,7 @@
 
       <div class="switch right">
         <label class="label-switch">
-          <input #enableCypherpunk [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
+          <input [(ngModel)]="blockMalware" (ngModelChange)="toggleBlockMalware($event)" type="checkbox" />
           <div class="checkbox"></div>
         </label>
       </div>

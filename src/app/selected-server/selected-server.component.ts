@@ -44,7 +44,7 @@ export class SelectedServerComponent {
     private proxySettingsService: ProxySettingsService
   ) {
     if (settingsService.defaultRoutingSettings().selected) {
-      this.selectedServerId = settingsService.defaultRoutingSettings().selected.toString();
+      this.selectedServerId = settingsService.defaultRoutingSettings().selected;
     }
     // set current smart selected server
     // let callback = (tabs) => {

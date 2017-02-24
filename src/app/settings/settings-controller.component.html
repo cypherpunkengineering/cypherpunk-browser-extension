@@ -14,6 +14,10 @@
   <app-default-routing (changeView)="changeView($event)"></app-default-routing>
 </div>
 
+<div class="view-container child" [@slideIn]="type" *ngIf="currentView === 'app-privacy-filter'">
+  <app-privacy-filter (changeView)="changeView($event)"></app-privacy-filter>
+</div>
+
 <div class="view-container grandchild" [@slideIn]="'dynamic'" *ngIf="currentView === 'app-specific-server'">
   <app-specific-server (changeView)="changeView($event)"></app-specific-server>
 </div>

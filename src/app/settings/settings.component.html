@@ -12,6 +12,14 @@
     </div>
   </div>
 
+  <!-- Default Routing -->
+  <div (click)="goToView('app-privacy-filter')" class="switch-row highlighted clickable bottom-separator">
+    <div class="label half">Privacy Filter</div>
+    <div class="switch half">
+      <span class="forward-icon">&#x3009;</span>
+    </div>
+  </div>
+
   <!-- WebRTC Leak Protection - Chrome -->
   <div *ngIf="!settingsService.isFirefox()" (click)="goToView('app-web-rtc')" class="switch-row highlighted clickable bottom-separator">
     <div class="label half">WebRTC Leak Prevention</div>

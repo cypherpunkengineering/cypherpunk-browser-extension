@@ -1,37 +1,132 @@
-var cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
-var privacyFilterEnabled = localStorage.getItem('cypherpunk.settings.privacyFilter.enabled') === "true";
-var userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
+// background script variables
+var tabs = {};
+var authUsername;
+var authPassword;
+var globalBlockAds = false;
+var globalBlockMalware = false;
+var chrome = chrome ? chrome : null;
+var regionOrder = ['DEV', 'NA', 'SA', 'CR', 'EU', 'ME', 'AF', 'AS', 'OP'];
+var adList = window.adList;
+var malwareList = window.malwareList;
 
-var webRTCLeakProtectionType = JSON.parse(localStorage.getItem('cypherpunk.settings.webRTCLeakProtection'));
+var ENABLED = 'cypherpunk.enabled';
+var LATENCY_LIST = 'cypherpunk.latencyList';
+var ACCOUNT_TYPE = 'cypherpunk.account.type';
+var PROXY_SERVERS = 'cypherpunk.proxyServers';
+var PREMIUM_ACCOUNT = 'cypherpunk.premiumAccount';
+var PROXY_SERVERS_ARR = 'cypherpunk.proxyServersArr';
+var PAC_SCRIPT_CONFIG = 'cypherpunk.pacScriptConfig';
+var USER_AGENT_STRING = 'cypherpunk.settings.userAgent.string';
+var WEB_RTC_LEAK_PROTECTION = 'cypherpunk.settings.webRTCLeakProtection';
+var PRIVACY_FILTER_WHITELIST ='cypherpunk.privacyFilterWhitelist';
+var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
+var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
 
-var authUsername, authPassword;
+// variables from localStorage
+var userAgentString = localStorage.getItem(USER_AGENT_STRING);
+var cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
+var serverArr = JSON.parse(localStorage.getItem(PROXY_SERVERS_ARR));
+var webRTCLeakProtectionType = JSON.parse(localStorage.getItem(WEB_RTC_LEAK_PROTECTION));
+var privacyFilterWhitelist = JSON.parse(localStorage.getItem(PRIVACY_FILTER_WHITELIST));
+var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
+var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
 
-// Remove proxy and settings upon uninstall
-chrome.management.onUninstalled.addListener(() => { destroy(); });
+
+/** Start up code **/
+
+function init() {
+  applyProxy();  // Attempt to load PAC Script
+  loadProxies(); // Attempt to fetch Proxy Servers
+
+  // Enable force http if it's enabled
+  // if (forceHttps) { enableForceHttps(); }
+  // else { disableForceHttps(); }
+
+  // Enable Privacy Filter
+  privacyFilterWhitelist = JSON.parse(localStorage.getItem(PRIVACY_FILTER_WHITELIST));
+  if (privacyFilterWhitelist) { enablePrivacyFilter(); }
+  else { disablePrivacyFilter(); }
+
+  // Enable user agent spoofing if user agent string supplied
+  userAgentString = localStorage.getItem(USER_AGENT_STRING);
+  if (userAgentString) { enableUserAgentSpoofing(); }
+  else { disableUserAgentSpoofing(); }
+
+  // Enable Web RTC Leak Protection
+  webRTCLeakProtectionType = JSON.parse(localStorage.getItem(WEB_RTC_LEAK_PROTECTION));
+  if (webRTCLeakProtectionType) { updateWebRTCLeakProtection(webRTCLeakProtectionType); }
+  else { updateWebRTCLeakProtection('DEFAULT'); }
+
+  chrome.browserAction.setIcon({
+   path : {
+     "128": "assets/cypherpunk_shaded_128.png",
+     "96": "assets/cypherpunk_shaded_96.png",
+     "64": "assets/cypherpunk_shaded_64.png",
+     "48": "assets/cypherpunk_shaded_48.png",
+     "32": "assets/cypherpunk_shaded_32.png",
+     "24": "assets/cypherpunk_shaded_24.png",
+     "16": "assets/cypherpunk_shaded_16.png"
+    }
+  });
+}
+
+function destroy() {
+  disableProxyAuthCredentials();
+  disableUserAgentSpoofing();
+  // disableForceHttps();
+  disableProxy();
+  disablePrivacyFilter();
+  updateWebRTCLeakProtection('DEFAULT');
+  chrome.browserAction.setIcon({
+    path : {
+      "128": "assets/cypherpunk_grey_128.png",
+      "96": "assets/cypherpunk_grey_96.png",
+      "64": "assets/cypherpunk_grey_64.png",
+      "48": "assets/cypherpunk_grey_48.png",
+      "32": "assets/cypherpunk_grey_32.png",
+      "24": "assets/cypherpunk_grey_24.png",
+      "16": "assets/cypherpunk_grey_16.png"
+     }
+  });
+}
+
+// save all the open tabs
+chrome.tabs.query({}, function(results) {
+  results.forEach(function(tab) { tabs[tab.id] = tab; });
+});
+
+if (cypherpunkEnabled) { init(); }
+else {
+  // Try to load servers even if cypherpunk is not enabled
+  loadProxies();
+  destroy();
+}
 
 /* PROXY SERVER PINGING FUNCTIONALITY */
-var serverArr = JSON.parse(localStorage.getItem('cypherpunk.proxyServersArr'));
 
-function updateProxies() {
+var hourlyUpdateInterval = 4;
+setInterval(function() {
   if (!serverArr.length) { return; }
   loadProxies();
-}
-var hourlyUpdateInterval = 4;
-setInterval(updateProxies, hourlyUpdateInterval * 60 * 60 *1000);
+}, hourlyUpdateInterval * 60 * 60 *1000);
 
 var min = arr => arr.reduce( ( p, c ) => { return ( p < c ? p : c ); } );
 
-function getServerLatencyList(servers, runs, premium) {
+function getServerLatencyList(servers, runs, accountType) {
   return Promise.all(servers.map(server => {
     // Ensure that server is available. If server is premium user must have premium account
-    if (server.httpDefault.length && (server.level === 'premium' && premium || server.level === 'free')) {
+    var serverHasIp = server.httpDefault.length;
+    var serverLevelValid = server.level === 'free';
+    if (server.level === 'premium' && accountType !== 'free') { serverLevelValid = true; }
+
+    if (serverHasIp && serverLevelValid) {
       var promises = [];
-      for (var i = 0; i < runs; i++) { promises.push(this.getLatency(server.ovHostname, 1)); }
+      for (var i = 0; i < runs; i++) {
+        promises.push(getLatency(server.ovHostname, 1));
+      }
 
       return Promise.all(promises)
-      .then((pings) => {
-        return { id: server.id, latency: this.min(pings) };
-      });
+      .then((pings) => { return { id: server.id, latency: min(pings) }; });
     }
     else { return Promise.resolve({ id: server.id, latency: 9999 }); }
   }))
@@ -41,7 +136,7 @@ function getServerLatencyList(servers, runs, premium) {
   .then(function(latencyList) {
     // Keep old list if latency is high for every server
     if (latencyList[0].latency < 9999) {
-      localStorage.setItem('cypherpunk.latencyList', JSON.stringify(latencyList));
+      localStorage.setItem(LATENCY_LIST, JSON.stringify(latencyList));
     }
     chrome.runtime.sendMessage({ action: "ServersUpdated", latencyList: latencyList });
     return latencyList;
@@ -49,7 +144,7 @@ function getServerLatencyList(servers, runs, premium) {
 }
 
 function requestImage(url) {
-  url = 'https://' + url + ':3128';
+  url = 'https://' + url + ':443';
   return new Promise((resolve, reject) => {
     var img = new Image();
     img.onload = () => { resolve(img); };
@@ -67,7 +162,7 @@ function getLatency(url, multiplier) {
         resolve(delta);
     };
 
-    this.requestImage(url).then(response).catch(response);
+    requestImage(url).then(response).catch(response);
 
     // If request times out set latency high, so it's low on the list
     setTimeout(() => { resolve(99999); }, 4000);
@@ -75,8 +170,9 @@ function getLatency(url, multiplier) {
 }
 
 /* Apply Proxy PAC Script */
+
 function applyProxy() {
-  var config = localStorage.getItem("cypherpunk.pacScriptConfig");
+  var config = localStorage.getItem(PAC_SCRIPT_CONFIG);
   if (!config) { return; }
   config = JSON.parse(config);
   console.log('Applying PacScript in BG', config);
@@ -121,7 +217,7 @@ function saveServerArray(servers) {
     return 0;
   });
 
-  localStorage.setItem('cypherpunk.proxyServersArr', JSON.stringify(serverArr));
+  localStorage.setItem(PROXY_SERVERS_ARR, JSON.stringify(serverArr));
   return serverArr;
 }
 
@@ -132,117 +228,17 @@ function loadProxies() {
     authUsername = res.privacy.username;
     authPassword = res.privacy.password;
     enableProxyAuthCredentials();
-    localStorage.setItem('cypherpunk.premiumAccount', JSON.stringify(res.account.type === 'premium'));
-    localStorage.setItem('cypherpunk.account.type', res.account.type);
+    localStorage.setItem(PREMIUM_ACCOUNT, JSON.stringify(res.account.type === 'premium'));
+    localStorage.setItem(ACCOUNT_TYPE, res.account.type);
 
     httpGetAsync('https://cypherpunk.privacy.network/api/v0/location/list/' + res.account.type, (servers) => {
       console.log('servers: ', servers);
-      localStorage.setItem('cypherpunk.proxyServers', servers);
+      localStorage.setItem(PROXY_SERVERS, servers);
       getServerLatencyList(saveServerArray(JSON.parse(servers)), 3, res.account.type);
       console.log('SERVERS SAVED', res.account.type);
     });
   });
 }
-
-// Clear cache on url change so ip doesnt leak from previous site
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  if (changeInfo.status === 'loading') {
-    if (chrome.browsingData) {
-      chrome.browsingData.removeCache();
-    }
-  }
-});
-
-function init() {
-  applyProxy();
-  loadProxies();
-  // Enable force http if it's enabled
-  // if (forceHttps) { enableForceHttps(); }
-  // else { disableForceHttps(); }
-
-  // Enable user agent spoofing if user agent string supplied
-  userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
-  if (userAgentString) { enableUserAgentSpoofing(); }
-  else { disableUserAgentSpoofing(); }
-
-  webRTCLeakProtectionType = JSON.parse(localStorage.getItem('cypherpunk.settings.webRTCLeakProtection'));
-  if (webRTCLeakProtectionType) { updateWebRTCLeakProtection(webRTCLeakProtectionType); }
-  else { updateWebRTCLeakProtection('DEFAULT'); }
-
-  chrome.browserAction.setIcon({
-   path : {
-     "128": "assets/cypherpunk_shaded_128.png",
-     "96": "assets/cypherpunk_shaded_96.png",
-     "64": "assets/cypherpunk_shaded_64.png",
-     "48": "assets/cypherpunk_shaded_48.png",
-     "32": "assets/cypherpunk_shaded_32.png",
-     "24": "assets/cypherpunk_shaded_24.png",
-     "16": "assets/cypherpunk_shaded_16.png"
-    }
-  });
-}
-
-function destroy() {
-  disableProxyAuthCredentials();
-  disableUserAgentSpoofing();
-  // disableForceHttps();
-  disablePrivacyFilter();
-  disableProxy();
-  updateWebRTCLeakProtection('DEFAULT');
-  chrome.browserAction.setIcon({
-    path : {
-      "128": "assets/cypherpunk_grey_128.png",
-      "96": "assets/cypherpunk_grey_96.png",
-      "64": "assets/cypherpunk_grey_64.png",
-      "48": "assets/cypherpunk_grey_48.png",
-      "32": "assets/cypherpunk_grey_32.png",
-      "24": "assets/cypherpunk_grey_24.png",
-      "16": "assets/cypherpunk_grey_16.png"
-     }
-  });
-}
-
-if (cypherpunkEnabled) { init(); }
-else {
-  // Try to load servers even if cypherpunk is not enabled
-  loadProxies();
-  destroy();
-}
-
-// Event Listener Triggers
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
-  if (request.action === "CypherpunkEnabled"){
-    cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
-    // Cypherpunk is turned on, enable features based on settings
-    if (cypherpunkEnabled) { init(); }
-    // Cypherpunk is turned off, disable all features
-    else { destroy(); }
-  }
-  else if (request.action === 'UserAgentSpoofing') {
-    userAgentString = localStorage.getItem('cypherpunk.settings.userAgent.string');
-    if (userAgentString) { enableUserAgentSpoofing(); }
-    else { disableUserAgentSpoofing(); }
-  }
-  else if (request.action === "UpdateWebRTCPolicy") {
-    if (!cypherpunkEnabled) { return; }
-    webRTCLeakProtectionType = JSON.parse(localStorage.getItem('cypherpunk.settings.webRTCLeakProtection'));
-    updateWebRTCLeakProtection(webRTCLeakProtectionType);
-  }
-  // else if (request.action === 'PrivacyFilter') {
-  //   cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === "true";
-  //   if (!cypherpunkEnabled) { return; }
-  //   // Reload current tab to update blocked requests
-  //   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-  //     chrome.tabs.reload(tabs[0].id);
-  //   });
-  // }
-  // else if (request.action === "ForceHTTPS"){
-  //   forceHttps = localStorage.getItem('cypherpunk.settings.forceHttps') === "true"
-  //   if (forceHttps) { enableForceHttps(); }
-  //   else { disableForceHttps(); }
-  //   sendResponse({ forceHttps: forceHttps });
-  // }
-});
 
 
 /** Block Proxy Auth Dialog **/
@@ -267,6 +263,7 @@ function enableProxyAuthCredentials() {
 
 
 /** WebRTC Leak Prevention **/
+
 function updateWebRTCLeakProtection(type) {
   var value = chrome.privacy.IPHandlingPolicy[type];
   console.log('Setting WebRTC Leak Prevention to ', value);
@@ -275,12 +272,14 @@ function updateWebRTCLeakProtection(type) {
   });
 }
 
+
 /** User Agent Spoofing **/
+
 function spoofUserAgent(details) {
   var headers = details.requestHeaders;
   if (!userAgentString) return;
   for(var i = 0, l = headers.length; i < l; ++i) {
-    if( headers[i].name === 'User-Agent' ) {
+    if( headers[i].name === 'User-Agent' || headers[i].name === 'user-agent') {
       if (userAgentString !== 'false') {
         headers[i].value = JSON.parse(userAgentString) || headers[i].value;
       }
@@ -307,8 +306,49 @@ function enableUserAgentSpoofing() {
 
 
 /** Privacy Filter **/
-// TODO: Change back to true once we have api providing url list
-function cancelRequest(details) { return { cancel: false }; }
+
+function cancelRequest(details) {
+  // allow request from other extensions and if tab is not recognized
+  if (details.tabId < 0) { return { cancel: false }; }
+  if (!tabs[details.tabId]) { return { cancel: false }; }
+
+  // find tab that request originated from
+  var originUrl = tabs[details.tabId].url;
+  let match = originUrl.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
+  originUrl = match ? match[1] : null;
+
+  // booleans that indicate whether which lists to lookup
+  var checkAds = false;
+  var checkMalware = false;
+
+  // check if originUrl is part of whitelist
+  var localPrivacySettings = privacyFilterWhitelist[originUrl];
+  if (localPrivacySettings) {
+    checkAds = localPrivacySettings.blockAds;
+    checkMalware = localPrivacySettings.blockMalware;
+  }
+  else {
+    checkAds = globalBlockAds;
+    checkMalware = globalBlockMalware;
+  }
+
+  var outgoingUrl = details.url;
+  var adListFound = false;
+  if (checkAds) {
+    adListFound = !!adList.find(function(adUrl) {
+      return outgoingUrl.indexOf(adUrl) !== -1;
+    });
+  }
+
+  var malwareListFound = false;
+  if (checkMalware) {
+    malwareListFound = !!malwareList.find(function(malwareUrl) {
+      return outgoingUrl.indexOf(malwareUrl) !== -1;
+    });
+  }
+
+  return { cancel: adListFound || malwareListFound };
+}
 
 function disablePrivacyFilter() {
   console.log('Disabling Privacy Filter');
@@ -318,6 +358,7 @@ function disablePrivacyFilter() {
 function enablePrivacyFilter() {
   disablePrivacyFilter();
   console.log('Enabling Privacy Filter');
+
   chrome.webRequest.onBeforeRequest.addListener(
     cancelRequest,
     { urls: ["<all_urls>"] },
@@ -325,26 +366,55 @@ function enablePrivacyFilter() {
   );
 }
 
-// Enable privacy filter if it's enabled
-chrome.tabs.onActivated.addListener(function (tab) {
-  chrome.tabs.get(tab.tabId, function(tab) {
-    if (!tab || !tab.url) { return; }
-    var url = tab.url;
 
-    var domain = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1];
-    var privacyFilterWhitelist = localStorage.getItem('cypherpunk.privacyFilterWhitelist');
-    privacyFilterWhitelist = JSON.parse(privacyFilterWhitelist);
+// Event Listener Triggers
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+  if (request.action === 'CypherpunkEnabled'){
+    console.log('cypher enabled');
+    cypherpunkEnabled = localStorage.getItem(ENABLED) === 'true';
+    // Cypherpunk is turned on, enable features based on settings
+    if (cypherpunkEnabled) { init(); }
+    // Cypherpunk is turned off, disable all features
+    else { destroy(); }
+  }
+  else if (request.action === 'UserAgentSpoofing') {
+    userAgentString = localStorage.getItem(USER_AGENT_STRING);
+    if (userAgentString) { enableUserAgentSpoofing(); }
+    else { disableUserAgentSpoofing(); }
+  }
+  else if (request.action === "UpdateWebRTCPolicy") {
+    if (!cypherpunkEnabled) { return; }
+    webRTCLeakProtectionType = JSON.parse(localStorage.getItem(WEB_RTC_LEAK_PROTECTION));
+    updateWebRTCLeakProtection(webRTCLeakProtectionType);
+  }
+  else if (request.action === 'updatePrivacyFilter') {
+    cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
+    if (!cypherpunkEnabled) { return; }
+    privacyFilterWhitelist = JSON.parse(localStorage.getItem(PRIVACY_FILTER_WHITELIST));
+    globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
+    globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
+  }
 
-    // Privacy Filter is enabled unless domain is in white list
-    var enabled = !(privacyFilterWhitelist && privacyFilterWhitelist[domain] === false);
-
-    // Start privacy filter if enabled and cypherpunk is on
-    if (cypherpunkEnabled && privacyFilterEnabled && enabled) { enablePrivacyFilter(); }
-    else { disablePrivacyFilter(); }
-
-  });
+  // else if (request.action === "ForceHTTPS"){
+  //   forceHttps = localStorage.getItem('cypherpunk.settings.forceHttps') === "true"
+  //   if (forceHttps) { enableForceHttps(); }
+  //   else { disableForceHttps(); }
+  //   sendResponse({ forceHttps: forceHttps });
+  // }
 });
 
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  // save tab on new tab
+  tabs[tabId] = tab;
+
+  // Clear cache on url change so ip doesnt leak from previous site
+  if (changeInfo.status === 'loading' && chrome.browsingData) { chrome.browsingData.removeCache(); }
+});
+
+chrome.tabs.onRemoved.addListener(function(tabId) { delete tabs[tabId]; });
+
+// Remove proxy and settings upon uninstall
+chrome.management.onUninstalled.addListener(() => { destroy(); });
 
 /** Force HTTPS */
 // function redirectRequest(requestDetails) {
@@ -365,27 +435,3 @@ chrome.tabs.onActivated.addListener(function (tab) {
 //     ['blocking']
 //   );
 // }
-
-var regionOrder = [
-  "DEV",
-  "NA",
-  "SA",
-  "CR",
-  "EU",
-  "ME",
-  "AF",
-  "AS",
-  "OP"
-];
-
-var regions = {
-  "NA": "North America",
-  "SA": "Central & South America",
-  "CR": "Caribbean",
-  "OP": "Oceania & Pacific",
-  "EU": "Europe",
-  "ME": "Middle East",
-  "AF": "Africa",
-  "AS": "Asia & India Subcontinent",
-  "DEV": "Development"
-};

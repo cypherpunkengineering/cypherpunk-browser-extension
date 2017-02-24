@@ -4,7 +4,7 @@
 @import '~bourbon-bitters/app/assets/stylesheets/_buttons';
 @import '../../scss/variables';
 
-:host { width: 100%; height: 100%; overflow: auto; display: block; }
+:host { width: 100%; height: 100%; overflow: hidden; display: block; }
 
 /* Main View Styles */
 #index { color: #fff; }
@@ -170,17 +170,18 @@
     width: 100%;
     margin-top: 30px;
     border-top: 15px solid #010011;
-    overflow: auto;
+    overflow: hidden;
     color: #8dfffc;
     background-color: $primary-bg;
 
     .left {
       float: left;
-      width: 90px;
+      width: 25%;
     }
 
     .right {
       float: left;
+      width: 75%;
 
       .row {
         overflow: auto;
@@ -188,6 +189,7 @@
         &:last-child { border-bottom: 0; }
 
         .third {
+          width: 33.33%;
           float: left;
           border-right: 1px solid #010011;
           &:last-child { border-right: 0; }
@@ -196,7 +198,7 @@
     }
 
     .button {
-      width: 88px;
+      width: 100%;
       height: 90px;
       float: left;
       cursor: pointer;
@@ -213,7 +215,7 @@
       }
 
       &.tall {
-        width: 90px;
+        width: 100%;
         height: 180px;
         border-right: 1px solid #010011;
 

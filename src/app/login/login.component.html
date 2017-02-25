@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page" *ngIf="!showConfirm">
   <div class="welcome">
     <img src="/assets/welcome.png" alt="">
   </div>
@@ -6,20 +6,16 @@
   <div class="window-container">
     <div id="email" class="window" [ngClass]="emailClassList">
       <div class="banner">
-        <div class="banner-text">
-          Welcome to
-        </div>
+        <div class="banner-text">Welcome to</div>
 
-        <div class="logo">
-          <img src="/assets/logo.png" alt="">
-        </div>
+        <div class="logo"><img src="/assets/logo.png" alt=""></div>
       </div>
 
-      <div class="email-text">
+      <div class="upper-text">
         Please input your email to begin<br>
       </div>
 
-      <div class="email-input">
+      <div class="input-wrapper">
         <input #emailInput type="email" [(ngModel)]="user.email" (keyup.enter)="checkEmail()" [disabled]="currentView !== 'email'" autofocus>
         <button (click)="checkEmail()" [disabled]="currentView !== 'email'">&#8250;</button>
       </div>
@@ -27,16 +23,16 @@
 
     <div id="login" class="window" [ngClass]="loginClassList">
       <div class="banner">
-        <div class="banner-text">
-          Welcome back,
-        </div>
+        <div class="banner-text">Welcome back,</div>
 
-        <div class="logo">
-          {{ user.email }}
-        </div>
+        <div class="logo">{{ user.email }}</div>
       </div>
 
-      <div class="login-input">
+      <div class="upper-text">
+        Please input your password to login<br>
+      </div>
+
+      <div class="input-wrapper">
         <input #passwordInput type="password" [(ngModel)]="user.password" placeholder="Password" (keyup.enter)="login()" [disabled]="currentView !== 'login'">
         <button (click)="login()" [disabled]="currentView !== 'login'">&#8250;</button>
       </div>
@@ -48,27 +44,28 @@
 
     <div id="register" class="window" [ngClass]="registerClassList">
       <div class="banner">
-        <div class="banner-text">
-          Welcome,
-        </div>
+        <div class="banner-text">Welcome,</div>
 
-        <div class="logo">
-          {{ user.email }}
-        </div>
+        <div class="logo">{{ user.email }}</div>
       </div>
 
-      <div class="email-text">
-        Please input your email to begin<br>
+      <div class="upper-text">
+        Please input your password to register<br>
       </div>
 
-      <div class="email-input">
-        <input type="email" [(ngModel)]="user.email" [disabled]="currentView !== 'register'">
-        <button (click)="checkEmail()" [disabled]="currentView !== 'register'">&#8250;</button>
+      <div class="input-wrapper">
+        <input #registerPasswordInput type="password" [(ngModel)]="user.password" placeholder="Password" (keyup.enter)="register()" [disabled]="currentView !== 'register'">
+        <button (click)="register()" [disabled]="currentView !== 'register'">&#8250;</button>
       </div>
 
-      <div class="back" (click)="goToEmail()">
+      <div class="lower-text">
+        By signing up, you agree to our <a (click)="launchTos()">Terms of Service</a> and confirm that you have read our <a (click)="launchPP()">Privacy Policy</a>
+      </div>
+
+      <div class="register-back" (click)="goToEmail()">
         Back
       </div>
     </div>
   </div>
+
 </div>

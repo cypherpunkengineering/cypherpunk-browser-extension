@@ -30,7 +30,14 @@ export class HqService {
 
   fetchUserStatus() {
     return this.http.get(this.apiPrefix + '/account/status')
-    .map((res: Response) => { return res.json(); })
+    .map((res: Response) => {
+      let user = res.json();
+      if (user.account.confirmed) { return user; }
+      else {
+        this.router.navigate(['/confirm', user.account.email]);
+        return Observable.throw(new Error('Account Not Confirmed'));
+      }
+    })
     .catch((error: any) => {
       if (error.status === 403) {
         this.router.navigate(['/login']);
@@ -54,6 +61,20 @@ export class HqService {
   login(body, options) {
     let url = this.apiPrefix + '/account/authenticate/userpasswd';
     options.withCredentials = true;
+    return this.http.post(url, body, options)
+    .map((res: Response) => { return res.json(); });
+  }
+
+  register(body, options) {
+    let url = this.apiPrefix + '/account/register/signup';
+    options.withCredentials = true;
+    return this.http.post(url, body, options)
+    .map((res: Response) => { return res.json(); });
+  }
+
+  resend(body, options) {
+    let url = this.apiPrefix + '/account/email/recover';
+    options.withCrednetials = true;
     return this.http.post(url, body, options)
     .map((res: Response) => { return res.json(); });
   }

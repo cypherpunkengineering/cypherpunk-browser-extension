@@ -19,12 +19,11 @@ import { Component, style, animate, transition, state, trigger, ViewChild, Eleme
 export class LoginComponent {
   @ViewChild('emailInput') emailInput: ElementRef;
   @ViewChild('passwordInput') passwordInput: ElementRef;
-  type = 'dynamic';
+  @ViewChild('registerPasswordInput') registerPasswordInput: ElementRef;
   currentView = 'email';
   emailClassList = ['middle'];
   loginClassList = ['right'];
   registerClassList = ['right'];
-  confirmClassList = ['right'];
   error: string;
   user = {
     email: '',
@@ -57,6 +56,10 @@ export class LoginComponent {
           this.currentView = 'register';
           this.emailClassList = ['left'];
           this.registerClassList = ['middle'];
+
+          setTimeout(() => {
+            this.renderer.invokeElementMethod(this.registerPasswordInput.nativeElement, 'focus');
+          }, 500);
         }
         else { return; }
       }
@@ -67,13 +70,21 @@ export class LoginComponent {
     let body = { login: this.user.email, password: this.user.password };
     this.hqService.login(body, {})
     .subscribe(
-      (data) => { this.router.navigate(['/']); },
+      (user) => {
+        if (user.account.confirmed) { this.router.navigate(['/']); }
+        else { this.router.navigate(['/confirm']); }
+      },
       (error) => { console.log(error); }
     );
   }
 
   register() {
-
+    let body = { email: this.user.email, password: this.user.password };
+    this.hqService.register(body, {})
+    .subscribe(
+      (data) => { this.router.navigate(['/confirm', this.user.email]); },
+      (error) => { console.log(error); }
+    );
   }
 
   goToEmail() {
@@ -81,5 +92,13 @@ export class LoginComponent {
     this.emailClassList = ['middle'];
     this.loginClassList = ['right'];
     this.registerClassList = ['right'];
+  }
+
+  launchTos() {
+    chrome.tabs.create({ url: 'https://cypherpunk.com/terms-of-service' });
+  }
+
+  launchPP() {
+    chrome.tabs.create({ url: 'https://cypherpunk.com/privacy-policy' });
   }
 }

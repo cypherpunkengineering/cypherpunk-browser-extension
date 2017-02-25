@@ -20,6 +20,7 @@ import { AccountContainerComponent } from './account/account-container.component
 import { AccountComponent } from './account/account/account.component';
 import { LocationComponent } from './location/location.component';
 import { LoginComponent } from './login/login.component';
+import { ConfirmComponent } from './confirm/confirm.component';
 import { ShareComponent } from './account/share/share.component';
 
 import { HqService } from './hq.service';
@@ -44,6 +45,7 @@ import { PingService } from './ping.service';
     AccountContainerComponent,
     LocationComponent,
     LoginComponent,
+    ConfirmComponent,
     ShareComponent
   ],
   imports: [
@@ -61,6 +63,7 @@ import { PingService } from './ping.service';
       { path: 'location', component: LocationComponent },
       { path: 'account', component: AccountContainerComponent },
       { path: 'login', component: LoginComponent },
+      { path: 'confirm/:email', component: ConfirmComponent },
       { path: '', component: IndexComponent }
         // { path: '**', component: PageNotFoundComponent }
     ]),

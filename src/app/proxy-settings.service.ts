@@ -45,25 +45,30 @@ export class ProxySettingsService {
 
   loadServers() {
     return new Promise((resolve, reject) => {
-      this.hqService.fetchUserStatus().flatMap(data => {
+      this.hqService.fetchUserStatus()
+      .flatMap(data => {
         this.accountType = data.account.type;
         this.premiumProxyAccount = this.accountType === 'premium';
         chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: data.privacy.username, authPassword: data.privacy.password });
         this.settingsService.saveProxyCredentials(data.privacy.username, data.privacy.password);
         return this.hqService.findServers(this.accountType); // fetch proxy server list
-      }).subscribe(servers => {
-        this.servers = servers;
-        this.serverArr = this.getServerArray();
-        this.settingsService.saveProxyServers(servers, this.serverArr);
+      })
+      .subscribe(
+        servers => {
+          this.servers = servers;
+          this.serverArr = this.getServerArray();
+          this.settingsService.saveProxyServers(servers, this.serverArr);
 
-        // Populate list of servers sorted by latency
-        this.pingService.getServerLatencyList(this.serverArr, 3, this.premiumProxyAccount)
-        .then((latencyArray) => {
-          this.settingsService.saveLatencyList(latencyArray);
-          this.latencyList = latencyArray;
-          resolve();
-        });
-      }, error => { reject(error); });
+          // Populate list of servers sorted by latency
+          this.pingService.getServerLatencyList(this.serverArr, 3, this.premiumProxyAccount)
+          .then((latencyArray) => {
+            this.settingsService.saveLatencyList(latencyArray);
+            this.latencyList = latencyArray;
+            resolve();
+          });
+        },
+        error => { reject(error); }
+      );
     });
   }
 

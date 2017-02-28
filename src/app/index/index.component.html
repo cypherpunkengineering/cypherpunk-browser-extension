@@ -14,19 +14,11 @@
     <a routerLink="/settings" class="btn__settings">
       <img class="gear" src="/assets/gear.png" alt="">
     </a>
-
-    <!-- On/Off Switch -->
-    <div id="cypher-punk-enabled-switch" class="switch">
-      <label class="label-switch">
-        <input #enableCypherpunk [(ngModel)]="cypherpunkEnabled" (ngModelChange)="toggleCypherpunk($event)" type="checkbox" />
-        <div class="checkbox"></div>
-      </label>
-    </div>
   </div>
 
   <!-- Cypherpunk is disabled screen -->
   <div id="off-screen" *ngIf="!cypherpunkEnabled">
-    <img src="/assets/mascot-off.png" alt="">
+    <img class="clickable" src="/assets/mascot-off.png" alt="" (click)="toggleCypherpunk(true)">
   </div>
 
   <!-- Cypherpunk is enabled screen -->
@@ -43,7 +35,7 @@
       </div>
 
       <div class="location">
-        <div class="flag-container">
+        <div class="flag-container clickable" (click)="toggleCypherpunk(false)" title="Turn Off">
           <img *ngIf="selectedRouteServerFlag" src="{{selectedRouteServerFlag}}" />
         </div>
         <div class="subtitle bold">

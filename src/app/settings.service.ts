@@ -210,18 +210,6 @@ export class SettingsService {
   }
 
   /** Index Settings **/
-  indexSettings() {
-    return {
-      showTutorial: !this.localStorageService.get(Keys.INITIALIZED),
-      cypherpunkEnabled: <boolean>this.localStorageService.get(Keys.ENABLED),
-      cachedSmartServers: this.localStorageService.get(Keys.CACHED_SMART_SERVERS),
-      defaultRouting: {
-        type: <string>this.localStorageService.get(Keys.ROUTING_TYPE),
-        selected: <string>this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
-      }
-    };
-  }
-
   saveTutorialFinished() {
     this.localStorageService.set(Keys.INITIALIZED, Defaults.getVal(Keys.INITIALIZED));
   }
@@ -241,6 +229,7 @@ export class SettingsService {
   }
 
   saveCypherpunkEnabled(enabled: boolean) {
+    this.enabled = enabled;
     this.localStorageService.set(Keys.ENABLED, enabled);
   }
 

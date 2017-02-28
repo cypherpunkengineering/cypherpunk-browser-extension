@@ -25,18 +25,13 @@
   }
   .title {
     height: 20px;
-    margin: 8px 0 0 52px;
+    margin: 8px 0 0 85px;
   }
   .btn__settings {
     position: absolute;
-    right: rem(80);
+    right: rem(16);
     top: rem(16);
-    .gear { width: 24px; }
-  }
-  .switch {
-    position: absolute;
-    right: rem(20);
-    top: rem(16);
+    .gear { width: 25px; }
   }
 }
 
@@ -264,3 +259,5 @@
     }
   }
 }
+
+.clickable { cursor: pointer; }

@@ -339,6 +339,27 @@ export class ProxySettingsService {
     return this.servers[latencyServer.id];
   }
 
+  getStarServer() {
+    let starredServers = this.settingsService.starredServers;
+    if (!starredServers.length) { return; }
+
+    let mostRecent, first;
+    starredServers.forEach((server) => {
+      if (!server.httpDefault.length) { return; }
+
+      if (!first) { first = server; }
+
+      if (server.last_used && !mostRecent) { mostRecent = server; }
+      else if (mostRecent && server.last_used > mostRecent.last_used) { mostRecent = server; }
+    });
+
+    let chosen;
+    if (mostRecent) { chosen = mostRecent; }
+    else if (first) { chosen = first; }
+
+    return chosen;
+  }
+
   regionOrder = [
     'DEV',
     'NA',

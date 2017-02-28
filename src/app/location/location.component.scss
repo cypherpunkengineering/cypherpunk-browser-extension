@@ -1,3 +1,5 @@
+@import '~bourbon/app/assets/stylesheets/_bourbon';
+@import '~bourbon-neat/app/assets/stylesheets/_neat';
 @import '../../scss/variables';
 
 :host { z-index: 2; width: 100%; height: 100%; display: block; position: absolute; overflow: auto; }
@@ -65,6 +67,23 @@
   .malware-text { padding-top: 5px; }
 }
 
+.option {
+  @include pad(0 rem(10) 0 rem(30));
+  @include span-columns(12);
+  height: rem(35);
+  line-height: rem(35);
+  text-align: left;
+  font-weight: 200;
+  cursor: pointer;
+  &:hover { background-color: $primary-bg-light; }
+  &.checked {
+    background-color: #010011;
+    color: #ffe49a;
+    border-top: 1px solid #5e5a5a;
+    border-bottom: 1px solid #5e5a5a;
+  }
+}
+
 .country-select.kill-height { height: auto; }
-.location-row.kill-height { height: auto; }
+.location-container { overflow: auto; width: 100%; }
 .location-row.kill-height span:first-child { height: 24px; }

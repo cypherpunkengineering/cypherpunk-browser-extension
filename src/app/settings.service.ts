@@ -13,12 +13,12 @@ class Keys {
   public static PROXY_SERVERS_ARR = 'proxyServersArr';
   public static PREMIUM_ACCOUNT = 'premiumAccount';
   public static PAC_SCRIPT_CONFIG = 'pacScriptConfig';
+  public static STARRED_SERVERS = 'starredServers';
 
   // Index view
   public static ENABLED = 'enabled';
   public static ROUTING = 'routing';
   public static INITIALIZED = 'intialized';
-  public static SMART_ROUTING_ENABLED = 'smartRoutingEnabled';
   public static CACHED_SMART_SERVERS = 'cachedSmartServers';
 
   // Advanced Settings
@@ -47,15 +47,14 @@ class Defaults {
     smartRoutingEnabled: true,
     privacyFilterWhitelist: {},
     routing: {},
-    latencyList: null,
-    proxyServers: null,
+    latencyList: [],
+    proxyServers: {},
     proxyServersArr: [],
+    starredServers: [],
     premiumAccount: false,
     pacScriptConfig: null,
     cachedSmartServers: null,
-    account: {
-      type: 'free'
-    },
+    account: { type: 'free' },
     settings: {
       forceHttps: true,
       ffWebRTCLeakProtection: true,
@@ -82,40 +81,66 @@ class Defaults {
 
 @Injectable()
 export class SettingsService {
+  enabled: boolean;
+  forceHttp: boolean;
+  accountType: string;
+  initialized: boolean;
+  premiumAccount: boolean;
+  latencyList = [];
+  proxyServers = {};
+  starredServers = [];
+  proxyServersArray = [];
+  cachedSmartServers = {};
+  routing = {};
+  defaultRoutingType: string;
+  defaultRoutingServer: string;
+  privacyFilterAds: boolean;
+  privacyFilterMalware: boolean;
+  privacyFilterWhitelist = {};
+  userAgentType: string;
+  userAgentString: string;
+  ffWebRtcLeakProtection: boolean;
+  webRtcLeakProtection: string;
+
   constructor (private localStorageService: LocalStorageService) {
-    let initialized = this.localStorageService.get(Keys.INITIALIZED);
-
     // Settings haven't been initialized yet, set defaults
-    if (!initialized) {
-      this.localStorageService.set(Keys.ENABLED, Defaults.getVal(Keys.ENABLED));
-      this.localStorageService.set(Keys.LATENCY_LIST, Defaults.getVal(Keys.LATENCY_LIST));
-      this.localStorageService.set(Keys.PROXY_SERVERS, Defaults.getVal(Keys.PROXY_SERVERS));
-      this.localStorageService.set(Keys.PROXY_SERVERS_ARR, Defaults.getVal(Keys.PROXY_SERVERS_ARR));
-      this.localStorageService.set(Keys.ACCOUNT_TYPE, Defaults.getVal(Keys.ACCOUNT_TYPE));
-      this.localStorageService.set(Keys.PREMIUM_ACCOUNT, Defaults.getVal(Keys.PREMIUM_ACCOUNT));
-      this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, Defaults.getVal(Keys.SMART_ROUTING_ENABLED));
-      this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, Defaults.getVal(Keys.PRIVACY_FILTER_WHITELIST));
-      this.localStorageService.set(Keys.CACHED_SMART_SERVERS, Defaults.getVal(Keys.CACHED_SMART_SERVERS));
-      this.localStorageService.set(Keys.ROUTING, Defaults.getVal(Keys.ROUTING));
-      this.localStorageService.set(Keys.ROUTING_TYPE, Defaults.getVal(Keys.ROUTING_TYPE));
-      this.localStorageService.set(Keys.ROUTING_SELECTED_SERVER, Defaults.getVal(Keys.ROUTING_SELECTED_SERVER));
-      this.localStorageService.set(Keys.FORCE_HTTPS, Defaults.getVal(Keys.FORCE_HTTPS));
-      this.localStorageService.set(Keys.PRIVACY_FILTER_ADS, Defaults.getVal(Keys.PRIVACY_FILTER_ADS));
-      this.localStorageService.set(Keys.PRIVACY_FILTER_MALWARE, Defaults.getVal(Keys.PRIVACY_FILTER_MALWARE));
-      this.localStorageService.set(Keys.USER_AGENT_TYPE, Defaults.getVal(Keys.USER_AGENT_TYPE));
-      this.localStorageService.set(Keys.USER_AGENT_STRING, Defaults.getVal(Keys.USER_AGENT_STRING));
-
-      if (this.isFirefox()) {
-        this.localStorageService.set(Keys.FF_WEB_RTC_LEAK_PROTECTION, Defaults.getVal(Keys.FF_WEB_RTC_LEAK_PROTECTION));
-      }
-      else {
-        this.localStorageService.set(Keys.WEB_RTC_LEAK_PROTECTION, Defaults.getVal(Keys.WEB_RTC_LEAK_PROTECTION));
-      }
+    this.enabled = this.defaultSetting(Keys.ENABLED);
+    this.initialized = this.defaultSetting(Keys.INITIALIZED);
+    this.accountType = this.defaultSetting(Keys.ACCOUNT_TYPE);
+    this.latencyList = this.defaultSetting(Keys.LATENCY_LIST);
+    this.proxyServers = this.defaultSetting(Keys.PROXY_SERVERS);
+    this.starredServers = this.defaultSetting(Keys.STARRED_SERVERS);
+    this.proxyServersArray = this.defaultSetting(Keys.PROXY_SERVERS_ARR);
+    this.premiumAccount = this.defaultSetting(Keys.PREMIUM_ACCOUNT);
+    this.cachedSmartServers = this.defaultSetting(Keys.CACHED_SMART_SERVERS);
+    this.routing = this.defaultSetting(Keys.ROUTING);
+    this.defaultRoutingType = this.defaultSetting(Keys.ROUTING_TYPE);
+    this.defaultRoutingServer = this.defaultSetting(Keys.ROUTING_SELECTED_SERVER);
+    this.forceHttp = this.defaultSetting(Keys.FORCE_HTTPS);
+    this.privacyFilterAds = this.defaultSetting(Keys.PRIVACY_FILTER_ADS);
+    this.privacyFilterMalware = this.defaultSetting(Keys.PRIVACY_FILTER_MALWARE);
+    this.privacyFilterWhitelist = this.defaultSetting(Keys.PRIVACY_FILTER_WHITELIST);
+    this.userAgentType = this.defaultSetting(Keys.USER_AGENT_TYPE);
+    this.userAgentString = this.defaultSetting(Keys.USER_AGENT_STRING);
+    if (this.isFirefox()) {
+      this.ffWebRtcLeakProtection = this.defaultSetting(Keys.FF_WEB_RTC_LEAK_PROTECTION);
+    }
+    else {
+      this.webRtcLeakProtection = this.defaultSetting(Keys.WEB_RTC_LEAK_PROTECTION);
     }
   }
 
+  defaultSetting(key): any {
+    let value = this.localStorageService.get(key);
+    if (value === null) {
+      value = Defaults.getVal(key);
+      this.localStorageService.set(key, value);
+    }
+    return value;
+  }
+
   /* Returns if browser is firefox or not */
-  isFirefox() {
+  isFirefox(): boolean {
     let isFirefox = false;
     // browser is defined in firefox, but not chrome
     try { isFirefox = browser !== undefined; }
@@ -148,29 +173,51 @@ export class SettingsService {
     this.localStorageService.set(Keys.ACCOUNT_TYPE, accountType);
   }
 
-  saveCachedSmartServers(smartServers) {
-    this.localStorageService.set(Keys.CACHED_SMART_SERVERS, smartServers);
+  saveCachedSmartServers(servers: Object) {
+    this.localStorageService.set(Keys.CACHED_SMART_SERVERS, servers);
   }
 
   savePacScriptConfig(config) {
     this.localStorageService.set(Keys.PAC_SCRIPT_CONFIG, config);
   }
 
+  starServer(server) {
+    let contains = false;
+    this.starredServers.map((starServer) => {
+      if (starServer.id === server.id) { contains = true; }
+    });
+
+    if (!contains) { this.starredServers.push(server); }
+    this.localStorageService.set(Keys.STARRED_SERVERS, this.starredServers);
+  }
+
+  unstarServer(server) {
+    let serverIndex: number;
+    this.starredServers.map((starServer, index) => {
+      if (starServer.id === server.id) { serverIndex = index; }
+    });
+
+    if (serverIndex > -1) { this.starredServers.splice(serverIndex, 1); }
+    this.localStorageService.set(Keys.STARRED_SERVERS, this.starredServers);
+  }
+
+  updateServerUsage(serverId) {
+    this.starredServers.map((server) => {
+      if (server.id === serverId) { server.last_used = new Date().getTime(); }
+    });
+
+    this.localStorageService.set(Keys.STARRED_SERVERS, this.starredServers);
+  }
+
   /** Index Settings **/
   indexSettings() {
     return {
       showTutorial: !this.localStorageService.get(Keys.INITIALIZED),
-      cypherpunkEnabled: this.localStorageService.get(Keys.ENABLED),
-      smartRoutingEnabled: this.localStorageService.get(Keys.SMART_ROUTING_ENABLED),
-      routing: this.localStorageService.get(Keys.ROUTING),
+      cypherpunkEnabled: <boolean>this.localStorageService.get(Keys.ENABLED),
       cachedSmartServers: this.localStorageService.get(Keys.CACHED_SMART_SERVERS),
       defaultRouting: {
         type: <string>this.localStorageService.get(Keys.ROUTING_TYPE),
         selected: <string>this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
-      },
-      proxyCredentials: {
-        username: this.localStorageService.get(Keys.PROXY_USERNAME),
-        password: this.localStorageService.get(Keys.PROXY_PASSWORD)
       }
     };
   }
@@ -195,10 +242,6 @@ export class SettingsService {
 
   saveCypherpunkEnabled(enabled: boolean) {
     this.localStorageService.set(Keys.ENABLED, enabled);
-  }
-
-  saveSmartRoutingEnabled(enabled: boolean) {
-    this.localStorageService.set(Keys.SMART_ROUTING_ENABLED, enabled);
   }
 
   saveRouting(routes: Object) {

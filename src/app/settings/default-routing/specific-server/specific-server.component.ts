@@ -8,17 +8,37 @@ import { SettingsService } from '../../../settings.service';
 })
 export class SpecificServerComponent {
   @Output() changeView = new EventEmitter<string>();
-
-  title = 'Use specific server';
-  premiumAccount = this.proxySettingsService.premiumProxyAccount;
-  serverArr = this.proxySettingsService.serverArr;
-  selectedServerId = this.settingsService.defaultRoutingSettings().selected;
-  regions = this.proxySettingsService.regions;
+  regions = {};
+  serverArr = [];
+  starredServers = [];
+  premiumAccount: boolean;
+  selectedServerId: string;
 
   constructor(
-    private proxySettingsService: ProxySettingsService,
-    private settingsService: SettingsService
-  ) {}
+    private settingsService: SettingsService,
+    private proxySettingsService: ProxySettingsService
+  ) {
+    this.regions = this.proxySettingsService.regions;
+    this.starredServers = settingsService.starredServers;
+    this.serverArr = this.proxySettingsService.serverArr;
+    this.premiumAccount = this.proxySettingsService.premiumProxyAccount;
+    
+    if (settingsService.defaultRoutingSettings().selected) {
+      this.selectedServerId = settingsService.defaultRoutingSettings().selected;
+    }
+  }
+
+  isStarred(server) {
+    let starred = false;
+    this.starredServers.map((starredServer) => {
+      if (server.id === starredServer.id) { starred = true; }
+    });
+    return starred;
+  }
+
+  starServer(server) { this.settingsService.starServer(server); }
+
+  unstarServer(server) { this.settingsService.unstarServer(server); }
 
   selectProxy(server) {
     if (server.level === 'premium' && !this.premiumAccount) { return; }
@@ -28,6 +48,7 @@ export class SpecificServerComponent {
       this.selectedServerId = server.id;
       this.settingsService.saveRoutingInfo('SELECTED', server.id);
       this.proxySettingsService.enableProxy();
+      this.settingsService.updateServerUsage(server.id);
     }
   }
 

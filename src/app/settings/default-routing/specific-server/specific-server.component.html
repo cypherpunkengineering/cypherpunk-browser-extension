@@ -1,6 +1,6 @@
 <div id="sub-menu">
   <div id="header" (click)="goToView('app-default-routing')" class="page-header bottom-separator">
-    <span class="back-icon">&#x3008;</span>{{title}}
+    <span class="back-icon">&#x3008;</span>Use specific server
   </div>
 
   <div class="country-select">
@@ -9,14 +9,24 @@
         {{regions[server.region]}}
       </div>
 
-      <div class="location-row" (click)="selectProxy(server)" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
-        <span class="flag">
-          <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
-        </span>
-        <span class="name">{{server.name}}</span>
-        <span *ngIf="server.level === 'premium'" class="premium">PREMIUM</span>
-        <span *ngIf="!server.httpDefault.length" class="unavailable">UNAVAILABLE</span>
+      <div class="location" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
+        <!-- server row -->
+        <div class="location-row" (click)="selectProxy(server)">
+          <span class="flag">
+            <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
+          </span>
+          <span class="name">{{server.name}}</span>
+          <span *ngIf="server.level === 'premium'" class="premium">PREMIUM</span>
+          <span *ngIf="!server.httpDefault.length" class="unavailable">UNAVAILABLE</span>
+        </div>
+
+        <!-- starring server -->
+        <div class="starred">
+          <span (click)="unstarServer(server)" *ngIf="isStarred(server)">&#9733;</span>
+          <span (click)="starServer(server)" *ngIf="!isStarred(server)">&#9734;</span>
+        </div>
       </div>
+
     </div>
   </div>
 </div>

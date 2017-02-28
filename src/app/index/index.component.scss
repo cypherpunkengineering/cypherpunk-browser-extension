@@ -238,6 +238,11 @@
         text-align: center;
         img { height: 100%; }
 
+        .star {
+          color: #ffe49a;
+          font-size: 24px;
+        }
+
         &.rocket {
           padding: 10px 5px;
           img { width: 100%; }
@@ -249,7 +254,13 @@
         }
       }
 
-      .title { text-align: center; }
+      .title {
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding: 0 5px;
+      }
     }
   }
 }

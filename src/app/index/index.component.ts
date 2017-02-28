@@ -21,29 +21,28 @@ import { Component, style, animate, transition, state, trigger } from '@angular/
 export class IndexComponent {
   // Misc Vars
   validProtocol = true;
-  faviconUrl = undefined;
 
   // Settings Vars
-  indexSettings = this.settingsService.indexSettings();
-  cypherpunkEnabled = this.indexSettings.cypherpunkEnabled;
-  defaultRouting = this.indexSettings.defaultRouting;
-  routing = this.indexSettings.routing;
-  cachedSmartServers = this.indexSettings.cachedSmartServers;
-  showTutorial = this.indexSettings.showTutorial;
+  cachedSmartServers;
+  showTutorial: boolean;
+  cypherpunkEnabled: boolean;
+  defaultRouting = { type: '', selected: '' };
 
   // Proxy Connection Display Vars
-  selectedRouteOpt = 'Loading...';
-  selectedRouteServerName = 'Loading...';
-  selectedRouteServerFlag = '';
-  selectedRouteServer;
-  actualCountryFlag = '';
-  actualCountry = '';
-  domain = 'Loading...';
+  domain: string;
+  faviconUrl: string;
+  actualCountry: string;
+  actualCountryFlag: string;
+  selectedRouteOpt: string;
+  selectedRouteServerName: string;
+  selectedRouteServerFlag: string;
+  starServerName: string;
+  starServerFlag: string;
 
   // Smart Server Vars
-  countryCode;
+  countryCode: string;
   smartServer;
-  smartServerName = 'Loading...';
+  smartServerName: string;
 
   constructor(
     private router: Router,
@@ -51,6 +50,27 @@ export class IndexComponent {
     private settingsService: SettingsService,
     private proxySettingsService: ProxySettingsService
   ) {
+    // get settings vars
+    this.cypherpunkEnabled = this.settingsService.enabled;
+    this.showTutorial = !this.settingsService.initialized;
+    this.cachedSmartServers = this.settingsService.cachedSmartServers;
+    this.defaultRouting = this.settingsService.defaultRoutingSettings();
+
+    // set visible strings
+    this.domain = 'Loading...';
+    this.smartServerName = 'Loading...';
+    this.selectedRouteOpt = 'Loading...';
+    this.selectedRouteServerName = 'Loading...';
+    let starServer = this.proxySettingsService.getStarServer();
+    if (starServer) {
+      this.starServerName = starServer.name;
+      this.starServerFlag =  '/assets/flags/48/' + starServer.country + '.png';
+    }
+    else {
+      this.starServerName = 'Empty';
+      this.starServerFlag =  '';
+    }
+
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
       let curTab = tabs[0];
       let url = curTab.url;
@@ -80,7 +100,6 @@ export class IndexComponent {
 
         // Load fav icon
         // not sure if this is actually used
-        // let favurl = url ? url.replace(/#.*$/, '') : ''; // drop #hash
         if (curTab.favIconUrl && curTab.favIconUrl !== '' && curTab.favIconUrl.indexOf('chrome://favicon/') === -1) {
           this.faviconUrl = curTab.favIconUrl;
         }
@@ -161,6 +180,7 @@ export class IndexComponent {
       fastestuk: 'Fastest UK',
       fastestus: 'Fastest US',
       selected: 'Selected Server',
+      star: 'Starred Server',
       none: 'No Proxy'
     };
     return selectedRouteOpts[this.selectedRouteOpt.toLowerCase()];
@@ -168,12 +188,10 @@ export class IndexComponent {
 
   /* Selects routing type, when user selects a type via the UI */
   selectRouteType(type: string) {
-    this.selectedRouteOpt = type;
     if (type === 'SELECTED') { return this.router.navigate(['/selected-server']); }
+    if (type === 'STAR' && !this.starServerFlag) { return; }
 
     // create proxy binding from this domain to proxy type
-    // this.routing[this.domain] = { type: type };
-
     switch (type) {
       case 'SMART':
         this.applySmartProxy();
@@ -187,12 +205,15 @@ export class IndexComponent {
       case 'FASTESTUS':
         this.applyFastestUSProxy();
         break;
+      case 'STAR':
+        if (this.starServerFlag) { this.applyStarProxy(); }
+        break;
       default:
         this.applyNoProxy();
     }
 
     console.log('Applying Selected Routing Type: ' + type);
-    // this.settingsService.saveRouting(this.routing); // save proxy binding
+    this.selectedRouteOpt = type;
     this.settingsService.saveRoutingInfo(type, null);
     this.proxySettingsService.enableProxy(); // process proxy binding
   }
@@ -202,7 +223,6 @@ export class IndexComponent {
     // Check if override for domain exists, apply override settings if it does
     let type: string = this.defaultRouting.type;
     let serverId: string = this.defaultRouting.selected;
-    this.selectedRouteOpt = type;
 
     switch (type) {
       case 'SMART':
@@ -220,13 +240,23 @@ export class IndexComponent {
       case 'FASTESTUS':
         this.applyFastestUSProxy();
         break;
+      case 'STAR':
+        if (this.starServerFlag) { this.applyStarProxy(); }
+        else { this.applyNoProxy(); }
+        break;
       default:
         this.applyNoProxy();
+    }
+
+    this.selectedRouteOpt = type;
+    if (type === 'STAR' && !this.starServerFlag) {
+      this.selectedRouteOpt = 'NONE';
+      this.settingsService.saveRoutingInfo('NONE', null);
+      this.proxySettingsService.enableProxy(); // process proxy binding
     }
   }
 
   applySmartProxy() {
-    this.selectedRouteServer = this.smartServer;
     this.selectedRouteServerName = this.smartServer.name;
     this.selectedRouteServerFlag = '/assets/flags/svg/flag-' + this.smartServer.country + '.svg';
   }
@@ -234,7 +264,6 @@ export class IndexComponent {
   applyFastestProxy() {
     let fastestServer = this.proxySettingsService.getFastestServer();
     if (fastestServer) {
-      this.selectedRouteServer = fastestServer;
       this.selectedRouteServerName = fastestServer.name;
       this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + fastestServer.country + '.svg';
     }
@@ -243,7 +272,6 @@ export class IndexComponent {
   applyFastestUSProxy() {
     let usServer = this.proxySettingsService.getFastestUSServer();
     if (usServer) {
-      this.selectedRouteServer = usServer;
       this.selectedRouteServerName = usServer.name;
       this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + usServer.country + '.svg';
     }
@@ -252,22 +280,35 @@ export class IndexComponent {
   applyFastestUKProxy() {
     let ukServer = this.proxySettingsService.getFastestUKServer();
     if (ukServer) {
-      this.selectedRouteServer = ukServer;
       this.selectedRouteServerName = ukServer.name;
       this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + ukServer.country + '.svg';
     }
   }
 
+  applyStarProxy() {
+    let starServer = this.proxySettingsService.getStarServer();
+    if (starServer) {
+      this.selectedRouteServerName = starServer.name;
+      this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + starServer.country + '.svg';
+      this.starServerName = starServer.name;
+      this.starServerFlag =  '/assets/flags/48/' + starServer.country + '.png';
+    }
+    /* blank state */
+    else {
+      this.starServerName = 'Empty';
+      this.starServerFlag = '';
+    }
+  }
+
   applyNoProxy() {
-    this.selectedRouteServer = undefined;
     this.selectedRouteServerName = 'Unprotected';
     this.selectedRouteServerFlag = undefined;
   }
 
   applySelectedProxy(serverId) {
     if (!serverId) { return; }
-    this.selectedRouteServer = this.proxySettingsService.servers[serverId];
-    this.selectedRouteServerName = this.selectedRouteServer.name;
-    this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + this.selectedRouteServer.country + '.svg';
+    let server = this.proxySettingsService.servers[serverId];
+    this.selectedRouteServerName = server.name;
+    this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + server.country + '.svg';
   }
 }

@@ -39,6 +39,7 @@ export class LocationComponent {
   showServers = false;
   regions = {};
   serverArr = [];
+  starredServers = [];
   selectedServerId: string;
 
   constructor(
@@ -50,6 +51,7 @@ export class LocationComponent {
     // load default settings
     this.regions = this.proxySettingsService.regions;
     this.serverArr = this.proxySettingsService.serverArr;
+    this.starredServers = settingsService.starredServers;
     this.routing = this.settingsService.selectedServerSettings().routing;
     this.defaultRouting = this.settingsService.defaultRoutingSettings();
     this.accountType = this.settingsService.proxySettingsService().accountType;
@@ -156,6 +158,18 @@ export class LocationComponent {
 
   useServer() { this.showServers = !this.showServers; }
 
+  isStarred(server) {
+    let starred = false;
+    this.starredServers.map((starredServer) => {
+      if (server.id === starredServer.id) { starred = true; }
+    });
+    return starred;
+  }
+
+  starServer(server) { this.settingsService.starServer(server); }
+
+  unstarServer(server) { this.settingsService.unstarServer(server); }
+
   selectProxy(server) {
     this.proxyMode = 'SELECTED';
     let valid: any = true;
@@ -168,6 +182,7 @@ export class LocationComponent {
       this.routing[this.siteUrl] = { type: 'SELECTED', serverId: server.id };
       this.settingsService.saveRouting(this.routing);
       this.proxySettingsService.enableProxy();
+      this.settingsService.updateServerUsage(server.id);
     }
   }
 }

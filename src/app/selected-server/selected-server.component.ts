@@ -1,7 +1,6 @@
 import { SettingsService } from '../settings.service';
-import { LocalStorageService } from 'angular-2-local-storage';
 import { ProxySettingsService } from '../proxy-settings.service';
-import { Component, NgZone, style, animate, transition, state, trigger } from '@angular/core';
+import { Component, style, animate, transition, state, trigger } from '@angular/core';
 
 @Component({
   selector: 'app-selected-server',
@@ -24,54 +23,37 @@ import { Component, NgZone, style, animate, transition, state, trigger } from '@
    ]
 })
 export class SelectedServerComponent {
-  browserObj: any = chrome ? chrome : chrome;
-
-  title = 'Selected Server';
-  domain: string;
+  regions = {};
+  serverArr = [];
+  starredServers = [];
+  premiumAccount: boolean;
   selectedServerId: string;
-  premiumAccount = this.proxySettingsService.premiumProxyAccount;
-  serverArr = this.proxySettingsService.serverArr;
-  regions = this.proxySettingsService.regions;
-
-  selectedServerSettings = this.settingsService.selectedServerSettings();
-  routing = this.selectedServerSettings.routing;
-  routingType = 'SELECTED';
 
   constructor(
-    private zone: NgZone,
     private settingsService: SettingsService,
-    private localStorageService: LocalStorageService,
     private proxySettingsService: ProxySettingsService
   ) {
+    this.regions = this.proxySettingsService.regions;
+    this.starredServers = settingsService.starredServers;
+    this.serverArr = this.proxySettingsService.serverArr;
+    this.premiumAccount = this.proxySettingsService.premiumProxyAccount;
+
     if (settingsService.defaultRoutingSettings().selected) {
       this.selectedServerId = settingsService.defaultRoutingSettings().selected;
     }
-    // set current smart selected server
-    // let callback = (tabs) => {
-    //   let curTab = tabs[0];
-    //   let url = curTab.url;
-    //   let match = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
-    //   this.domain = match ? match[1] : null;
-    //
-    //   let curSmartRoute = this.routing[this.domain];
-    //   if (curSmartRoute) {
-    //     this.zone.run(() => {
-    //       this.selectedServerId = curSmartRoute.serverId;
-    //     });
-    //   }
-    // };
-    //
-    //
-    // if (chrome) { // Chrome
-    //   this.browserObj.tabs.query({currentWindow: true, active: true}, callback);
-    // }
-    // else { // FF
-    //   this.browserObj.tabs.query({currentWindow: true, active: true})
-    //   .then(callback);
-    // }
-
-
   }
+
+  isStarred(server) {
+    let starred = false;
+    this.starredServers.map((starredServer) => {
+      if (server.id === starredServer.id) { starred = true; }
+    });
+    return starred;
+  }
+
+  starServer(server) { this.settingsService.starServer(server); }
+
+  unstarServer(server) { this.settingsService.unstarServer(server); }
 
   selectProxy(server) {
     if (server.level === 'premium' && !this.premiumAccount) { return; }
@@ -79,14 +61,9 @@ export class SelectedServerComponent {
     else if (!server.httpDefault.length) { return; }
     else {
       this.selectedServerId = server.id;
-      // this.routing[this.domain] = {
-      //   type: this.routingType,
-      //   serverId: server.id
-      // };
-      // this.settingsService.saveRouting(this.routing);
-      this.settingsService.saveRoutingInfo(this.routingType, server.id);
+      this.settingsService.saveRoutingInfo('SELECTED', server.id);
       this.proxySettingsService.enableProxy();
+      this.settingsService.updateServerUsage(server.id);
     }
-
   }
 }

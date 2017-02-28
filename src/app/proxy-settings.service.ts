@@ -199,6 +199,14 @@ export class ProxySettingsService {
           rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' + fukIp + ':80\';\n';
         }
       }
+      // Starred Servers: Route to fastest UK server always
+      if (domainSettings.type === 'STAR') {
+        let starServer = this.getStarServer();
+        if (starServer) {
+          let starIp = starServer.httpDefault[0];
+          rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' + starIp + ':80\';\n';
+        }
+      }
       // Selected: Route to the selected server
       else if (domainSettings.type === 'SELECTED') {
         let selectedProxyIp = this.servers[domainSettings.serverId].httpDefault[0];
@@ -252,6 +260,14 @@ export class ProxySettingsService {
       if (fastestUKServer) {
         let fastestUKServerIp = fastestUKServer.httpDefault[0];
         defaultRoutingRules += '  else return \'PROXY ' + fastestUKServerIp + ':80\';\n';
+      }
+    }
+    // Starred Servers: Route to fastest UK server always
+    if (defaultRouting.type === 'STAR') {
+      let starServer = this.getStarServer();
+      if (starServer) {
+        let starIp = starServer.httpDefault[0];
+        defaultRoutingRules += '  else return \'PROXY ' + starIp + ':80\';\n';
       }
     }
     // Selected: Route to the default selected server

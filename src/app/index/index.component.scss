@@ -42,10 +42,17 @@
 #on-screen {
   .flags-wrap {
     @include pad(22px rem(12) 30px);
-    background-image: url('/assets/main-helmet.png');
-    background-position: center;
-    background-repeat: no-repeat;
     overflow: auto;
+    z-index: 20;
+
+    .banner {
+      position: absolute;
+      width: 230px;
+      top: 202px;
+      left: 60px;
+      z-index: 1;
+      img { width: 100%; }
+    }
 
     .title {
       @include span-columns(12);
@@ -62,38 +69,43 @@
       &.last { @include omega; cursor: pointer; }
 
       .flag-container {
-        width: rem(70);
-        height: rem(70);
         margin-top: rem(20);
-        line-height: rem(88);
         width: rem(105);
         height: rem(167);
-        background-size: rem(105);
 
-        img {
-          box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.5);
-          margin-top: rem(69);
-          width: rem(44);
-          height: rem(28);
+        &.helmet {
+          background-image: url('/assets/index-helmet.png');
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: rem(105);
+        }
+        &.user {
+          background-image: url('/assets/index-location.png');
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: contain;
+        }
+        &.site {
+          background-image: url('/assets/index-connected.png');
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: contain;
+        }
+        &.small {
+          width: rem(80);
+          height: rem(100);
+          margin: 60px auto 0;
         }
 
-        &.small {
-          width: rem(50);
-          height: rem(50);
-          line-height: rem(60);
-          border-radius: 4px;
-          box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-          margin: 0 auto;
-          margin-top: 93px;
-
-          &.square { line-height: rem(75); }
-
-          img {
-            margin-top: 0;
+        img {
+          margin-top: rem(65);
+          width: rem(44);
+          height: rem(28);
+          &.flag { margin-top: 47px; }
+          &.favicon {
+            margin-top: 43px;
             width: rem(35);
             height: rem(35);
-            margin-left: 0;
-            &.flag { height: rem(19); }
           }
         }
       }

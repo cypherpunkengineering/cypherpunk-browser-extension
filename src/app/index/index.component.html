@@ -25,17 +25,21 @@
   <div id="on-screen" *ngIf="cypherpunkEnabled">
     <!-- Floating head and flags -->
     <div class="flags-wrap">
+      <div class="banner">
+        <img src="/assets/index-banner.png" alt="">
+      </div>
+
       <div class="title">Your Public Location</div>
 
       <div class="location">
-        <div class="flag-container small">
+        <div class="flag-container user small">
           <img class="flag" *ngIf="actualCountryFlag" src="{{ actualCountryFlag }}" />
         </div>
         <div class="subtitle">{{ actualCountry }}</div>
       </div>
 
       <div class="location">
-        <div class="flag-container clickable" (click)="toggleCypherpunk(false)" title="Turn Off">
+        <div class="flag-container helmet clickable" (click)="toggleCypherpunk(false)" title="Turn Off">
           <img *ngIf="selectedRouteServerFlag" src="{{selectedRouteServerFlag}}" />
         </div>
         <div class="subtitle bold">
@@ -46,8 +50,8 @@
       </div>
 
       <div class="location last" routerLink="/location">
-        <div class="flag-container small square" routerLink="/location">
-          <img *ngIf="faviconUrl" src="{{faviconUrl}}" />
+        <div class="flag-container site small" routerLink="/location">
+          <img class="favicon" *ngIf="faviconUrl" src="{{faviconUrl}}" />
         </div>
         <div class="subtitle" [innerHTML]="domain"></div>
       </div>

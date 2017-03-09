@@ -429,6 +429,31 @@ a {
   }
 }
 
+.scrolling-binary {
+  color: rgba(255, 255, 255, 0.7);
+  overflow: hidden;
+  font-size: rem(12);
+  .right {
+    width: rem(275);
+    white-space: nowrap;
+    animation: rscroll 15s linear infinite alternate;
+  }
+  .left {
+    width: rem(275);
+    white-space: nowrap;
+    animation: lscroll 15s linear infinite alternate;
+  }
+
+  @keyframes lscroll {
+    0%   { transform: translate(0, 0); }
+    100% { transform: translate(-50%, 0); }
+  }
+  @keyframes rscroll {
+    0%   { transform: translate(-50%, 0); }
+    100% { transform: translate(0, 0); }
+  }
+}
+
 .account {
   color: #fff;
   overflow: auto;

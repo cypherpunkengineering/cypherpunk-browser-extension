@@ -7,9 +7,22 @@
   background-color: $primary-bg;
 
   .welcome {
+    position: relative;
     padding: 20px 0 0;
-    background-color: #666;
+    height: 195px;
+    box-sizing: content-box;
     img { width: 100%; }
+
+    .scrolling-binary {
+      position: absolute;
+      left: 0;
+      right: 0;
+      width: 100%;
+      top: 183px;
+
+      .right { width: 200%; }
+      .left { width: 200%; }
+    }
   }
 
   .window-container { overflow: hidden; }

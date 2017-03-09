@@ -40,10 +40,11 @@
 
 /* Connected Screen */
 #on-screen {
-  padding-top: 20px;
-
   .flags-wrap {
-    @include pad(0 rem(20));
+    @include pad(22px rem(12) 30px);
+    background-image: url('/assets/main-helmet.png');
+    background-position: center;
+    background-repeat: no-repeat;
     overflow: auto;
 
     .title {
@@ -65,16 +66,14 @@
         height: rem(70);
         margin-top: rem(20);
         line-height: rem(88);
-        background: url('/assets/public_location.png');
         width: rem(105);
         height: rem(167);
         background-size: rem(105);
 
         img {
           box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.5);
-          margin-top: rem(67);
+          margin-top: rem(69);
           width: rem(44);
-          margin-left: rem(-8);
           height: rem(28);
         }
 
@@ -83,11 +82,9 @@
           height: rem(50);
           line-height: rem(60);
           border-radius: 4px;
-          background: none;
-          background-color: #ffffff;
           box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
           margin: 0 auto;
-          margin-top: rem(76);
+          margin-top: 93px;
 
           &.square { line-height: rem(75); }
 
@@ -132,38 +129,15 @@
 
   .scrolling-binary {
     position: absolute;
-    top: rem(210);
-    z-index: 1;
-    color: rgba(255, 255, 255, 0.4);
+    top: 208px;
     left: 0;
     right: 0;
-    margin: 0 50px;
-    overflow: hidden;
-    font-size: rem(12);
-    .right {
-      width: rem(275);
-      white-space: nowrap;
-      animation: rscroll 15s linear infinite alternate;
-    }
-    .left {
-      width: rem(275);
-      white-space: nowrap;
-      animation: lscroll 15s linear infinite alternate;
-    }
-
-    @keyframes lscroll {
-      0%   { transform: translate(0, 0); }
-      100% { transform: translate(-50%, 0); }
-    }
-    @keyframes rscroll {
-      0%   { transform: translate(-50%, 0); }
-      100% { transform: translate(0, 0); }
-    }
+    margin: 0 92px;
+    z-index: 1;
   }
 
   .cypher-buttons {
     width: 100%;
-    margin-top: 30px;
     border-top: 15px solid #010011;
     overflow: hidden;
     color: #8dfffc;

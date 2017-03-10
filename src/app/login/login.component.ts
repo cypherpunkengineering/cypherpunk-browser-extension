@@ -1,5 +1,6 @@
 import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
+import { SettingsService } from '../settings.service';
 import { Component, style, animate, transition, state, trigger, ViewChild, ElementRef, Renderer } from '@angular/core';
 
 @Component({
@@ -32,9 +33,10 @@ export class LoginComponent {
 
   constructor(
     private router: Router,
+    private renderer: Renderer,
     private hqService: HqService,
-    private renderer: Renderer
-  ) {}
+    private settingsService: SettingsService
+  ) { this.settingsService.saveTutorialFinished(false); }
 
   checkEmail() {
     if (!this.user.email) { return; }

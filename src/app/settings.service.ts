@@ -18,7 +18,7 @@ class Keys {
   // Index view
   public static ENABLED = 'enabled';
   public static ROUTING = 'routing';
-  public static INITIALIZED = 'intialized';
+  public static INITIALIZED = 'initialized';
   public static CACHED_SMART_SERVERS = 'cachedSmartServers';
 
   // Advanced Settings
@@ -42,7 +42,7 @@ class Keys {
 
 class Defaults {
   public static CONFIG = {
-    intialized: true,
+    initialized: false,
     enabled: false,
     smartRoutingEnabled: true,
     privacyFilterWhitelist: {},
@@ -210,8 +210,9 @@ export class SettingsService {
   }
 
   /** Index Settings **/
-  saveTutorialFinished() {
-    this.localStorageService.set(Keys.INITIALIZED, Defaults.getVal(Keys.INITIALIZED));
+  saveTutorialFinished(initialized: boolean) {
+    this.initialized = initialized;
+    this.localStorageService.set(Keys.INITIALIZED, initialized);
   }
 
   saveProxyCredentials(username: string, password: string) {

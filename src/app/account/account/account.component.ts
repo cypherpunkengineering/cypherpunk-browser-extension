@@ -17,9 +17,7 @@ export class AccountComponent {
     private proxySettingsService: ProxySettingsService
   ) { }
 
-  open(url: string) {
-    chrome.tabs.create({ url: url });
-  }
+  open(url: string) { chrome.tabs.create({ url: url }); }
 
   goToPage(url: string) {
     let urlPrepend = 'https://cypherpunk.com';
@@ -35,10 +33,7 @@ export class AccountComponent {
     });
     this.settingsService.saveCypherpunkEnabled(false);
     chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
-
   }
 
-  goToView(name: string) {
-    this.changeView.emit(name);
-  }
+  goToView(name: string) { this.changeView.emit(name); }
 }

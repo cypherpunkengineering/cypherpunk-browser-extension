@@ -15,13 +15,12 @@ export class TutorialComponent {
 
   allowAnalytics() {
     this.tutorialVisible.emit(false);
-    this.settingsService.saveTutorialFinished();
+    this.settingsService.saveTutorialFinished(true);
     // Enable analytics once feature is implemented
   }
 
   saveTutorialFinished() {
     this.tutorialVisible.emit(false);
-    this.settingsService.saveTutorialFinished();
+    this.settingsService.saveTutorialFinished(true);
   }
 }
-

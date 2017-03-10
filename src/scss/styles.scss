@@ -434,23 +434,29 @@ a {
   overflow: hidden;
   font-size: rem(12);
   .right {
-    width: rem(275);
+    width: auto;
     white-space: nowrap;
-    animation: rscroll 15s linear infinite alternate;
+    transform: translate3d(0,0,0);
+    animation: 20s linear infinite marquee;
+    animation-play-state: running;
+    animation-duration: 26100ms;
   }
   .left {
-    width: rem(275);
+    width: auto;
     white-space: nowrap;
-    animation: lscroll 15s linear infinite alternate;
+    transform: translate3d(0,0,0);
+    animation: 20s linear reverse infinite marquee;
+    animation-play-state: running;
+    animation-duration: 26100ms;
   }
 
-  @keyframes lscroll {
-    0%   { transform: translate(0, 0); }
-    100% { transform: translate(-50%, 0); }
-  }
-  @keyframes rscroll {
-    0%   { transform: translate(-50%, 0); }
-    100% { transform: translate(0, 0); }
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
   }
 }
 

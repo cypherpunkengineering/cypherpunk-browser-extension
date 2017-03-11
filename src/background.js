@@ -414,7 +414,9 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 chrome.tabs.onRemoved.addListener(function(tabId) { delete tabs[tabId]; });
 
 // Remove proxy and settings upon uninstall
-chrome.management.onUninstalled.addListener(() => { destroy(); });
+chrome.management.onUninstalled.addListener((extId) => {
+  if (extId === chrome.runtime.id) { destroy(); }
+});
 
 /** Force HTTPS */
 // function redirectRequest(requestDetails) {

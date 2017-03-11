@@ -369,3 +369,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     chrome.runtime.sendMessage({ action: 'ClearCache' });
   }
 });
+
+// Remove proxy and settings upon uninstall
+chrome.management.onUninstalled.addListener((extId) => {
+  if (extId === chrome.runtime.id) { destroy(); }
+});

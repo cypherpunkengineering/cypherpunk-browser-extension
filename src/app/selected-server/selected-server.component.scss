@@ -1,0 +1,55 @@
+@import '../../scss/variables';
+
+.country-select {
+  height: 455px;
+
+  .location .starred .latency-number { font-size: 12px; padding-right: 5px; }
+  .location .starred .star { padding-right: 5px; }
+}
+
+.sorting { padding: 10px; }
+
+.server-search {
+  width: 70%;
+  display: inline-block;
+  position: relative;
+
+  input {
+    height: 25px;
+    width: 210px;
+    padding-left: 30px;
+    background-color: $primary-bg-light;
+    border: 0;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    line-height: 25px;
+  }
+
+  .fa-search {
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
+    padding-left: 10px;
+  }
+}
+
+.sort-order {
+  float: right;
+  display: inline-block;
+  cursor: pointer;
+  i {
+    color: #fff;
+    padding: 0 5px;
+    font-size: 16px;
+    line-height: 25px;
+    opacity: 0.5;
+    &.checked { opacity: 1; }
+  }
+}

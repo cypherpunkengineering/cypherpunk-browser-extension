@@ -35,12 +35,19 @@ export class LocationComponent {
   blockAds = true;
   blockMalware = true;
 
-  proxyMode: string;
-  showServers = false;
   regions = {};
-  serverArr = [];
-  starredServers = [];
+  serverMap = {};
+  searchText = '';
+  proxyMode: string;
+  serverSortOrder = 'geo';
   selectedServerId: string;
+  showServers = false;
+
+  geoServers = [];
+  alphaServers = [];
+  latencyServers = [];
+  currentServers = [];
+  starredServers = [];
 
   constructor(
     private zone: NgZone,
@@ -50,11 +57,17 @@ export class LocationComponent {
   ) {
     // load default settings
     this.regions = this.proxySettingsService.regions;
-    this.serverArr = this.proxySettingsService.serverArr;
-    this.starredServers = settingsService.starredServers;
+    this.serverMap = this.proxySettingsService.servers;
+    this.accountType = this.settingsService.proxySettingsService().accountType;
+
     this.routing = this.settingsService.selectedServerSettings().routing;
     this.defaultRouting = this.settingsService.defaultRoutingSettings();
-    this.accountType = this.settingsService.proxySettingsService().accountType;
+    this.geoServers = this.appendLatency(this.proxySettingsService.serverArr);
+    this.latencyServers = this.latencySort(this.settingsService.latencyList);
+    this.alphaServers = this.alphaSort(this.geoServers);
+    this.currentServers = this.geoServers;
+    this.starredServers = settingsService.starredServers;
+
 
     // load site information
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
@@ -170,12 +183,19 @@ export class LocationComponent {
 
   unstarServer(server) { this.settingsService.unstarServer(server); }
 
+  disabledServer(server) {
+    if (server.level === 'premium' && this.accountType === 'free') { return true; }
+    else if (!server.enabled) { return true; }
+    else if (!server.httpDefault.length) { return true; }
+    else { return false; }
+  }
+
   selectProxy(server) {
     this.proxyMode = 'SELECTED';
     let valid: any = true;
-    if (server.level === 'premium' && this.accountType === 'free') { valid = 'premium'; }
-    else if (!server.enabled) { valid = 'enabled'; }
-    else if (!server.httpDefault.length) { valid = 'http'; }
+    if (server.level === 'premium' && this.accountType === 'free') { valid = false; }
+    else if (!server.enabled) { valid = false; }
+    else if (!server.httpDefault.length) { valid = false; }
 
     if (valid === true) {
       this.selectedServerId = server.id;
@@ -185,4 +205,44 @@ export class LocationComponent {
       this.settingsService.updateServerUsage(server.id);
     }
   }
+
+  appendLatency(latencyServers) {
+    let appendedServers = [];
+    latencyServers.forEach((server) => {
+      let thisServer = this.serverMap[server.id];
+      thisServer.latency = server.latency;
+      appendedServers.push(thisServer);
+    });
+    return appendedServers;
+  }
+
+  latencySort(servers) {
+    let sortedServers = [];
+    servers.forEach((server) => {
+      let thisServer = this.serverMap[server.id];
+      thisServer.latency = server.latency;
+      sortedServers.push(thisServer);
+    });
+    sortedServers.sort((a, b) => { return a.latency - b.latency; });
+    return sortedServers;
+  }
+
+  alphaSort(servers) {
+    let sortedServers = [];
+    servers.forEach((server) => { sortedServers.push(server); });
+    sortedServers.sort((a, b) => {
+      if (a.name > b.name) { return 1; }
+      else if (a.name < b.name) { return -1; }
+      else { return 0; }
+    });
+    return sortedServers;
+  }
+
+  switchServerOrder(type: string) {
+    this.serverSortOrder = type;
+    if (type === 'geo') { this.currentServers = this.geoServers; }
+    else if (type === 'latency') { this.currentServers = this.latencyServers; }
+    else if (type === 'alpha') { this.currentServers = this.alphaServers; }
+  }
+
 }

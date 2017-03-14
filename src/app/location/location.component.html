@@ -77,26 +77,57 @@
       </div>
 
       <div class="location-container" *ngIf="showServers">
-        <div *ngFor="let server of serverArr; let i = index;">
-          <div class="region" *ngIf="i === 0 || (!(i === 0) && serverArr[i-1].region !== server.region)">
+        <div class="sorting">
+          <div class="server-search">
+            <input type="text" [(ngModel)]="searchText">
+            <i class="fa fa-search">S</i>
+          </div>
+
+          <div class="sort-order" (click)="switchServerOrder('alpha')">
+            <i class="fa fa-sort-alpha-asc" [ngClass]="{'checked': serverSortOrder === 'alpha'}">A</i>
+          </div>
+
+          <div class="sort-order" (click)="switchServerOrder('latency')">
+            <i class="fa fa-tachometer" [ngClass]="{'checked': serverSortOrder === 'latency'}">L</i>
+          </div>
+
+          <div class="sort-order" (click)="switchServerOrder('geo')">
+            <i class="fa fa-globe" [ngClass]="{'checked': serverSortOrder === 'geo'}">G</i>
+          </div>
+        </div>
+
+        <div class="region" *ngIf="serverSortOrder === 'latency'">
+          FASTEST
+        </div>
+
+        <div class="region" *ngIf="serverSortOrder === 'alpha'">
+          ALPHABETICAL
+        </div>
+
+        <div *ngFor="let server of currentServers; let i = index;">
+
+          <div class="region" *ngIf="serverSortOrder === 'geo' && (i === 0 || (i !== 0 && (currentServers[i-1].region !== server.region)))">
             {{regions[server.region]}}
           </div>
 
-          <div class="location" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
+          <div class="location" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }" *ngIf="!searchText || server.name.toLowerCase().indexOf(searchText.toLowerCase()) > -1">
             <!-- server row -->
-            <div class="location-row kill-height" (click)="selectProxy(server)" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': !server.enabled || !server.httpDefault.length }">
+            <div class="location-row kill-height" (click)="selectProxy(server)" [ngClass]="{'checked': selectedServerId === server.id, 'disabled': disabledServer(server) }">
               <span class="flag">
                 <img src="{{'/assets/flags/24/' + server.country + '.png' }}" />
               </span>
               <span class="name">{{server.name}}</span>
-              <span *ngIf="server.level === 'premium'" class="premium">Premium</span>
+              <span *ngIf="server.level === 'premium' && server.httpDefault.length" class="premium">Premium</span>
               <span *ngIf="!server.httpDefault.length" class="unavailable">Unavailable</span>
             </div>
 
             <!-- starring server -->
             <div class="starred">
-              <span (click)="unstarServer(server)" *ngIf="isStarred(server)">&#9733;</span>
-              <span (click)="starServer(server)" *ngIf="!isStarred(server)">&#9734;</span>
+              <span class="latency-number" *ngIf="server.latency !== 9999">
+                {{server.latency + 'ms'}}
+              </span>
+              <span class="star" (click)="unstarServer(server)" *ngIf="isStarred(server)">&#9733;</span>
+              <span class="star" (click)="starServer(server)" *ngIf="!isStarred(server)">&#9734;</span>
             </div>
           </div>
 

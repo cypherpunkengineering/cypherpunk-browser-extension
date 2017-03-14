@@ -366,6 +366,8 @@ a {
   }
 
   .location {
+    width: 100%;
+    overflow: hidden;
     background-color: $primary-bg-dark;
 
     &:hover { background-color: $primary-bg-light; }
@@ -383,7 +385,7 @@ a {
     @include pad(0 rem(10) 0 rem(30));
     @include span-columns(12);
     display: inline-block;
-    width: 90%;
+    width: 80%;
     height: rem(35);
     line-height: rem(35);
     text-align: left;
@@ -420,10 +422,10 @@ a {
   }
   .starred {
     display: inline-block;
-    width: 10%;
+    width: 20%;
     height: rem(35);
     line-height: rem(35);
-    text-align: center;
+    text-align: right;
     cursor: pointer;
     color: #ffe49a;
   }

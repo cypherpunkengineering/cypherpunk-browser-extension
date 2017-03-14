@@ -106,7 +106,6 @@ export class SelectedServerComponent {
   unstarServer(server) { this.settingsService.unstarServer(server); }
 
   disabledServer(server) {
-    console.log(this.accountType);
     if (server.level === 'premium' && this.accountType === 'free') { return true; }
     else if (!server.enabled) { return true; }
     else if (!server.httpDefault.length) { return true; }

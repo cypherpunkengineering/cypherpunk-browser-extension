@@ -6,19 +6,19 @@
   <div class="sorting">
     <div class="server-search">
       <input type="text" [(ngModel)]="searchText">
-      <i class="fa fa-search">S</i>
+      <img src="/assets/server-sort/search.png" alt="Search">
     </div>
 
     <div class="sort-order" (click)="switchServerOrder('alpha')">
-      <i class="fa fa-sort-alpha-asc" [ngClass]="{'checked': serverSortOrder === 'alpha'}">A</i>
+      <img src="/assets/server-sort/sort-alpha-asc.png" alt="alphabetical" [ngClass]="{'checked': serverSortOrder === 'alpha'}">
     </div>
 
     <div class="sort-order" (click)="switchServerOrder('latency')">
-      <i class="fa fa-tachometer" [ngClass]="{'checked': serverSortOrder === 'latency'}">L</i>
+      <img src="/assets/server-sort/dashboard.png" alt="Latency" [ngClass]="{'checked': serverSortOrder === 'latency'}">
     </div>
 
     <div class="sort-order" (click)="switchServerOrder('geo')">
-      <i class="fa fa-globe" [ngClass]="{'checked': serverSortOrder === 'geo'}">G</i>
+      <img src="/assets/server-sort/globe.png" alt="Geo" [ngClass]="{'checked': serverSortOrder === 'geo'}">
     </div>
   </div>
 

@@ -16,22 +16,43 @@
   background-color: $primary-bg;
   text-align: left;
   border-bottom: 2px solid #19474c;
+  position: relative;
 
-  .logo {
+  .account {
     position: absolute;
-    left: rem(16);
-    top: rem(16);
-    height: 25px;
+    top: 25px;
+    left: -30px;
+    width: 100px;
+    border: 2px solid #19474c;
+    border-radius: 50px;
+    text-align: center;
+    z-index: 5;
+    background-color: $primary-bg;
+    height: 60px;
+    padding: 10px 0 0 20px;
+
+    .logo { height: 35px; }
   }
+
   .title {
     height: 20px;
     margin: 8px 0 0 85px;
   }
-  .btn__settings {
+
+  .settings {
     position: absolute;
-    right: rem(16);
-    top: rem(16);
-    .gear { width: 25px; }
+    top: 25px;
+    right: -30px;
+    width: 100px;
+    border: 2px solid #19474c;
+    border-radius: 50px;
+    text-align: center;
+    z-index: 5;
+    background-color: $primary-bg;
+    height: 60px;
+    padding: 10px 20px 0 0;
+
+    .gear { width: 35px; }
   }
 }
 

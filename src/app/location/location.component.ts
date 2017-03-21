@@ -42,6 +42,7 @@ export class LocationComponent {
   serverSortOrder = 'geo';
   selectedServerId: string;
   showServers = false;
+  hasOverrides: boolean;
 
   geoServers = [];
   alphaServers = [];
@@ -88,6 +89,7 @@ export class LocationComponent {
         this.proxyMode = localRouting.type;
         this.selectedServerId = localRouting.serverId;
         if (this.proxyMode === 'SELECTED') { this.showServers = true; }
+        this.hasOverrides = true;
       }
 
       // load privacy settings from localStorage if exists
@@ -98,6 +100,7 @@ export class LocationComponent {
       if (localPrivacySettings) {
         this.blockAds = localPrivacySettings.blockAds;
         this.blockMalware = localPrivacySettings.blockMalware;
+        this.hasOverrides = true;
       }
       else {
         this.blockAds = privacySettings.blockAds;
@@ -113,6 +116,7 @@ export class LocationComponent {
     this.privacyFilterWhitelist[this.siteUrl] = currentEntry;
     this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
     chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
+    this.hasOverrides = true;
   }
 
   toggleBlockMalware(enabled: boolean) {
@@ -122,6 +126,7 @@ export class LocationComponent {
     this.privacyFilterWhitelist[this.siteUrl] = currentEntry;
     this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
     chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
+    this.hasOverrides = true;
   }
 
   useCypherplay() {
@@ -131,6 +136,7 @@ export class LocationComponent {
     this.routing[this.siteUrl] = { type: 'SMART', serverId: '' };
     this.settingsService.saveRouting(this.routing);
     this.proxySettingsService.enableProxy();
+    this.hasOverrides = true;
   }
 
   useFastest() {
@@ -140,6 +146,7 @@ export class LocationComponent {
     this.routing[this.siteUrl] = { type: 'FASTEST', serverId: '' };
     this.settingsService.saveRouting(this.routing);
     this.proxySettingsService.enableProxy();
+    this.hasOverrides = true;
   }
 
   useFastestUK() {
@@ -149,6 +156,7 @@ export class LocationComponent {
     this.routing[this.siteUrl] = { type: 'FASTESTUK', serverId: '' };
     this.settingsService.saveRouting(this.routing);
     this.proxySettingsService.enableProxy();
+    this.hasOverrides = true;
   }
 
   useFastestUS() {
@@ -158,6 +166,7 @@ export class LocationComponent {
     this.routing[this.siteUrl] = { type: 'FASTESTUS', serverId: '' };
     this.settingsService.saveRouting(this.routing);
     this.proxySettingsService.enableProxy();
+    this.hasOverrides = true;
   }
 
   useNoProxy() {
@@ -167,6 +176,7 @@ export class LocationComponent {
     this.routing[this.siteUrl] = { type: 'NONE', serverId: '' };
     this.settingsService.saveRouting(this.routing);
     this.proxySettingsService.enableProxy();
+    this.hasOverrides = true;
   }
 
   useServer() { this.showServers = !this.showServers; }
@@ -203,7 +213,28 @@ export class LocationComponent {
       this.settingsService.saveRouting(this.routing);
       this.proxySettingsService.enableProxy();
       this.settingsService.updateServerUsage(server.id);
+      this.hasOverrides = true;
     }
+  }
+
+  resetSiteOverrides() {
+    if (!this.hasOverrides) { return; }
+    this.proxyMode = '';
+    this.selectedServerId = '';
+    this.hasOverrides = false;
+    let privacySettings = this.settingsService.privacyFilterSettings();
+    this.blockAds = privacySettings.blockAds;
+    this.blockMalware = privacySettings.blockMalware;
+
+    // reset privacy whitelist
+    delete this.privacyFilterWhitelist[this.siteUrl];
+    this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
+    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
+
+    // reset proxy settings
+    delete this.routing[this.siteUrl];
+    this.settingsService.saveRouting(this.routing);
+    this.proxySettingsService.enableProxy();
   }
 
   appendLatency(latencyServers) {

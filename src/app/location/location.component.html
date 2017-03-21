@@ -44,6 +44,12 @@
         </label>
       </div>
     </div>
+
+    <div class="override" (click)="resetSiteOverrides()" [ngClass]="{ 'disabled': !hasOverrides }">
+      <div class="override-text left">
+        Remove Site Specific Overrides
+      </div>
+    </div>
   </section>
 
   <!-- Proxy Modes -->

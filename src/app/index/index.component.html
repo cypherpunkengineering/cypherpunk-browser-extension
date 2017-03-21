@@ -33,11 +33,14 @@
         <img src="/assets/index-banner.png" alt="">
       </div>
 
-      <div class="title">Your Public Location</div>
-
       <div class="location">
         <div class="flag-container user small">
           <img class="flag" *ngIf="actualCountryFlag" src="{{ actualCountryFlag }}" />
+        </div>
+        <div class="overlay actual-overlay">
+          Your real location<br>
+          <strong>{{ actualCountry }}</strong><br>
+          {{ 'IP: ' + actualIP }}
         </div>
         <div class="subtitle">{{ actualCountry }}</div>
       </div>
@@ -56,6 +59,11 @@
       <div class="location last" routerLink="/location">
         <div class="flag-container site small" routerLink="/location">
           <img class="favicon" *ngIf="faviconUrl" src="{{faviconUrl}}" />
+        </div>
+        <div class="overlay route-overlay">
+          You are connected to: <br>
+          <div><strong>{{ domain }}</strong></div>
+          <div>via: {{ selectedRouteServerName }}</div>
         </div>
         <div class="subtitle" [innerHTML]="domain"></div>
       </div>

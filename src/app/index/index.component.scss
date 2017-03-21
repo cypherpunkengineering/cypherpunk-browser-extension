@@ -26,7 +26,7 @@
     border: 2px solid #19474c;
     border-radius: 50px;
     text-align: center;
-    z-index: 5;
+    z-index: 2;
     background-color: $primary-bg;
     height: 60px;
     padding: 10px 0 0 20px;
@@ -47,7 +47,7 @@
     border: 2px solid #19474c;
     border-radius: 50px;
     text-align: center;
-    z-index: 5;
+    z-index: 2;
     background-color: $primary-bg;
     height: 60px;
     padding: 10px 20px 0 0;
@@ -62,7 +62,7 @@
 /* Connected Screen */
 #on-screen {
   .flags-wrap {
-    @include pad(22px rem(12) 30px);
+    @include pad(22px rem(12) 56px);
     overflow: auto;
     z-index: 20;
 
@@ -89,6 +89,49 @@
       z-index: 2;
       &.last { @include omega; cursor: pointer; }
 
+      .overlay {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border-radius: 5px;
+        color: #000;
+        padding: 5px 10px;
+        font-size: 12px;
+        text-align: left;
+
+        div {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        &:after {
+          content: ' ';
+          width: 0;
+          height: 0;
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
+          border-top: 10px solid #fff;
+          position: absolute;
+          bottom: -10px;
+          z-index: 2;
+        }
+      }
+
+      .actual-overlay {
+        top: 15px;
+        left: 30px;
+        width: 100px;
+        &:after { left: 12px; }
+      }
+
+      .route-overlay {
+        top: 15px;
+        right: 30px;
+        width: 130px;
+        &:after { right: 14px; }
+      }
+
       .flag-container {
         margin-top: rem(20);
         width: rem(105);
@@ -105,17 +148,19 @@
           background-repeat: no-repeat;
           background-position: center;
           background-size: contain;
+          &:hover + .actual-overlay { display: block; }
         }
         &.site {
           background-image: url('/assets/index-connected.png');
           background-repeat: no-repeat;
           background-position: center;
           background-size: contain;
+          &:hover + .route-overlay { display: block; }
         }
         &.small {
           width: rem(80);
           height: rem(100);
-          margin: 60px auto 0;
+          margin: 85px auto 0;
         }
 
         img {

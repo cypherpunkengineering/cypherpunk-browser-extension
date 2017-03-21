@@ -31,6 +31,7 @@ export class IndexComponent {
   // Proxy Connection Display Vars
   domain: string;
   faviconUrl: string;
+  actualIP: string;
   actualCountry: string;
   actualCountryFlag: string;
   selectedRouteOpt: string;
@@ -134,6 +135,8 @@ export class IndexComponent {
 
     // Get user's actual location
     this.hqService.findNetworkStatus().subscribe(res => {
+      console.log(res);
+      this.actualIP = res.ip;
       this.actualCountry = this.proxySettingsService.countries[res.country];
       this.actualCountryFlag = '/assets/flags/svg/flag-' + res.country + '.svg';
     });

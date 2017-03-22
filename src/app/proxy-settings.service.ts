@@ -179,39 +179,38 @@ export class ProxySettingsService {
       if (domainSettings.type === 'FASTEST') {
         let fastestServer = this.getFastestServer();
         if (fastestServer) {
-          let fsIp = fastestServer.httpDefault[0];
-          rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' + fsIp + ':80\';\n';
+          let fsIp = fastestServer.ipsecHostname;
+          rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'HTTPS ' + fsIp + ':443\';\n';
         }
       }
       // FastestUS: Route to fastest US server always
       if (domainSettings.type === 'FASTESTUS') {
         let fastestUSServer = this.getFastestUSServer();
         if (fastestUSServer) {
-          let fusIp = fastestUSServer.httpDefault[0];
-          rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' + fusIp + ':80\';\n';
+          let fusIp = fastestUSServer.ipsecHostname;
+          rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'HTTPS ' + fusIp + ':443\';\n';
         }
       }
       // FastestUK: Route to fastest UK server always
       if (domainSettings.type === 'FASTESTUK') {
         let fastestUKServer = this.getFastestUKServer();
         if (fastestUKServer) {
-          let fukIp = fastestUKServer.httpDefault[0];
-          rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' + fukIp + ':80\';\n';
+          let fukIp = fastestUKServer.ipsecHostname;
+          rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'HTTPS ' + fukIp + ':443\';\n';
         }
       }
       // Starred Servers: Route to fastest UK server always
       if (domainSettings.type === 'STAR') {
         let starServer = this.getStarServer();
         if (starServer) {
-          let starIp = starServer.httpDefault[0];
-          rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' + starIp + ':80\';\n';
+          let starIp = starServer.ipsecHostname;
+          rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'HTTPS ' + starIp + ':443\';\n';
         }
       }
       // Selected: Route to the selected server
       else if (domainSettings.type === 'SELECTED') {
-        let selectedProxyIp = this.servers[domainSettings.serverId].httpDefault[0];
-        rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' +
-          selectedProxyIp + ':80\';\n';
+        let selectedProxyIp = this.servers[domainSettings.serverId].ipsecHostname;
+        rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'HTTPS ' + selectedProxyIp + ':443\';\n';
       }
       // None: Do not proxy
       else if (domainSettings.type === 'NONE') {
@@ -227,9 +226,8 @@ export class ProxySettingsService {
           countryCode = tld;
         }
         else { countryCode = 'US'; }
-        let smartProxyIP = this.getSmartServer(countryCode).httpDefault[0];
-        rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'PROXY ' +
-          smartProxyIP + ':80\';\n';
+        let smartProxyIP = this.getSmartServer(countryCode).ipsecHostname;
+        rules += '  if (shExpMatch(host, "' + domain + '") || dnsDomainIs(host, ".' + domain + '")) return \'HTTPS ' + smartProxyIP + ':443\';\n';
       }
     });
     return rules;
@@ -242,40 +240,39 @@ export class ProxySettingsService {
     if (defaultRouting.type === 'FASTEST') {
       let fastestServer = this.getFastestServer();
       if (fastestServer) {
-        let fastestServerIp = fastestServer.httpDefault[0];
-        defaultRoutingRules += '  else return \'PROXY ' + fastestServerIp + ':80\';\n';
+        let fastestServerIp = fastestServer.ipsecHostname;
+        defaultRoutingRules += '  else return \'HTTPS ' + fastestServerIp + ':443\';\n';
       }
     }
     // FastestUS: Route to fastest US server always
     else if (defaultRouting.type === 'FASTESTUS') {
       let fastestUSServer = this.getFastestUSServer();
       if (fastestUSServer) {
-        let fastestUSServerIp = fastestUSServer.httpDefault[0];
-        defaultRoutingRules += '  else return \'PROXY ' + fastestUSServerIp + ':80\';\n';
+        let fastestUSServerIp = fastestUSServer.ipsecHostname;
+        defaultRoutingRules += '  else return \'HTTPS ' + fastestUSServerIp + ':443\';\n';
       }
     }
     // FastestUK: Route to fastest UK server always
     else if (defaultRouting.type === 'FASTESTUK') {
       let fastestUKServer = this.getFastestUKServer();
       if (fastestUKServer) {
-        let fastestUKServerIp = fastestUKServer.httpDefault[0];
-        defaultRoutingRules += '  else return \'PROXY ' + fastestUKServerIp + ':80\';\n';
+        let fastestUKServerIp = fastestUKServer.ipsecHostname;
+        defaultRoutingRules += '  else return \'HTTPS ' + fastestUKServerIp + ':443\';\n';
       }
     }
     // Starred Servers: Route to fastest UK server always
-    if (defaultRouting.type === 'STAR') {
+    else if (defaultRouting.type === 'STAR') {
       let starServer = this.getStarServer();
       if (starServer) {
-        let starIp = starServer.httpDefault[0];
-        defaultRoutingRules += '  else return \'PROXY ' + starIp + ':80\';\n';
+        let starIp = starServer.ipsecHostname;
+        defaultRoutingRules += '  else return \'HTTPS ' + starIp + ':443\';\n';
       }
     }
     // Selected: Route to the default selected server
     else if (defaultRouting.type === 'SELECTED') {
       let selectedProxyId = defaultRouting.selected;
-      let selectedProxyIp = this.servers[selectedProxyId].httpDefault[0];
-      defaultRoutingRules += '  else return \'PROXY ' +
-        selectedProxyIp + ':80\';\n';
+      let selectedProxyIp = this.servers[selectedProxyId].ipsecHostname;
+      defaultRoutingRules += '  else return \'HTTPS ' + selectedProxyIp + ':443\';\n';
     }
     // None: Do not proxy
     else if (defaultRouting.type === 'NONE') {
@@ -290,13 +287,13 @@ export class ProxySettingsService {
       tlds.forEach((tld) => {
         let smartServer = this.getSmartServer(tld);
         this.cachedSmartServers[tld] = smartServer;
-        defaultRoutingRules += '  if (shExpMatch(host, "*.' + tld + '")) return \'PROXY ' +
-          smartServer.httpDefault[0] + ':80\';\n';
+        defaultRoutingRules += '  if (shExpMatch(host, "*.' + tld + '")) return \'HTTPS ' +
+          smartServer.ipsecHostname + ':443\';\n';
       });
       this.settingsService.saveCachedSmartServers(this.cachedSmartServers);
       // Default to fastest US server if TLD is unknown
-      defaultRoutingRules += '  else return \'PROXY ' +
-        this.getSmartServer('com').httpDefault[0] + ':80\';\n';
+      defaultRoutingRules += '  else return \'HTTPS ' +
+        this.getSmartServer('com').ipsecHostname + ':443\';\n';
     }
     return defaultRoutingRules;
   }

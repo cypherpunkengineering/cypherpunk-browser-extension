@@ -2,7 +2,9 @@ import { Http } from '@angular/http';
 import { HqService } from './hq.service';
 import { Injectable } from '@angular/core';
 import { PingService } from './ping.service';
+import { Observable } from 'rxjs/Observable';
 import { SettingsService } from './settings.service';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { LocalStorageService } from 'angular-2-local-storage';
 
 @Injectable()
@@ -13,6 +15,8 @@ export class ProxySettingsService {
   cachedSmartServers = {};
   premiumProxyAccount;
   accountType;
+  proxyExtSubject: BehaviorSubject<any>;
+  proxyExtObservable: Observable<any>;
 
   constructor (
     private http: Http,
@@ -21,6 +25,9 @@ export class ProxySettingsService {
     private hqService: HqService,
     private pingService: PingService
   ) {
+    this.proxyExtSubject = <BehaviorSubject<any>>new BehaviorSubject({});
+    this.proxyExtObservable = this.proxyExtSubject.asObservable();
+
     // Try to load cached server info
     let serverData = this.settingsService.proxySettingsService();
     this.latencyList = serverData.latencyList;
@@ -40,6 +47,32 @@ export class ProxySettingsService {
         this.latencyList = updatedServerData.latencyList;
         this.premiumProxyAccount = updatedServerData.premiumAccount;
       }
+    });
+
+    // check if proxy settings are allowed
+    let isFirefox = this.settingsService.isFirefox();
+    if (!isFirefox) {
+      chrome.proxy.settings.get({incognito: false}, (details) => {
+        if (details.levelOfControl !== 'controlled_by_this_extension' || details.levelOfControl !== 'controlled_by_this_extension') {
+          this.findProxyExtension();
+        }
+      });
+    }
+  }
+
+  findProxyExtension() {
+    let found = false;
+    chrome.management.getAll((exts) => {
+      exts.forEach((ext) => {
+        if (ext.enabled &&
+            ext.id !== chrome.runtime.id &&
+            ext.permissions.indexOf('proxy') > -1 &&
+            !found) {
+          found = true;
+          this.proxyExtSubject.next(ext);
+          return;
+        }
+      });
     });
   }
 

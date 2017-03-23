@@ -20,13 +20,43 @@
     </div>
   </div>
 
+  <!-- Cypherpunk no proxy screen -->
+  <div id="no-proxy-screen" *ngIf="otherExt">
+    <h1>
+      Protection Disabled
+    </h1>
+
+    <div class="warning">
+      <span>Cypherpunk cannot work while another extension is controlling your proxy settings</span>
+    </div>
+
+    <div class="instructions">
+      <span>
+        Please disable the following extension in your extension settings.
+      </span>
+    </div>
+
+    <div class="extensions">
+      <div class="icon">
+        <img #extIcon src="#" alt="">
+      </div>
+
+      <div class="name">
+        <a href="#" (click)="openSettingsPage()">
+          {{ otherExt.name }}
+        </a>
+      </div>
+    </div>
+
+  </div>
+
   <!-- Cypherpunk is disabled screen -->
-  <div id="off-screen" *ngIf="!cypherpunkEnabled">
+  <div id="off-screen" *ngIf="!otherExt && !cypherpunkEnabled">
     <img class="clickable" src="/assets/mascot-off.png" alt="" (click)="toggleCypherpunk(true)">
   </div>
 
   <!-- Cypherpunk is enabled screen -->
-  <div id="on-screen" *ngIf="cypherpunkEnabled">
+  <div id="on-screen" *ngIf="!otherExt && cypherpunkEnabled">
     <!-- Floating head and flags -->
     <div class="flags-wrap">
       <div class="banner">

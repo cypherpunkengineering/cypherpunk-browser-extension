@@ -2,7 +2,7 @@ import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
 import { ProxySettingsService } from '../proxy-settings.service';
-import { Component, style, animate, transition, state, trigger } from '@angular/core';
+import { Component, ViewChild, style, animate, transition, state, trigger, ElementRef, AfterViewChecked } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +18,8 @@ import { Component, style, animate, transition, state, trigger } from '@angular/
     ])
   ]
 })
-export class IndexComponent {
+export class IndexComponent implements AfterViewChecked {
+  @ViewChild('extIcon') extIcon: ElementRef;
   // Misc Vars
   validProtocol = true;
 
@@ -29,6 +30,7 @@ export class IndexComponent {
   defaultRouting = { type: '', selected: '' };
 
   // Proxy Connection Display Vars
+  otherExt: any;
   domain: string;
   faviconUrl: string;
   actualIP: string;
@@ -56,6 +58,13 @@ export class IndexComponent {
     this.showTutorial = !this.settingsService.initialized;
     this.cachedSmartServers = this.settingsService.cachedSmartServers;
     this.defaultRouting = this.settingsService.defaultRoutingSettings();
+    this.proxySettingsService.proxyExtObservable.subscribe(
+      (ext) => {
+        if (ext.name) { this.otherExt = ext; }
+        else { this.otherExt = null;  }
+      },
+      (error) => { this.otherExt = null; }
+    );
 
     // set visible strings
     this.domain = 'Loading...';
@@ -128,6 +137,12 @@ export class IndexComponent {
     }
   }
 
+  ngAfterViewChecked() {
+    if (this.extIcon && this.otherExt) {
+      this.extIcon.nativeElement.src = this.otherExt.icons[0].url;
+    }
+  }
+
   init() {
     // Check if Cypherpunk is on and enable/disable proxy
     if (this.cypherpunkEnabled) { this.proxySettingsService.enableProxy(); }
@@ -162,6 +177,11 @@ export class IndexComponent {
       this.applyNoProxy();
     }
   };
+
+  openSettingsPage() {
+    let url = 'chrome://settings';
+    chrome.tabs.create({ url: url });
+  }
 
   tutorialVisible(visible: boolean) { this.showTutorial = visible; }
 

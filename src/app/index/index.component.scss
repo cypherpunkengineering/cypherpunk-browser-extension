@@ -56,6 +56,35 @@
   }
 }
 
+#no-proxy-screen {
+  padding: 20px 20px 0;
+  text-align: center;
+
+  .warning {
+    font-size: 18px;
+    padding-bottom: 20px;
+  }
+
+  .instructions {
+    font-size: 16px;
+    padding-bottom: 20px;
+  }
+
+  .extensions {
+    .icon {
+      display: inline-block;
+      padding-right: 5px;
+      vertical-align: middle;
+      img { vertical-align: middle; }
+    }
+
+    .name {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+}
+
 /* Disconnected Screen */
 #off-screen img { margin-top: rem(48); width: 100%; }
 

@@ -12,13 +12,13 @@
   },
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "icons": {
-    "128": "assets/cypherpunk_grey_128.png",
-    "96": "assets/cypherpunk_grey_96.png",
-    "64": "assets/cypherpunk_grey_64.png",
-    "48": "assets/cypherpunk_grey_48.png",
-    "32": "assets/cypherpunk_grey_32.png",
-    "24": "assets/cypherpunk_grey_24.png",
-    "16": "assets/cypherpunk_grey_16.png"
+    "128": "assets/cypherpunk_shaded_128.png",
+    "96": "assets/cypherpunk_shaded_96.png",
+    "64": "assets/cypherpunk_shaded_64.png",
+    "48": "assets/cypherpunk_shaded_48.png",
+    "32": "assets/cypherpunk_shaded_32.png",
+    "24": "assets/cypherpunk_shaded_24.png",
+    "16": "assets/cypherpunk_shaded_16.png"
    },
 
   "permissions": [

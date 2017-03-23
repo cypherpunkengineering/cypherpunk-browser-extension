@@ -235,6 +235,7 @@ export class SettingsService {
   }
 
   saveRouting(routes: Object) {
+    this.routing = routes;
     this.localStorageService.set(Keys.ROUTING, routes);
   }
 
@@ -317,7 +318,6 @@ export class SettingsService {
     this.localStorageService.set(Keys.USER_AGENT_TYPE, type);
     this.localStorageService.set(Keys.USER_AGENT_STRING, agentString);
   }
-
 
   /** Advanced Settings > Default Routing/Specific Server **/
   defaultRoutingSettings() {

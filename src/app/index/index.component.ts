@@ -42,6 +42,10 @@ export class IndexComponent implements AfterViewChecked {
   starServerName: string;
   starServerFlag: string;
 
+  // site override
+  routing;
+  siteOverride = false;
+
   // Smart Server Vars
   countryCode: string;
   smartServer;
@@ -58,6 +62,8 @@ export class IndexComponent implements AfterViewChecked {
     this.showTutorial = !this.settingsService.initialized;
     this.cachedSmartServers = this.settingsService.cachedSmartServers;
     this.defaultRouting = this.settingsService.defaultRoutingSettings();
+
+    // manage other extensions
     this.proxySettingsService.proxyExtObservable.subscribe(
       (ext) => {
         if (ext.name) { this.otherExt = ext; }
@@ -100,6 +106,10 @@ export class IndexComponent implements AfterViewChecked {
           this.countryCode = tld;
         }
         else { this.countryCode = 'COM'; } // Default to COM (US)
+
+        // manage site overrides
+        this.routing = this.settingsService.routing;
+        if (this.routing[this.domain]) { this.siteOverride = true; }
 
         // .com -> US and .uk -> GB, all other tlds are direct translations
         // Try to preload smart server name from cache
@@ -197,7 +207,7 @@ export class IndexComponent implements AfterViewChecked {
   selectedRouteType() {
     if (this.selectedRouteOpt === 'Loading...') { return this.selectedRouteOpt; }
     let selectedRouteOpts = {
-      smart: 'Smart Routing',
+      smart: 'CypherPlay',
       fastest: 'Fastest',
       fastestuk: 'Fastest UK',
       fastestus: 'Fastest US',
@@ -205,7 +215,12 @@ export class IndexComponent implements AfterViewChecked {
       star: 'Starred Server',
       none: 'No Proxy'
     };
-    return selectedRouteOpts[this.selectedRouteOpt.toLowerCase()];
+
+    if (this.siteOverride) {
+      let type = this.routing[this.domain].type;
+      return 'Override: ' + selectedRouteOpts[type.toLowerCase()];
+    }
+    else { return selectedRouteOpts[this.selectedRouteOpt.toLowerCase()]; }
   }
 
   /* Selects routing type, when user selects a type via the UI */
@@ -214,24 +229,26 @@ export class IndexComponent implements AfterViewChecked {
     if (type === 'STAR' && !this.starServerFlag) { return; }
 
     // create proxy binding from this domain to proxy type
-    switch (type) {
-      case 'SMART':
+    if (!this.siteOverride) {
+      switch (type) {
+        case 'SMART':
         this.applySmartProxy();
         break;
-      case 'FASTEST':
+        case 'FASTEST':
         this.applyFastestProxy();
         break;
-      case 'FASTESTUK':
+        case 'FASTESTUK':
         this.applyFastestUKProxy();
         break;
-      case 'FASTESTUS':
+        case 'FASTESTUS':
         this.applyFastestUSProxy();
         break;
-      case 'STAR':
+        case 'STAR':
         if (this.starServerFlag) { this.applyStarProxy(); }
         break;
-      default:
+        default:
         this.applyNoProxy();
+      }
     }
 
     console.log('Applying Selected Routing Type: ' + type);
@@ -243,8 +260,13 @@ export class IndexComponent implements AfterViewChecked {
   /* Looks at stored settings and preselects correct routing type in the UI */
   selectedRoutingInit() {
     // Check if override for domain exists, apply override settings if it does
-    let type: string = this.defaultRouting.type;
-    let serverId: string = this.defaultRouting.selected;
+    let type = this.defaultRouting.type;
+    let serverId = this.defaultRouting.selected;
+
+    if (this.siteOverride) {
+      type = this.routing[this.domain].type;
+      serverId = this.routing[this.domain].selected;
+    }
 
     switch (type) {
       case 'SMART':
@@ -270,7 +292,7 @@ export class IndexComponent implements AfterViewChecked {
         this.applyNoProxy();
     }
 
-    this.selectedRouteOpt = type;
+    this.selectedRouteOpt = this.defaultRouting.type;
     if (type === 'STAR' && !this.starServerFlag) {
       this.selectedRouteOpt = 'NONE';
       this.settingsService.saveRoutingInfo('NONE', null);

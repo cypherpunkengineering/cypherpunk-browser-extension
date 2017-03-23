@@ -72,17 +72,17 @@
           <strong>{{ actualCountry }}</strong><br>
           {{ 'IP: ' + actualIP }}
         </div>
-        <div class="subtitle">{{ actualCountry }}</div>
+        <div class="subtitle no-wrap">{{ actualCountry }}</div>
       </div>
 
       <div class="location">
         <div class="flag-container helmet clickable" (click)="toggleCypherpunk(false)" title="Turn Off">
           <img *ngIf="selectedRouteServerFlag" src="{{selectedRouteServerFlag}}" />
         </div>
-        <div class="subtitle bold">
+        <div class="subtitle no-wrap bold" title="{{selectedRouteType()}}">
           {{ selectedRouteServerName }}
           <br>
-            ( {{ selectedRouteType() }} )
+          ( {{ selectedRouteType() }} )
         </div>
       </div>
 
@@ -95,7 +95,7 @@
           <div><strong>{{ domain }}</strong></div>
           <div>via: {{ selectedRouteServerName }}</div>
         </div>
-        <div class="subtitle" [innerHTML]="domain"></div>
+        <div class="subtitle no-wrap" [innerHTML]="domain"></div>
       </div>
     </div>
 

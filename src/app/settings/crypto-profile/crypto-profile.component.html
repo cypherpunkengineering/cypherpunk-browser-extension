@@ -1,0 +1,33 @@
+<div id="sub-menu">
+  <div id="header" (click)="goToView('app-settings')" class="page-header bottom-separator">
+    <span class="back-icon">&#x3008;</span>Crypto Profile
+  </div>
+
+  <!-- Smart Routing -->
+  <div (click)="selectPrivacyMode(false)" class="option bottom-separator">
+    <div class="selected">
+      <div class="circle" [ngClass]="{'checked': !privacyMode}"></div>
+    </div>
+    <div class="text">
+      <div class="label">Max Speed</div>
+      <div class="desc">No Additional encryption</div>
+      <div class="info">
+        Cipher <span>NONE</span> Auth <span>SHA-1</span> Key <span>RSA-4096</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fastest Server -->
+  <div (click)="selectPrivacyMode(true)" class="option bottom-separator">
+    <div class="selected">
+      <div class="circle" [ngClass]="{'checked': privacyMode}"></div>
+    </div>
+    <div class="text">
+      <div class="label">Max Privacy</div>
+      <div class="desc">Strong Encryption</div>
+      <div class="info">
+        Cipher <span>AES-256-CBC</span> Auth <span>SHA-512</span> Key <span>RSA-4096</span>
+      </div>
+    </div>
+  </div>
+</div>

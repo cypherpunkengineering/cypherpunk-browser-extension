@@ -1,0 +1,54 @@
+@import '~bourbon/app/assets/stylesheets/_bourbon';
+@import '~bourbon-neat/app/assets/stylesheets/_neat';
+@import '../../../scss/variables';
+
+.option {
+  height: rem(95);
+  color: #fff;
+  cursor: pointer;
+  background-color: $primary-bg-light;
+
+  &:hover, &.checked:hover { background-color: darken($primary-bg-light, 5%); }
+
+  .selected {
+    width: 50px;
+    height: 100%;
+    display: inline-block;
+
+    .circle {
+      width: 20px;
+      height: 20px;
+      background-color: #fff;
+      border-radius: 50px;
+      margin: auto;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      &.checked { background-color: #ffe49a; }
+    }
+  }
+
+  .text {
+    display: inline-block;
+    width: 300px;
+    height: 100%;
+    text-align: left;
+    vertical-align: top;
+  }
+  .label {
+    font-size: 18px;
+    line-height: 1.5;
+    padding-top: 10px;
+  }
+  .desc {
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.5;
+  }
+  .info {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #a3b5b6;
+    span { font-size: 16px; color: #fefefe; }
+  }
+}

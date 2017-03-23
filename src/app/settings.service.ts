@@ -35,6 +35,7 @@ class Keys {
   public static USER_AGENT_STRING = 'settings.userAgent.string';
 
   // Privacy Filter
+  public static PRIVACY_MODE = 'privacyMode';
   public static PRIVACY_FILTER_WHITELIST = 'privacyFilterWhitelist';
   public static PRIVACY_FILTER_ADS = 'settings.privacyFilter.blockAds';
   public static PRIVACY_FILTER_MALWARE = 'settings.privacyFilter.blockMalware';
@@ -45,6 +46,7 @@ class Defaults {
     initialized: false,
     enabled: false,
     smartRoutingEnabled: true,
+    privacyMode: true,
     privacyFilterWhitelist: {},
     routing: {},
     latencyList: [],
@@ -94,6 +96,7 @@ export class SettingsService {
   routing = {};
   defaultRoutingType: string;
   defaultRoutingServer: string;
+  privacyMode: boolean;
   privacyFilterAds: boolean;
   privacyFilterMalware: boolean;
   privacyFilterWhitelist = {};
@@ -117,6 +120,7 @@ export class SettingsService {
     this.defaultRoutingType = this.defaultSetting(Keys.ROUTING_TYPE);
     this.defaultRoutingServer = this.defaultSetting(Keys.ROUTING_SELECTED_SERVER);
     this.forceHttp = this.defaultSetting(Keys.FORCE_HTTPS);
+    this.privacyMode = this.defaultSetting(Keys.PRIVACY_MODE);
     this.privacyFilterAds = this.defaultSetting(Keys.PRIVACY_FILTER_ADS);
     this.privacyFilterMalware = this.defaultSetting(Keys.PRIVACY_FILTER_MALWARE);
     this.privacyFilterWhitelist = this.defaultSetting(Keys.PRIVACY_FILTER_WHITELIST);
@@ -291,6 +295,11 @@ export class SettingsService {
       blockAds: <boolean>this.localStorageService.get(Keys.PRIVACY_FILTER_ADS),
       blockMalware: <boolean>this.localStorageService.get(Keys.PRIVACY_FILTER_MALWARE)
     };
+  }
+
+  savePrivacyMode(privacyMode: boolean) {
+    this.privacyMode = privacyMode;
+    this.localStorageService.set(Keys.PRIVACY_MODE, privacyMode);
   }
 
   savePrivacyFilterWhitelist(list: Object) {

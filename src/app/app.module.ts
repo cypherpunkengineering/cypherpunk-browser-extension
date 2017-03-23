@@ -22,6 +22,7 @@ import { LocationComponent } from './location/location.component';
 import { LoginComponent } from './login/login.component';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { ShareComponent } from './account/share/share.component';
+import { CryptoProfileComponent } from './settings/crypto-profile/crypto-profile.component';
 
 import { HqService } from './hq.service';
 import { ProxySettingsService } from './proxy-settings.service';
@@ -46,7 +47,8 @@ import { PingService } from './ping.service';
     LocationComponent,
     LoginComponent,
     ConfirmComponent,
-    ShareComponent
+    ShareComponent,
+    CryptoProfileComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,6 @@
 <div id="sub-menu">
   <div id="header" routerLink="/" routerLinkActive="active" class="page-header bottom-separator">
-    <span class="back-icon">&#x3008;</span>{{title}}
+    <span class="back-icon">&#x3008;</span>Settings
   </div>
 
   <!-- Default Routing -->
@@ -29,7 +29,7 @@
   </div>
 
   <!-- WebRTC Leak Protection - Chrome -->
-  <div *ngIf="!settingsService.isFirefox()" (click)="goToView('app-web-rtc')" class="switch-row highlighted clickable bottom-separator">
+  <div (click)="goToView('app-web-rtc')" class="switch-row highlighted clickable bottom-separator" *ngIf="!isFirefox">
     <div class="label half">WebRTC Leak Prevention</div>
     <div class="switch half">
       {{webRTCType}}
@@ -37,14 +37,11 @@
     </div>
   </div>
 
-  <!-- WebRTC Leak Protection - Firefox -->
-  <div *ngIf="settingsService.isFirefox()" class="switch-row highlighted bottom-separator">
-    <div class="label">WebRTC Leak Protection</div>
-    <div class="switch">
-      <label class="label-switch">
-        <input #ffWebRtcLeakProtection type="checkbox" [(ngModel)]="ffWebRtcLeakProtectionEnabled" (ngModelChange)="toggleFFWebRtcLeakProtection($event)" />
-        <div class="checkbox"></div>
-      </label>
+  <div (click)="goToView('app-web-rtc')" class="switch-row highlighted clickable bottom-separator" *ngIf="isFirefox">
+    <div class="label half">WebRTC Leak Prevention</div>
+    <div class="switch half">
+      {{ffWebRTCType}}
+      <span class="forward-icon">&#x3009;</span>
     </div>
   </div>
 

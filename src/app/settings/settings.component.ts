@@ -8,10 +8,6 @@ import { ProxySettingsService } from '../proxy-settings.service';
 })
 export class SettingsComponent {
   @Output() changeView = new EventEmitter<string>();
-  browserObj: any = chrome ? chrome : chrome;
-
-  title = 'Settings';
-  advancedSettings = this.settingsService.advancedSettings();
 
   webRTCDesc = {
     DEFAULT: 'Unprotected',
@@ -20,40 +16,31 @@ export class SettingsComponent {
     DISABLE_NON_PROXIED_UDP: 'Non-Proxied UDP'
   };
 
-  ffWebRtcLeakProtectionEnabled;
-  webRTCType;
+  isFirefox: boolean;
+  webRTCType: string;
+  ffWebRTCType: string;
+  userAgentType: string;
 
-  userAgentType = this.advancedSettings.userAgentType;
-
-  constructor(private settingsService: SettingsService, private proxySettingsService: ProxySettingsService) {
-    if (this.settingsService.isFirefox()) {
-      this.ffWebRtcLeakProtectionEnabled = this.advancedSettings['ffWebRtcLeakProtection'];
-    }
-    else {
-      this.webRTCType = this.webRTCDesc[this.advancedSettings['webRtcLeakProtection']];
-    }
+  constructor(
+    private settingsService: SettingsService,
+    private proxySettingsService: ProxySettingsService
+  ) {
+    this.isFirefox = this.settingsService.isFirefox();
+    this.userAgentType = this.settingsService.userAgentType;
+    this.webRTCType = this.settingsService.webRtcLeakProtection;
+    this.ffWebRTCType = this.settingsService.ffWebRtcLeakProtection ? 'On' : 'Off';
   }
 
   defaultRouting() {
-    let type = this.advancedSettings.defaultRouting.type;
-    if (type === 'SMART') { return 'Smart Routing'; }
+    let type = this.settingsService.defaultRoutingType;
+    if (type === 'SMART') { return 'CypherPlay'; }
     else if (type === 'FASTEST') { return 'Fastest Server'; }
+    else if (type === 'FASTESTUK') { return 'Fastest UK Server'; }
+    else if (type === 'FASTESTUS') { return 'Fastest US Server'; }
     else if (type === 'SELECTED') { return 'Specific Server'; }
+    else if (type === 'STAR') { return 'Starred Server'; }
     else { return 'No Proxy'; }
   }
 
-  toggleFFWebRtcLeakProtection(enabled: boolean) {
-    console.log('WebRTC Leak Protection:', enabled);
-    this.settingsService.saveFFWebRtcLeakProtection(enabled);
-    if (enabled) {
-      chrome.runtime.sendMessage({ action: 'EnableWebRTCLeakProtection' });
-    }
-    else {
-      chrome.runtime.sendMessage({ action: 'DisableWebRTCLeakProtection' });
-    }
-  }
-
-  goToView(name: string) {
-    this.changeView.emit(name);
-  }
+  goToView(name: string) { this.changeView.emit(name); }
 }

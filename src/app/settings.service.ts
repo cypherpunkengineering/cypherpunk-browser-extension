@@ -134,7 +134,7 @@ export class SettingsService {
     }
   }
 
-  defaultSetting(key): any {
+  private defaultSetting(key): any {
     let value = this.localStorageService.get(key);
     if (value === null) {
       value = Defaults.getVal(key);
@@ -251,40 +251,20 @@ export class SettingsService {
   }
 
   /** Advanced Settings **/
-  advancedSettings() {
-    let settings = {
-      defaultRouting: {
-        type: this.localStorageService.get(Keys.ROUTING_TYPE),
-        selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
-      },
-      forceHttps: this.localStorageService.get(Keys.FORCE_HTTPS),
-      userAgentType: this.localStorageService.get(Keys.USER_AGENT_TYPE)
-    };
-    if (this.isFirefox()) {
-      settings['ffWebRtcLeakProtection'] = this.localStorageService.get(Keys.FF_WEB_RTC_LEAK_PROTECTION);
-    }
-    else {
-      settings['webRtcLeakProtection'] = this.localStorageService.get(Keys.WEB_RTC_LEAK_PROTECTION);
-    }
-    return settings;
-  }
 
   saveForceHttps(enabled: boolean) {
     this.localStorageService.set(Keys.FORCE_HTTPS, enabled);
   }
 
+  /** Advanced Settings > WebRTC Leak Prevention **/
+
   saveFFWebRtcLeakProtection(enabled: boolean) {
+    this.ffWebRtcLeakProtection = enabled;
     this.localStorageService.set(Keys.FF_WEB_RTC_LEAK_PROTECTION, enabled);
   }
 
-  /** Advanced Settings > WebRTC Leak Prevention **/
-  webRtcSettings() {
-    return {
-      webRtcLeakProtection: this.localStorageService.get(Keys.WEB_RTC_LEAK_PROTECTION),
-    };
-  }
-
   saveWebRtcLeakProtection(type: string) {
+    this.webRtcLeakProtection = type;
     this.localStorageService.set(Keys.WEB_RTC_LEAK_PROTECTION, type);
   }
 
@@ -337,6 +317,8 @@ export class SettingsService {
   }
 
   saveRoutingInfo(type: any, selected: string) {
+    this.defaultRoutingType = type;
+    this.defaultRoutingServer = selected;
     this.localStorageService.set(Keys.ROUTING_TYPE, type);
     this.localStorageService.set(Keys.ROUTING_SELECTED_SERVER, selected);
   }

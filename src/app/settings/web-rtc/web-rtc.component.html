@@ -1,28 +1,47 @@
 <div id="sub-menu">
   <div id="header" (click)="goToView('app-settings')" class="page-header bottom-separator">
-    <span class="back-icon">&#x3008;</span>{{title}}
+    <span class="back-icon">&#x3008;</span>WebRTC Leak Prevention
+  </div>
+
+  <!-- leak warning -->
+  <div class="single-row highlighted bottom-separator">
+    <div class="label">
+      Activating webrtc leak protection may cause Skype, Google Hangouts, and other video call services from working
+    </div>
   </div>
 
   <!-- Default -->
-  <div (click)="setWebRTCIPHandlingPolicy('DEFAULT')" [ngClass]="{'checked': selectedWebRTCType === 'DEFAULT'}" class="double-row extended-desc bottom-separator">
+  <div (click)="setWebRTCIPHandlingPolicy('DEFAULT')" [ngClass]="{'checked': webRtcLeakProtection === 'DEFAULT'}" class="double-row extended-desc bottom-separator" *ngIf="!isFirefox">
     <div class="label">Unprotected</div>
     <div class="desc">WebRTC has the right to enumerate all interfaces and bind them to discover public interfaces.</div>
   </div>
 
   <!-- Fastest Server -->
-  <div (click)="setWebRTCIPHandlingPolicy('DEFAULT_PUBLIC_INTERFACE_ONLY')" [ngClass]="{'checked': selectedWebRTCType === 'DEFAULT_PUBLIC_INTERFACE_ONLY'}" class="double-row extended-desc bottom-separator">
+  <div (click)="setWebRTCIPHandlingPolicy('DEFAULT_PUBLIC_INTERFACE_ONLY')" [ngClass]="{'checked': webRtcLeakProtection === 'DEFAULT_PUBLIC_INTERFACE_ONLY'}" class="double-row extended-desc bottom-separator" *ngIf="!isFirefox">
     <div class="label">Default Public Interface Only</div>
     <div class="desc">Sends WebRTC traffic via the default public network adapter. This will be the VPN adapter for system-VPN users. WebRTC should only use the default route used by http.</div>
   </div>
 
   <!-- Specific Country -->
-  <div (click)="setWebRTCIPHandlingPolicy('DEFAULT_PUBLIC_AND_PRIVATE_INTERFACES')" [ngClass]="{'checked': selectedWebRTCType === 'DEFAULT_PUBLIC_AND_PRIVATE_INTERFACES'}" class="double-row extended-desc bottom-separator">
+  <div (click)="setWebRTCIPHandlingPolicy('DEFAULT_PUBLIC_AND_PRIVATE_INTERFACES')" [ngClass]="{'checked': webRtcLeakProtection === 'DEFAULT_PUBLIC_AND_PRIVATE_INTERFACES'}" class="double-row extended-desc bottom-separator" *ngIf="!isFirefox">
     <div class="label">Default Public And Private Interfaces</div>
     <div class="desc">Same as Default Public Interface Only, except allowing WebRTC traffic through the default private interface to your local network as well.</div>
   </div>
 
   <!-- Do Not Proxy -->
-  <div (click)="setWebRTCIPHandlingPolicy('DISABLE_NON_PROXIED_UDP')" [ngClass]="{'checked': selectedWebRTCType === 'DISABLE_NON_PROXIED_UDP'}" class="double-row extended-desc bottom-separator">
+  <div (click)="setWebRTCIPHandlingPolicy('DISABLE_NON_PROXIED_UDP')" [ngClass]="{'checked': webRtcLeakProtection === 'DISABLE_NON_PROXIED_UDP'}" class="double-row extended-desc bottom-separator" *ngIf="!isFirefox">
+    <div class="label">Disable Non Proxied UDP</div>
+    <div class="desc">Disables non-proxied UDP and forces proxy. This policy forces the use of a proxy, and only allows WebRTC traffic over UDP proxies. This will effectively disable WebRTC communication for most users (depending on UDP proxy usage).</div>
+  </div>
+
+  <!-- Specific Country -->
+  <div (click)="setFFWebRTCIPHandlingPolicy(false)" [ngClass]="{'checked': ffWebRtcLeakProtection === false}" class="double-row extended-desc bottom-separator" *ngIf="isFirefox">
+    <div class="label">Unprotected</div>
+    <div class="desc">WebRTC has the right to enumerate all interfaces and bind them to discover public interfaces.</div>
+  </div>
+
+  <!-- Do Not Proxy -->
+  <div (click)="setFFWebRTCIPHandlingPolicy(true)" [ngClass]="{'checked': ffWebRtcLeakProtection === true}" class="double-row extended-desc bottom-separator" *ngIf="isFirefox">
     <div class="label">Disable Non Proxied UDP</div>
     <div class="desc">Disables non-proxied UDP and forces proxy. This policy forces the use of a proxy, and only allows WebRTC traffic over UDP proxies. This will effectively disable WebRTC communication for most users (depending on UDP proxy usage).</div>
   </div>

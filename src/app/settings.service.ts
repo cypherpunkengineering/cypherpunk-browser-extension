@@ -59,8 +59,8 @@ class Defaults {
     account: { type: 'free' },
     settings: {
       forceHttps: true,
-      ffWebRTCLeakProtection: true,
-      webRTCLeakProtection: 'DISABLE_NON_PROXIED_UDP',
+      ffWebRTCLeakProtection: false,
+      webRTCLeakProtection: 'DEFAULT',
       defaultRouting: {
         type: 'SMART',
         selected: null

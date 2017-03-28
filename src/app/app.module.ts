@@ -10,8 +10,6 @@ import { SettingsComponent } from './settings/settings.component';
 import { PrivacyFilterComponent } from './settings/privacy-filter/privacy-filter.component';
 import { UserAgentComponent } from './settings/user-agent/user-agent.component';
 import { WebRtcComponent } from './settings/web-rtc/web-rtc.component';
-import { DefaultRoutingComponent } from './settings/default-routing/default-routing.component';
-import { SpecificServerComponent } from './settings/default-routing/specific-server/specific-server.component';
 import { SelectedServerComponent } from './selected-server/selected-server.component';
 import { IndexComponent } from './index/index.component';
 import { TutorialComponent } from './tutorial/tutorial.component';
@@ -38,8 +36,6 @@ import { PingService } from './ping.service';
     PrivacyFilterComponent,
     UserAgentComponent,
     WebRtcComponent,
-    DefaultRoutingComponent,
-    SpecificServerComponent,
     SelectedServerComponent,
     SettingsControllerComponent,
     AccountComponent,
@@ -59,8 +55,6 @@ import { PingService } from './ping.service';
       { path: 'settings/privacy-filter', component: PrivacyFilterComponent },
       { path: 'settings/user-agent', component: UserAgentComponent },
       { path: 'settings/web-rtc', component: WebRtcComponent },
-      { path: 'settings/default-routing', component: DefaultRoutingComponent },
-      { path: 'advanced-settings/default-routing/specific-server', component: SpecificServerComponent },
       { path: 'selected-server', component: SelectedServerComponent },
       { path: 'location', component: LocationComponent },
       { path: 'account', component: AccountContainerComponent },

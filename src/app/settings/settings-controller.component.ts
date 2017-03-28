@@ -40,20 +40,17 @@ import { ChangeDetectorRef } from '@angular/core';
   ]
 })
 export class SettingsControllerComponent {
+  private changeDetectorRef: ChangeDetectorRef;
   currentView = 'app-settings';
   type;
-  private changeDetectorRef: ChangeDetectorRef;
 
   constructor( changeDetectorRef: ChangeDetectorRef ) {
-      this.changeDetectorRef = changeDetectorRef;
-      this.type = 'dynamic';
+    this.type = 'dynamic';
+    this.changeDetectorRef = changeDetectorRef;
   }
 
   changeView(viewName: string) {
-    if (viewName === 'app-specific-server' || this.currentView === 'app-specific-server') { this.type = 'static';
-  } else { this.type = 'dynamic'; }
     this.changeDetectorRef.detectChanges();
-
     this.currentView = viewName;
   }
 }

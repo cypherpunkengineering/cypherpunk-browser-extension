@@ -35,7 +35,7 @@
     .text {
       width: 65%;
       margin: 0 auto;
-      line-height: rem(21.6);
+      line-height: 21.6px;
       color: #fff;
     }
     .tooltip {
@@ -53,8 +53,8 @@
       margin-top: 24px;
       width: 100%;
       button {
-        width: rem(165.2);
-        height: rem(41.6);
+        width: 165.2px;
+        height: 41.6px;
         background-color: #1987bd;
         outline: none;
       }

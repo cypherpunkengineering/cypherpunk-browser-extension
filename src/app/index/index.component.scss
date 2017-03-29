@@ -220,12 +220,12 @@
         &.bold { font-weight: 400; }
         a {
           @include display(block);
-          line-height: 1.35rem;
+          line-height: 1.35;
           font-weight: 200;
           div {
             -webkit-text-stroke: 1px rgba(169, 169, 169, 0.6);
             color: rgba(169, 169, 169, 0.6);
-            margin-top: rem(-4px);
+            margin-top: -4px;
             font-size: 5px;
           }
           &:hover div {

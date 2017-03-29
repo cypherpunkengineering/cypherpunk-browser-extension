@@ -128,9 +128,9 @@ body {
     }
     .desc {
       @include pad(0 32px 0 32px);
-      font-size: 0.75rem;
+      font-size: 10.5px;
     }
-    @include pad(0 0 1rem 0);
+    @include pad(0 0 14px 0);
     height: initial;
   }
 }
@@ -487,8 +487,8 @@ a {
   overflow: auto;
 
   .account-banner {
-    height: 2.5rem;
-    line-height: 2.5rem;
+    height: 35px;
+    line-height: 2.5;
     text-align: center;
     color: #80e0df;
     font-size: 16px;
@@ -511,10 +511,10 @@ a {
 
   section.account-menu {
     .header {
-      height: 2.5rem;
-      line-height: 2.5rem;
+      height: 35px;
+      line-height: 2.5;
       font-weight: bold;
-      padding: 0 0 0 1.25rem;
+      padding: 0 0 0 17.5px;
       background-color: $primary-bg-dark;
     }
   }

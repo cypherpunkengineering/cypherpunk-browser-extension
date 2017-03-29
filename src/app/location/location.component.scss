@@ -81,10 +81,10 @@
 }
 
 .option {
-  @include pad(0 rem(10) 0 rem(30));
+  @include pad(0 10px 0 30px);
   @include span-columns(12);
-  height: rem(35);
-  line-height: rem(35);
+  height: 35px;
+  line-height: 35px;
   text-align: left;
   font-weight: 200;
   cursor: pointer;

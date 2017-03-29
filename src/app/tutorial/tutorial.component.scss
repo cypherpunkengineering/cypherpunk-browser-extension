@@ -4,8 +4,8 @@
 @import '~bourbon-bitters/app/assets/stylesheets/_buttons';
 
 #tutorial {
-  background: linear-gradient(0, #0d1e26 rem(108), #163238 rem(108));
-  background: -moz-linear-gradient(90deg, #0d1e26 rem(108), #163238 rem(108));
+  background: linear-gradient(0, #0d1e26 108px, #163238 108px);
+  background: -moz-linear-gradient(90deg, #0d1e26 108px, #163238 108px);
   height: 100%;
   width: 100%;
   position:relative;
@@ -20,17 +20,17 @@
     text-align: center;
     width: 100%;
 
-    &.hidden-left { left: rem(-360); transition: left .25s ease-in-out; }
-    &.hidden-right { left: rem(360); transition: left .25s ease-in-out; }
+    &.hidden-left { left: -360px; transition: left .25s ease-in-out; }
+    &.hidden-right { left: 360px; transition: left .25s ease-in-out; }
     &.visible { left: 0; transition: left .25s ease-in-out; }
-    h2 { text-align: center; width: 100%; color: #fff; font-weight: 500; margin-top: rem(24); }
+    h2 { text-align: center; width: 100%; color: #fff; font-weight: 500; margin-top: 24px; }
     .image {
-      margin-top: rem(16);
+      margin-top: 16px;
       width: 100%;
-      height: rem(200);
-      line-height: rem(200);
+      height: 200px;
+      line-height: 200px;
       img { vertical-align: middle; }
-      &.cypherplay, &.overrides { height: rem(180); line-height: rem(180); }
+      &.cypherplay, &.overrides { height: 180px; line-height: 180px; }
     }
     .text {
       width: 65%;
@@ -39,18 +39,18 @@
       color: #fff;
     }
     .tooltip {
-      margin-top: rem(16);
+      margin-top: 16px;
       background: #fff;
       width: 60%;
       color: #555;
-      border-radius: rem(4);
+      border-radius: 4px;
       margin-left: auto;
       font-weight: 500;
       margin-right: auto;
-      padding: rem(16);
+      padding: 16px;
     }
     .next {
-      margin-top: rem(24);
+      margin-top: 24px;
       width: 100%;
       button {
         width: rem(165.2);
@@ -64,14 +64,14 @@
         z-index: 100;
         color: #fff;
         text-decoration: underline;
-        margin-top: rem(24);
+        margin-top: 24px;
       }
     }
   }
   .back-btn {
     position: absolute;
-    bottom: rem(16);
-    left: rem(24);
+    bottom: 16px;
+    left: 24px;
     user-select: none;
     cursor: pointer;
     z-index: 100;
@@ -80,13 +80,13 @@
   }
   .dots {
     position: absolute;
-    bottom: rem(16);
+    bottom: 16px;
     text-align: center;
     user-select: none;
     width: 100%;
     .dot {
       display: inline-block;
-      margin: 0 rem(5);
+      margin: 0 5px;
       background: lighten(#163238, 20%);
       width: 10px;
       height: 10px;

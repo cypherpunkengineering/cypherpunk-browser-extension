@@ -86,12 +86,12 @@
 }
 
 /* Disconnected Screen */
-#off-screen img { margin-top: rem(48); width: 100%; }
+#off-screen img { margin-top: 48px; width: 100%; }
 
 /* Connected Screen */
 #on-screen {
   .flags-wrap {
-    @include pad(22px rem(12) 56px);
+    @include pad(22px 12px 56px);
     overflow: auto;
     z-index: 20;
 
@@ -106,9 +106,9 @@
 
     .title {
       @include span-columns(12);
-      font-size: rem(18);
+      font-size: 18px;
       text-align: center;
-      margin-top: rem(4);
+      margin-top: 4px;
     }
 
     .location {
@@ -162,15 +162,15 @@
       }
 
       .flag-container {
-        margin-top: rem(20);
-        width: rem(105);
-        height: rem(167);
+        margin-top: 20px;
+        width: 105px;
+        height: 167px;
 
         &.helmet {
           background-image: url('/assets/index-helmet.png');
           background-repeat: no-repeat;
           background-position: center;
-          background-size: rem(105);
+          background-size: 105px;
         }
         &.user {
           background-image: url('/assets/index-location.png');
@@ -187,20 +187,20 @@
           &:hover + .route-overlay { display: block; }
         }
         &.small {
-          width: rem(80);
-          height: rem(100);
+          width: 80px;
+          height: 100px;
           margin: 85px auto 0;
         }
 
         img {
-          margin-top: rem(65);
-          width: rem(44);
-          height: rem(28);
+          margin-top: 65px;
+          width: 44px;
+          height: 28px;
           &.flag { margin-top: 47px; }
           &.favicon {
             margin-top: 43px;
-            width: rem(35);
-            height: rem(35);
+            width: 35px;
+            height: 35px;
           }
         }
       }
@@ -212,7 +212,7 @@
       }
 
       .subtitle {
-        margin-top: rem(10);
+        margin-top: 10px;
         text-align: center;
         font-weight: 200;
         max-width: 100%;

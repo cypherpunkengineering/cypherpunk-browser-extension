@@ -64,8 +64,8 @@ class Defaults {
         selected: null
       },
       privacyFilter: {
-        blockAds: true,
-        blockMalware: true
+        blockAds: false,
+        blockMalware: false
       },
       userAgent: {
         type: 'DEFAULT',

@@ -24,7 +24,6 @@ export class IndexComponent implements AfterViewChecked {
   validProtocol = true;
 
   // Settings Vars
-  cachedSmartServers;
   showTutorial: boolean;
   cypherpunkEnabled: boolean;
   defaultRouting = { type: '', selected: '' };
@@ -46,11 +45,6 @@ export class IndexComponent implements AfterViewChecked {
   routing;
   siteOverride = false;
 
-  // Smart Server Vars
-  countryCode: string;
-  smartServer;
-  smartServerName: string;
-
   constructor(
     private router: Router,
     private hqService: HqService,
@@ -60,7 +54,6 @@ export class IndexComponent implements AfterViewChecked {
     // get settings vars
     this.cypherpunkEnabled = this.settingsService.enabled;
     this.showTutorial = !this.settingsService.initialized;
-    this.cachedSmartServers = this.settingsService.cachedSmartServers;
     this.defaultRouting = this.settingsService.defaultRoutingSettings();
 
     // manage other extensions
@@ -74,7 +67,6 @@ export class IndexComponent implements AfterViewChecked {
 
     // set visible strings
     this.domain = 'Loading...';
-    this.smartServerName = 'Loading...';
     this.selectedRouteOpt = 'Loading...';
     this.selectedRouteServerName = 'Loading...';
     let starServer = this.proxySettingsService.getStarServer();
@@ -98,25 +90,9 @@ export class IndexComponent implements AfterViewChecked {
       this.validProtocol = protocol === 'http' || protocol === 'https';
 
       if (this.domain && this.validProtocol) {
-        // Get Smart Route name
-        let match = this.domain.match(/[.](au|br|ca|ch|de|fr|uk|hk|in|it|jp|nl|no|ru|se|sg|tr|com)/);
-        let tld = match && match.length ? match[0] : null;
-        if (tld) {
-          tld = tld.slice(1); // remove "."
-          this.countryCode = tld;
-        }
-        else { this.countryCode = 'COM'; } // Default to COM (US)
-
         // manage site overrides
         this.routing = this.settingsService.routing;
         if (this.routing[this.domain]) { this.siteOverride = true; }
-
-        // .com -> US and .uk -> GB, all other tlds are direct translations
-        // Try to preload smart server name from cache
-        if (this.cachedSmartServers) {
-          this.smartServer = this.cachedSmartServers[this.countryCode.toLowerCase()];
-          this.smartServerName = this.smartServer.name;
-        }
 
         // Load fav icon
         // not sure if this is actually used
@@ -167,22 +143,9 @@ export class IndexComponent implements AfterViewChecked {
 
     // If the user is on a tab with a valid domain/protocol. Select the user's stored
     // routing settings in the UI, for display purposes.
-    if (this.domain && this.validProtocol) {
-      // Check if the cache updated then update the smart server name if so
-      if (Object.keys(this.proxySettingsService.cachedSmartServers).length) {
-        this.smartServer = this.proxySettingsService.cachedSmartServers[this.countryCode.toLowerCase()];
-        this.smartServerName = this.smartServer.name;
-      }
-      else { // Cache isn't present fetch smart route manually
-        this.smartServer = this.proxySettingsService.getSmartServer(this.countryCode);
-        this.smartServerName = this.smartServer.name;
-      }
-
-      // Load which proxy is selected once we have domain info
-      this.selectedRoutingInit();
-    }
-    else { // Not on a valid website, apply no proxy
-      this.smartServerName = 'Unavailable';
+    if (this.domain && this.validProtocol) { this.selectedRoutingInit(); }
+    // Not on a valid website, apply no proxy
+    else {
       this.selectedRouteOpt = 'NONE';
       this.applyNoProxy();
     }
@@ -232,7 +195,7 @@ export class IndexComponent implements AfterViewChecked {
     if (!this.siteOverride) {
       switch (type) {
         case 'SMART':
-        this.applySmartProxy();
+        this.applyCyperplayProxy();
         break;
         case 'FASTEST':
         this.applyFastestProxy();
@@ -270,10 +233,7 @@ export class IndexComponent implements AfterViewChecked {
 
     switch (type) {
       case 'SMART':
-        this.applySmartProxy();
-        break;
-      case 'SELECTED':
-        this.applySelectedProxy(serverId);
+        this.applyCyperplayProxy();
         break;
       case 'FASTEST':
         this.applyFastestProxy();
@@ -283,6 +243,9 @@ export class IndexComponent implements AfterViewChecked {
         break;
       case 'FASTESTUS':
         this.applyFastestUSProxy();
+        break;
+      case 'SELECTED':
+        this.applySelectedProxy(serverId);
         break;
       case 'STAR':
         if (this.starServerFlag) { this.applyStarProxy(); }
@@ -300,9 +263,9 @@ export class IndexComponent implements AfterViewChecked {
     }
   }
 
-  applySmartProxy() {
-    this.selectedRouteServerName = this.smartServer.name;
-    this.selectedRouteServerFlag = '/assets/flags/svg/flag-' + this.smartServer.country + '.svg';
+  applyCyperplayProxy() {
+    this.selectedRouteServerName = 'CypherPlay Servers';
+    this.selectedRouteServerFlag =  '';
   }
 
   applyFastestProxy() {

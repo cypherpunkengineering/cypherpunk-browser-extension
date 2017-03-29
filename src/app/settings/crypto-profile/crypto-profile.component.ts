@@ -14,13 +14,11 @@ export class CryptoProfileComponent {
   constructor(
     private settingsService: SettingsService,
     private proxySettingsService: ProxySettingsService
-  ) {
-    this.privacyMode = proxySettingsService.privacyMode;
-  }
+  ) { this.privacyMode = settingsService.privacyMode; }
 
   selectPrivacyMode(enabled: boolean) {
     this.privacyMode = enabled;
-    this.proxySettingsService.setPrivacyMode(enabled);
+    this.settingsService.savePrivacyMode(enabled);
     this.proxySettingsService.enableProxy();
   }
 

@@ -31,9 +31,9 @@ export class LocationComponent {
   siteUrl: string;
   favIconUrl: string;
 
-  privacyFilterWhitelist = {};
   blockAds = true;
   blockMalware = true;
+  privacyFilterWhitelist = {};
 
   regions = {};
   serverMap = {};
@@ -115,7 +115,7 @@ export class LocationComponent {
     else { currentEntry = { blockAds: enabled, blockMalware: this.blockMalware }; }
     this.privacyFilterWhitelist[this.siteUrl] = currentEntry;
     this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
-    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
+    this.proxySettingsService.enableProxy();
     this.hasOverrides = true;
   }
 
@@ -125,7 +125,7 @@ export class LocationComponent {
     else { currentEntry = { blockAds: this.blockAds, blockMalware: enabled }; }
     this.privacyFilterWhitelist[this.siteUrl] = currentEntry;
     this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
-    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
+    this.proxySettingsService.enableProxy();
     this.hasOverrides = true;
   }
 

@@ -19,7 +19,6 @@ class Keys {
   public static ENABLED = 'enabled';
   public static ROUTING = 'routing';
   public static INITIALIZED = 'initialized';
-  public static CACHED_SMART_SERVERS = 'cachedSmartServers';
 
   // Advanced Settings
   public static FORCE_HTTPS = 'settings.forceHttps';
@@ -55,7 +54,6 @@ class Defaults {
     starredServers: [],
     premiumAccount: false,
     pacScriptConfig: null,
-    cachedSmartServers: null,
     account: { type: 'free' },
     settings: {
       forceHttps: true,
@@ -92,7 +90,6 @@ export class SettingsService {
   proxyServers = {};
   starredServers = [];
   proxyServersArray = [];
-  cachedSmartServers = {};
   routing = {};
   defaultRoutingType: string;
   defaultRoutingServer: string;
@@ -115,7 +112,6 @@ export class SettingsService {
     this.starredServers = this.defaultSetting(Keys.STARRED_SERVERS);
     this.proxyServersArray = this.defaultSetting(Keys.PROXY_SERVERS_ARR);
     this.premiumAccount = this.defaultSetting(Keys.PREMIUM_ACCOUNT);
-    this.cachedSmartServers = this.defaultSetting(Keys.CACHED_SMART_SERVERS);
     this.routing = this.defaultSetting(Keys.ROUTING);
     this.defaultRoutingType = this.defaultSetting(Keys.ROUTING_TYPE);
     this.defaultRoutingServer = this.defaultSetting(Keys.ROUTING_SELECTED_SERVER);
@@ -175,10 +171,6 @@ export class SettingsService {
 
   saveAccountType(accountType: string) {
     this.localStorageService.set(Keys.ACCOUNT_TYPE, accountType);
-  }
-
-  saveCachedSmartServers(servers: Object) {
-    this.localStorageService.set(Keys.CACHED_SMART_SERVERS, servers);
   }
 
   savePacScriptConfig(config) {
@@ -283,14 +275,17 @@ export class SettingsService {
   }
 
   savePrivacyFilterWhitelist(list: Object) {
+    this.privacyFilterWhitelist = list;
     this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, list);
   }
 
   savePrivacyFilterAds(enabled: boolean) {
+    this.privacyFilterAds = enabled;
     this.localStorageService.set(Keys.PRIVACY_FILTER_ADS, enabled);
   }
 
   savePrivacyFilterMalware(enabled: boolean) {
+    this.privacyFilterMalware = enabled;
     this.localStorageService.set(Keys.PRIVACY_FILTER_MALWARE, enabled);
   }
 

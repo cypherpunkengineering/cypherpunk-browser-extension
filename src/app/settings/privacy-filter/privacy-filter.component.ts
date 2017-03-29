@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { SettingsService } from '../../settings.service';
+import { ProxySettingsService } from '../../proxy-settings.service';
 
 @Component({
   selector: 'app-privacy-filter',
@@ -14,16 +15,19 @@ export class PrivacyFilterComponent {
   blockAds = this.privacyFilterSettings.blockAds;
   blockMalware = this.privacyFilterSettings.blockMalware;
 
-  constructor(private settingsService: SettingsService) {}
+  constructor(
+    private settingsService: SettingsService,
+    private proxySettingsService: ProxySettingsService
+  ) {}
 
   toggleBlockAds(enabled: boolean) {
     this.settingsService.savePrivacyFilterAds(enabled);
-    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
+    this.proxySettingsService.enableProxy();
   }
 
   toggleBlockMalware(enabled: boolean) {
     this.settingsService.savePrivacyFilterMalware(enabled);
-    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
+    this.proxySettingsService.enableProxy();
   }
 
   goToView(name: string) {

@@ -1,12 +1,8 @@
 // background script variables
 var authUsername;
 var authPassword;
-var globalBlockAds = false;
-var globalBlockMalware = false;
 var chrome = chrome ? chrome : null;
 var regionOrder = ['DEV', 'NA', 'SA', 'CR', 'EU', 'ME', 'AF', 'AS', 'OP'];
-var adList = window.adList;
-var malwareList = window.malwareList;
 
 var ENABLED = 'cypherpunk.enabled';
 var LATENCY_LIST = 'cypherpunk.latencyList';
@@ -17,29 +13,17 @@ var PROXY_SERVERS_ARR = 'cypherpunk.proxyServersArr';
 var PAC_SCRIPT_CONFIG = 'cypherpunk.pacScriptConfig';
 var USER_AGENT_STRING = 'cypherpunk.settings.userAgent.string';
 var WEB_RTC_LEAK_PROTECTION = 'cypherpunk.settings.ffWebRTCLeakProtection';
-var PRIVACY_FILTER_WHITELIST ='cypherpunk.privacyFilterWhitelist';
-var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
-var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
 
 // variables from localStorage
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
 var cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
 var serverArr = JSON.parse(localStorage.getItem(PROXY_SERVERS_ARR));
-var privacyFilterWhitelist = JSON.parse(localStorage.getItem(PRIVACY_FILTER_WHITELIST));
-var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
-var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
-
 
 /** Start up code **/
 
 function init() {
   loadProxies(); // Attempt to fetch Proxy Servers
   applyProxy(); // Attempt to load PAC Script
-
-  // Enable Privacy Filter
-  privacyFilterWhitelist = JSON.parse(localStorage.getItem(PRIVACY_FILTER_WHITELIST));
-  if (privacyFilterWhitelist) { enablePrivacyFilter(); }
-  else { disablePrivacyFilter(); }
 
   // Enable user agent spoofing if user agent string supplied
   userAgentString = localStorage.getItem(USER_AGENT_STRING);
@@ -69,7 +53,6 @@ function destroy() {
   disableProxy(); // Disable PAC Script
   disableUserAgentSpoofing(); // Disable user agent spoofing
   disableWebRTCLeakProtection(); // Disable webRTC leak protection
-  disablePrivacyFilter(); // Disable proxy filter onWebRequest
 
   // Set icon to grey Cypherpunk
   chrome.browserAction.setIcon({
@@ -277,68 +260,6 @@ function enableUserAgentSpoofing() {
 }
 
 
-/** Privacy Filter **/
-
-function cancelRequest(details) {
-  // firefox has the originUrl in the details,
-  // so keeping track of tabs is unnecessary
-  if (!details.originUrl) { return { cancel: false }; }
-
-  // find tab that request originated from
-  var originUrl = details.originUrl;
-  let match = originUrl.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
-  originUrl = match ? match[1] : null;
-
-  // booleans that indicate whether which lists to lookup
-  var checkAds = false;
-  var checkMalware = false;
-
-  // check if originUrl is part of whitelist
-  var localPrivacySettings = privacyFilterWhitelist[originUrl];
-  if (localPrivacySettings) {
-    checkAds = localPrivacySettings.blockAds;
-    checkMalware = localPrivacySettings.blockMalware;
-  }
-  else {
-    checkAds = globalBlockAds;
-    checkMalware = globalBlockMalware;
-  }
-
-  var outgoingUrl = details.url;
-  var adListFound = false;
-  if (checkAds) {
-    adListFound = !!adList.find(function(adUrl) {
-      return outgoingUrl.indexOf(adUrl) !== -1;
-    });
-  }
-
-  var malwareListFound = false;
-  if (checkMalware) {
-    malwareListFound = !!malwareList.find(function(malwareUrl) {
-      return outgoingUrl.indexOf(malwareUrl) !== -1;
-    });
-  }
-
-  return { cancel: adListFound || malwareListFound };
-}
-
-function disablePrivacyFilter() {
-  console.log('Disabling Privacy Filter');
-  chrome.webRequest.onBeforeRequest.removeListener(cancelRequest);
-}
-
-function enablePrivacyFilter() {
-  disablePrivacyFilter();
-  console.log('Enabling Privacy Filter');
-
-  chrome.webRequest.onBeforeRequest.addListener(
-    cancelRequest,
-    { urls: ["<all_urls>"] },
-    ["blocking"]
-  );
-}
-
-
 /* Event Listener Triggers */
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.action === 'CypherpunkEnabled') {
@@ -353,13 +274,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     userAgentString = localStorage.getItem(USER_AGENT_STRING);
     if (userAgentString) { enableUserAgentSpoofing(); }
     else { disableUserAgentSpoofing(); }
-  }
-  else if (request.action === 'updatePrivacyFilter') {
-    cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
-    if (!cypherpunkEnabled) { return; }
-    privacyFilterWhitelist = JSON.parse(localStorage.getItem(PRIVACY_FILTER_WHITELIST));
-    globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
-    globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
   }
 });
 

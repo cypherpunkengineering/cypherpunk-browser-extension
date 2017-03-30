@@ -264,8 +264,10 @@ export class IndexComponent implements AfterViewChecked {
   }
 
   applyCyperplayProxy() {
-    this.selectedRouteServerName = 'CypherPlay Servers';
-    this.selectedRouteServerFlag =  '';
+    this.selectedRouteServerFlag =  '/assets/index-key.png';
+    let fastestServer = this.proxySettingsService.getFastestServer();
+    if (fastestServer) { this.selectedRouteServerName = fastestServer.name; }
+    else { this.selectedRouteServerName = 'Cypherplay Server'; }
   }
 
   applyFastestProxy() {

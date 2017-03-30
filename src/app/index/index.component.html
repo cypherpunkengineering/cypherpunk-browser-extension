@@ -77,7 +77,7 @@
 
       <div class="location">
         <div class="flag-container helmet clickable" (click)="toggleCypherpunk(false)" title="Turn Off">
-          <img *ngIf="selectedRouteServerFlag" src="{{selectedRouteServerFlag}}" />
+          <img *ngIf="selectedRouteServerFlag" src="{{selectedRouteServerFlag}}" [ngClass]="{'cypherplay': selectedRouteOpt === 'SMART'}" />
         </div>
         <div class="subtitle no-wrap bold" title="{{selectedRouteType()}}">
           {{ selectedRouteServerName }}

@@ -3,7 +3,8 @@ import { SettingsService } from '../../settings.service';
 
 @Component({
   selector: 'app-web-rtc',
-  templateUrl: './web-rtc.component.html'
+  templateUrl: './web-rtc.component.html',
+  styleUrls: ['./web-rtc.component.scss']
 })
 export class WebRtcComponent {
   @Output() changeView = new EventEmitter<string>();

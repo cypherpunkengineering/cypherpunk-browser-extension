@@ -34,21 +34,14 @@
     height: 100%;
     text-align: left;
     vertical-align: top;
-  }
-  .label {
-    font-size: 18px;
-    line-height: 1.5;
-    padding-top: 10px;
-  }
-  .desc {
-    font-size: 14px;
-    line-height: 1.5;
-    opacity: 0.5;
-  }
-  .info {
-    font-size: 14px;
-    line-height: 1.5;
-    color: #a3b5b6;
-    span { font-size: 16px; color: #fefefe; }
+    .label {
+      font-size: 14px;
+      padding-top: 10px;
+    }
+    .desc {
+      font-size: 10.5px;
+      line-height: 1.5;
+      opacity: 0.5;
+    }
   }
 }

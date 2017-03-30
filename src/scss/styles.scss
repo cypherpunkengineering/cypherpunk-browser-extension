@@ -145,9 +145,7 @@ body {
     line-height: 50px;
     background-color: #0E063D;
   }
-  &.highlighted {
-    background-color: $primary-bg-light;
-  }
+  &.highlighted { background-color: $primary-bg-light; }
   &.clickable {
     cursor: pointer;
     &:hover { background-color: darken($primary-bg-light, 5%); }

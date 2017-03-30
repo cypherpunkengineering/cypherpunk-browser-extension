@@ -4,7 +4,7 @@
   </div>
 
   <!-- Private User Agent -->
-  <div (click)="setUserAgent('PRIVATE')" class="switch-row bottom-separator">
+  <div (click)="setUserAgent('PRIVATE')" class="option bottom-separator">
     <div class="selected">
       <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'PRIVATE'}"></div>
     </div>
@@ -15,7 +15,7 @@
   </div>
 
   <!-- Default User Agent -->
-  <div (click)="setUserAgent('DEFAULT')" class="switch-row bottom-separator">
+  <div (click)="setUserAgent('DEFAULT')" class="option bottom-separator">
     <div class="selected">
       <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'DEFAULT'}"></div>
     </div>
@@ -26,7 +26,7 @@
   </div>
 
   <!-- iOS User Agent -->
-  <div (click)="setUserAgent('IOS')" class="switch-row bottom-separator">
+  <div (click)="setUserAgent('IOS')" class="option bottom-separator">
     <div class="selected">
       <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'IOS'}"></div>
     </div>
@@ -37,7 +37,7 @@
   </div>
 
   <!-- Android User Agent -->
-  <div (click)="setUserAgent('ANDROID')" class="switch-row bottom-separator">
+  <div (click)="setUserAgent('ANDROID')" class="option bottom-separator">
     <div class="selected">
       <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'ANDROID'}"></div>
     </div>

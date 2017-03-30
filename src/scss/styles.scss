@@ -85,56 +85,6 @@ body {
   }
 }
 
-.double-row {
-  @include row;
-  clear: both;
-  height: 75px;
-  color: #fff;
-  background-color: $primary-bg-light;
-  cursor: pointer;
-
-  &:hover, &.checked:hover { background-color: darken($primary-bg-light, 5%); }
-  &.checked {
-    background: $primary-bg-light url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 32%;
-  }
-  .label {
-    @include span-columns(12);
-    @include pad(0 0 0 32px);
-    height: 40px;
-    line-height: 52px;
-    text-align: left;
-    div { @include display(inline-block); }
-    &.half { @include span-columns(6); }
-  }
-  .action {
-    @include span-columns(6);
-    @include omega;
-    @include pad(0 20px 0 0);
-    height: 40px;
-    line-height: 52px;
-    text-align: right;
-    color: #8dfffc;
-  }
-  .desc {
-    @include span-columns(12);
-    @include pad(0 0 0 32px);
-    color: rgba(255, 255, 255, 0.6);
-    text-align: left;
-    div { @include display(inline-block); }
-  }
-  &.extended-desc {
-    &.checked {
-      background: $primary-bg-light url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 19px;
-    }
-    .desc {
-      @include pad(0 32px 0 32px);
-      font-size: 10.5px;
-    }
-    @include pad(0 0 14px 0);
-    height: initial;
-  }
-}
-
 .switch-row {
   @include row;
   clear: both;
@@ -149,14 +99,6 @@ body {
   &.clickable {
     cursor: pointer;
     &:hover { background-color: darken($primary-bg-light, 5%); }
-  }
-  &.selectable {
-    @include pad(0 0 0 10px);
-    cursor: pointer;
-    &:hover, &.checked:hover { background-color: darken($primary-bg-light, 5%); }
-    &.checked {
-      background: $primary-bg-light url('/assets/checkmarks/icon-circle-check.png') no-repeat 10px 50%;
-    }
   }
   .label {
     @include span-columns(9);

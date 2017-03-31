@@ -59,29 +59,40 @@
 #no-proxy-screen {
   padding: 20px 20px 0;
   text-align: center;
+  color: #61B8C1;
 
-  .warning {
-    font-size: 18px;
-    padding-bottom: 20px;
+  .title {
+    margin: 20px 0;
+    font-size: 16px;
+    color: #92FFFD;
   }
 
-  .instructions {
+  .icon {
+    position: relative;
+    img { position: absolute; top: 30px; left: 109px; }
+  }
+
+  .protection-image {
+    width: 200px;
+    margin: 0 auto 40px;
+    img { width: 100%; }
+  }
+
+  .warning {
+    width: 250px;
+    margin: auto;
     font-size: 16px;
     padding-bottom: 20px;
   }
 
-  .extensions {
-    .icon {
-      display: inline-block;
-      padding-right: 5px;
-      vertical-align: middle;
-      img { vertical-align: middle; }
-    }
+  .instructions {
+    width: 250px;
+    margin: auto;
+    font-size: 16px;
+    padding-bottom: 20px;
 
-    .name {
-      display: inline-block;
-      vertical-align: middle;
-    }
+    .name { color: #92FFFD; text-decoration: underline; }
+    a { font-size: 16px; color: #92FFFD; }
   }
 }
 

@@ -22,32 +22,25 @@
 
   <!-- Cypherpunk no proxy screen -->
   <div id="no-proxy-screen" *ngIf="otherExt">
-    <h1>
-      Protection Disabled
-    </h1>
+    <div class="title">Protection Disabled</div>
+
+    <div class="icon">
+      <img #extIcon src="#" alt="">
+    </div>
+
+    <div class="protection-image">
+      <img src="/assets/protection-disabled.png" alt="Protection Disabled">
+    </div>
 
     <div class="warning">
-      <span>Cypherpunk cannot work while another extension is controlling your proxy settings</span>
+      <span>It looks like another browser extension is trying to control your connection.</span>
     </div>
 
     <div class="instructions">
       <span>
-        Please disable the following extension in your extension settings.
+        We recommend you disable <span class="name">{{ otherExt.name }}</span> in your browser <a href="#" (click)="openSettingsPage()"><i>settings.</i></a>
       </span>
     </div>
-
-    <div class="extensions">
-      <div class="icon">
-        <img #extIcon src="#" alt="">
-      </div>
-
-      <div class="name">
-        <a href="#" (click)="openSettingsPage()">
-          {{ otherExt.name }}
-        </a>
-      </div>
-    </div>
-
   </div>
 
   <!-- Cypherpunk is disabled screen -->

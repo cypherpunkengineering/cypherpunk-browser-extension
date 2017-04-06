@@ -216,7 +216,8 @@ export class SettingsService {
     this.localStorageService.set(Keys.PROXY_PASSWORD, password);
   }
 
-  saveLatencyList(arr: Object) {
+  saveLatencyList(arr) {
+    this.latencyList = arr;
     this.localStorageService.set(Keys.LATENCY_LIST, arr);
   }
 

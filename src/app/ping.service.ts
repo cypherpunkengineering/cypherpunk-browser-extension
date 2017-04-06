@@ -5,17 +5,17 @@ export class PingService {
 
   min = arr => arr.reduce( ( p, c ) => { return ( p < c ? p : c ); } );
 
-  getServerLatencyList(servers: [any], runs: number, premium) {
+  getServerLatencyList(servers: [any], runs: number, accountType) {
     return Promise.all(servers.map(server => {
       // Ensure that server is available. If server is premium user must have premium account
-      if (server.httpDefault.length && (server.level === 'premium' && premium || server.level === 'free')) {
+      if (server.httpDefault.length && (server.level === 'free' || (server.level === 'premium' && accountType !== 'free'))) {
         let promises = [];
-        for (let i = 0; i < runs; i++) { promises.push(this.getLatency(server.ovHostname, 1)); }
+        for (let i = 0; i < runs; i++) {
+          promises.push(this.getLatency(server.ovHostname, 1));
+        }
 
         return Promise.all(promises)
-        .then((pings) => {
-          return { id: server.id, latency: this.min(pings) };
-        });
+        .then((pings) => { return { id: server.id, latency: this.min(pings) }; });
       }
       else { return Promise.resolve({ id: server.id, latency: 9999 }); }
     }))
@@ -39,7 +39,6 @@ export class PingService {
         let start = (new Date()).getTime();
         let response = () => {
             let delta = ((new Date()).getTime() - start);
-            delta *= (multiplier || 1);
             resolve(delta);
         };
 

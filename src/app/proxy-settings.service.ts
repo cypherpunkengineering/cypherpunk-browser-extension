@@ -12,7 +12,6 @@ export class ProxySettingsService {
   servers;
   serverArr;
   latencyList;
-  premiumProxyAccount;
   accountType;
   proxyExtSubject: BehaviorSubject<any>;
   proxyExtObservable: Observable<any>;
@@ -30,7 +29,6 @@ export class ProxySettingsService {
     if (this.latencyList) {
       this.servers = serverData.proxyServers;
       this.serverArr = serverData.proxyServersArr;
-      this.premiumProxyAccount = serverData.premiumAccount;
     }
 
     // If app is updated by background script while open
@@ -41,7 +39,6 @@ export class ProxySettingsService {
         this.servers = updatedServerData.proxyServers;
         this.serverArr = updatedServerData.proxyServersArr;
         this.latencyList = updatedServerData.latencyList;
-        this.premiumProxyAccount = updatedServerData.premiumAccount;
       }
     });
 
@@ -79,7 +76,6 @@ export class ProxySettingsService {
       this.hqService.fetchUserStatus()
       .flatMap(data => {
         this.accountType = data.account.type;
-        this.premiumProxyAccount = this.accountType === 'premium';
         chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: data.privacy.username, authPassword: data.privacy.password });
         this.settingsService.saveProxyCredentials(data.privacy.username, data.privacy.password);
         return this.hqService.findServers(this.accountType); // fetch proxy server list
@@ -91,7 +87,7 @@ export class ProxySettingsService {
           this.settingsService.saveProxyServers(servers, this.serverArr);
 
           // Populate list of servers sorted by latency
-          this.pingService.getServerLatencyList(this.serverArr, 3, this.premiumProxyAccount)
+          this.pingService.getServerLatencyList(this.serverArr, 3, this.accountType)
           .then((latencyArray) => {
             this.settingsService.saveLatencyList(latencyArray);
             this.latencyList = latencyArray;

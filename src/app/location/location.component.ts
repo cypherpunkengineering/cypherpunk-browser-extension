@@ -78,14 +78,17 @@ export class LocationComponent {
       let match = this.siteUrl.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
       this.siteUrl = match ? match[1] : null;
 
+      let protocol = this.siteUrl ? this.siteUrl.split('://')[0] : null;
+      let validProtocol = protocol === 'http' || protocol === 'https';
+
       // Load site fav icon
-      if (tabs[0].favIconUrl && tabs[0].favIconUrl !== '' && tabs[0].favIconUrl.indexOf('chrome://favicon/') === -1) {
+      if (tabs[0].favIconUrl && tabs[0].favIconUrl !== '' && tabs[0].favIconUrl.indexOf('chrome://favicon/') === -1 && validProtocol) {
         this.favIconUrl = tabs[0].favIconUrl;
       }
 
       // load proxy settings from localStorage if exists
       let localRouting = this.routing[this.siteUrl];
-      if (localRouting) {
+      if (localRouting && validProtocol) {
         this.proxyMode = localRouting.type;
         this.selectedServerId = localRouting.serverId;
         if (this.proxyMode === 'SELECTED') { this.showServers = true; }
@@ -97,7 +100,7 @@ export class LocationComponent {
       this.privacyFilterWhitelist = privacySettings.whitelist;
 
       let localPrivacySettings = this.privacyFilterWhitelist[this.siteUrl];
-      if (localPrivacySettings) {
+      if (localPrivacySettings && validProtocol) {
         this.blockAds = localPrivacySettings.blockAds;
         this.blockMalware = localPrivacySettings.blockMalware;
         this.hasOverrides = true;

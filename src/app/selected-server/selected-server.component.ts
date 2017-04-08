@@ -47,10 +47,10 @@ export class SelectedServerComponent {
     this.alphaServers = this.alphaSort(this.geoServers);
     this.starredServers = settingsService.starredServers;
     this.currentServers = this.geoServers;
-    this.accountType = this.settingsService.proxySettingsService().accountType;
+    this.accountType = this.settingsService.accountType;
 
-    if (settingsService.defaultRoutingSettings().selected) {
-      this.selectedServerId = settingsService.defaultRoutingSettings().selected;
+    if (this.settingsService.defaultRoutingServer) {
+      this.selectedServerId = this.settingsService.defaultRoutingServer;
     }
   }
 

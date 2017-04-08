@@ -17,11 +17,11 @@ class Keys {
 
   // Index view
   public static ENABLED = 'enabled';
-  public static ROUTING = 'routing';
   public static INITIALIZED = 'initialized';
 
   // Advanced Settings
   public static FORCE_HTTPS = 'settings.forceHttps';
+  public static SITE_OVERRIDES = 'settings.siteOverrides';
   public static WEB_RTC_LEAK_PROTECTION = 'settings.webRTCLeakProtection';
   public static FF_WEB_RTC_LEAK_PROTECTION = 'settings.ffWebRTCLeakProtection';
 
@@ -35,7 +35,6 @@ class Keys {
 
   // Privacy Filter
   public static PRIVACY_MODE = 'privacyMode';
-  public static PRIVACY_FILTER_WHITELIST = 'privacyFilterWhitelist';
   public static PRIVACY_FILTER_ADS = 'settings.privacyFilter.blockAds';
   public static PRIVACY_FILTER_MALWARE = 'settings.privacyFilter.blockMalware';
 }
@@ -44,19 +43,17 @@ class Defaults {
   public static CONFIG = {
     initialized: false,
     enabled: false,
-    smartRoutingEnabled: true,
     privacyMode: true,
-    privacyFilterWhitelist: {},
-    routing: {},
     latencyList: [],
     proxyServers: {},
     proxyServersArr: [],
     starredServers: [],
     premiumAccount: false,
-    pacScriptConfig: null,
     account: { type: 'free' },
+    pacScriptConfig: null,
     settings: {
       forceHttps: true,
+      siteOverrides: {},
       ffWebRTCLeakProtection: false,
       webRTCLeakProtection: 'DEFAULT',
       defaultRouting: {
@@ -90,13 +87,12 @@ export class SettingsService {
   proxyServers = {};
   starredServers = [];
   proxyServersArray = [];
-  routing = {};
   defaultRoutingType: string;
   defaultRoutingServer: string;
+  siteOverrides: {};
   privacyMode: boolean;
   privacyFilterAds: boolean;
   privacyFilterMalware: boolean;
-  privacyFilterWhitelist = {};
   userAgentType: string;
   userAgentString: string;
   ffWebRtcLeakProtection: boolean;
@@ -112,14 +108,13 @@ export class SettingsService {
     this.starredServers = this.defaultSetting(Keys.STARRED_SERVERS);
     this.proxyServersArray = this.defaultSetting(Keys.PROXY_SERVERS_ARR);
     this.premiumAccount = this.defaultSetting(Keys.PREMIUM_ACCOUNT);
-    this.routing = this.defaultSetting(Keys.ROUTING);
     this.defaultRoutingType = this.defaultSetting(Keys.ROUTING_TYPE);
     this.defaultRoutingServer = this.defaultSetting(Keys.ROUTING_SELECTED_SERVER);
     this.forceHttp = this.defaultSetting(Keys.FORCE_HTTPS);
+    this.siteOverrides = this.defaultSetting(Keys.SITE_OVERRIDES);
     this.privacyMode = this.defaultSetting(Keys.PRIVACY_MODE);
     this.privacyFilterAds = this.defaultSetting(Keys.PRIVACY_FILTER_ADS);
     this.privacyFilterMalware = this.defaultSetting(Keys.PRIVACY_FILTER_MALWARE);
-    this.privacyFilterWhitelist = this.defaultSetting(Keys.PRIVACY_FILTER_WHITELIST);
     this.userAgentType = this.defaultSetting(Keys.USER_AGENT_TYPE);
     this.userAgentString = this.defaultSetting(Keys.USER_AGENT_STRING);
     if (this.isFirefox()) {
@@ -153,23 +148,12 @@ export class SettingsService {
     return {
       latencyList: this.localStorageService.get(Keys.LATENCY_LIST),
       proxyServers: this.localStorageService.get(Keys.PROXY_SERVERS),
-      proxyServersArr: this.localStorageService.get(Keys.PROXY_SERVERS_ARR),
-      premiumAccount: this.localStorageService.get(Keys.PREMIUM_ACCOUNT),
-      accountType: <string>this.localStorageService.get(Keys.ACCOUNT_TYPE)
-    };
-  }
-
-  pacScriptSettings() {
-    return {
-      routing: this.localStorageService.get(Keys.ROUTING),
-      defaultRouting: {
-        type: this.localStorageService.get(Keys.ROUTING_TYPE),
-        selected: this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
-      }
+      proxyServersArr: this.localStorageService.get(Keys.PROXY_SERVERS_ARR)
     };
   }
 
   saveAccountType(accountType: string) {
+    this.accountType = accountType;
     this.localStorageService.set(Keys.ACCOUNT_TYPE, accountType);
   }
 
@@ -222,6 +206,8 @@ export class SettingsService {
   }
 
   saveProxyServers(servers: Object, serverArr) {
+    this.proxyServers = servers;
+    this.proxyServersArray = serverArr;
     this.localStorageService.set(Keys.PROXY_SERVERS, servers);
     this.localStorageService.set(Keys.PROXY_SERVERS_ARR, serverArr);
   }
@@ -231,21 +217,10 @@ export class SettingsService {
     this.localStorageService.set(Keys.ENABLED, enabled);
   }
 
-  saveRouting(routes: Object) {
-    this.routing = routes;
-    this.localStorageService.set(Keys.ROUTING, routes);
-  }
-
-  /** Smart Routing Selected Server Settings **/
-  selectedServerSettings() {
-    return {
-      routing: this.localStorageService.get(Keys.ROUTING)
-    };
-  }
-
   /** Advanced Settings **/
 
   saveForceHttps(enabled: boolean) {
+    this.forceHttp = enabled;
     this.localStorageService.set(Keys.FORCE_HTTPS, enabled);
   }
 
@@ -262,22 +237,10 @@ export class SettingsService {
   }
 
   /** Advanced Settings > Privacy Filter **/
-  privacyFilterSettings() {
-    return {
-      whitelist: this.localStorageService.get(Keys.PRIVACY_FILTER_WHITELIST),
-      blockAds: <boolean>this.localStorageService.get(Keys.PRIVACY_FILTER_ADS),
-      blockMalware: <boolean>this.localStorageService.get(Keys.PRIVACY_FILTER_MALWARE)
-    };
-  }
 
   savePrivacyMode(privacyMode: boolean) {
     this.privacyMode = privacyMode;
     this.localStorageService.set(Keys.PRIVACY_MODE, privacyMode);
-  }
-
-  savePrivacyFilterWhitelist(list: Object) {
-    this.privacyFilterWhitelist = list;
-    this.localStorageService.set(Keys.PRIVACY_FILTER_WHITELIST, list);
   }
 
   savePrivacyFilterAds(enabled: boolean) {
@@ -292,31 +255,26 @@ export class SettingsService {
 
 
   /** Advanced Settings > User Agent **/
-  userAgentSettings() {
-    return {
-      userAgentType: this.localStorageService.get(Keys.USER_AGENT_TYPE),
-      userAgentString: this.localStorageService.get(Keys.USER_AGENT_STRING)
-    };
-  }
 
   saveUserAgent(type: string, agentString: string) {
+    this.userAgentType = type;
+    this.userAgentString = agentString;
     this.localStorageService.set(Keys.USER_AGENT_TYPE, type);
     this.localStorageService.set(Keys.USER_AGENT_STRING, agentString);
   }
 
   /** Advanced Settings > Default Routing/Specific Server **/
-  defaultRoutingSettings() {
-    return {
-      type: <string>this.localStorageService.get(Keys.ROUTING_TYPE),
-      selected: <string>this.localStorageService.get(Keys.ROUTING_SELECTED_SERVER)
-    };
-  }
 
   saveRoutingInfo(type: any, selected: string) {
     this.defaultRoutingType = type;
     this.defaultRoutingServer = selected;
     this.localStorageService.set(Keys.ROUTING_TYPE, type);
     this.localStorageService.set(Keys.ROUTING_SELECTED_SERVER, selected);
+  }
+
+  saveSiteOverrides(overrides: Object) {
+    this.siteOverrides = overrides;
+    this.localStorageService.set(Keys.SITE_OVERRIDES, overrides);
   }
 
 }

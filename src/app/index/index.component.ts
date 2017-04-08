@@ -26,7 +26,6 @@ export class IndexComponent implements AfterViewChecked {
   // Settings Vars
   showTutorial: boolean;
   cypherpunkEnabled: boolean;
-  defaultRouting = { type: '', selected: '' };
 
   // Proxy Connection Display Vars
   otherExt: any;
@@ -42,7 +41,7 @@ export class IndexComponent implements AfterViewChecked {
   starServerFlag: string;
 
   // site override
-  routing;
+  siteOverrides;
   siteOverride = false;
 
   constructor(
@@ -54,7 +53,6 @@ export class IndexComponent implements AfterViewChecked {
     // get settings vars
     this.cypherpunkEnabled = this.settingsService.enabled;
     this.showTutorial = !this.settingsService.initialized;
-    this.defaultRouting = this.settingsService.defaultRoutingSettings();
 
     // manage other extensions
     this.proxySettingsService.proxyExtObservable.subscribe(
@@ -91,8 +89,8 @@ export class IndexComponent implements AfterViewChecked {
 
       if (this.domain && this.validProtocol) {
         // manage site overrides
-        this.routing = this.settingsService.routing;
-        if (this.routing[this.domain]) { this.siteOverride = true; }
+        this.siteOverrides = this.settingsService.siteOverrides;
+        if (this.siteOverrides[this.domain]) { this.siteOverride = true; }
 
         // Load fav icon
         // not sure if this is actually used
@@ -167,6 +165,13 @@ export class IndexComponent implements AfterViewChecked {
     else { this.proxySettingsService.disableProxy(); }
   }
 
+  setHelmetCSS() {
+    if (this.siteOverride && this.siteOverrides[this.domain].type === 'SMART') { return true; }
+    else if (this.siteOverride) { return false; }
+    else if (this.selectedRouteOpt === 'SMART') { return true; }
+    else { return false; }
+  }
+
   selectedRouteType() {
     if (this.selectedRouteOpt === 'Loading...') { return this.selectedRouteOpt; }
     let selectedRouteOpts = {
@@ -179,8 +184,8 @@ export class IndexComponent implements AfterViewChecked {
       none: 'No Proxy'
     };
 
-    if (this.siteOverride) {
-      let type = this.routing[this.domain].type;
+    if (this.siteOverride && this.siteOverrides[this.domain].type) {
+      let type = this.siteOverrides[this.domain].type;
       return 'Override: ' + selectedRouteOpts[type.toLowerCase()];
     }
     else { return selectedRouteOpts[this.selectedRouteOpt.toLowerCase()]; }
@@ -223,12 +228,12 @@ export class IndexComponent implements AfterViewChecked {
   /* Looks at stored settings and preselects correct routing type in the UI */
   selectedRoutingInit() {
     // Check if override for domain exists, apply override settings if it does
-    let type = this.defaultRouting.type;
-    let serverId = this.defaultRouting.selected;
+    let type = this.settingsService.defaultRoutingType;
+    let serverId = this.settingsService.defaultRoutingServer;
 
     if (this.siteOverride) {
-      type = this.routing[this.domain].type;
-      serverId = this.routing[this.domain].selected;
+      type = this.siteOverrides[this.domain].type;
+      serverId = this.siteOverrides[this.domain].selected;
     }
 
     switch (type) {
@@ -255,7 +260,7 @@ export class IndexComponent implements AfterViewChecked {
         this.applyNoProxy();
     }
 
-    this.selectedRouteOpt = this.defaultRouting.type;
+    this.selectedRouteOpt = this.settingsService.defaultRoutingType;
     if (type === 'STAR' && !this.starServerFlag) {
       this.selectedRouteOpt = 'NONE';
       this.settingsService.saveRoutingInfo('NONE', null);

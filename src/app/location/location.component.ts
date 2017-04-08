@@ -23,32 +23,29 @@ import { Component, NgZone, style, animate, transition, state, trigger } from '@
    ]
 })
 export class LocationComponent {
-  routing: any;
-  defaultRouting: any;
   accountType: string;
 
   siteName: string;
   siteUrl: string;
   favIconUrl: string;
 
-  blockAds = true;
-  blockMalware = true;
-  privacyFilterWhitelist = {};
+  overrides: any;
+  proxyMode: string;
+  selectedServerId = '';
+  blockAds = false;
+  blockMalware = false;
+  hasOverrides = false;
 
   regions = {};
   serverMap = {};
   searchText = '';
-  proxyMode: string;
   serverSortOrder = 'geo';
-  selectedServerId: string;
-  showServers = false;
-  hasOverrides: boolean;
-
   geoServers = [];
   alphaServers = [];
   latencyServers = [];
   currentServers = [];
   starredServers = [];
+  showServers = false;
 
   constructor(
     private zone: NgZone,
@@ -57,18 +54,17 @@ export class LocationComponent {
     private proxySettingsService: ProxySettingsService
   ) {
     // load default settings
+    this.accountType = this.settingsService.accountType;
+    this.overrides = this.settingsService.siteOverrides;
+    this.blockAds = this.settingsService.privacyFilterAds;
+    this.blockMalware = this.settingsService.privacyFilterMalware;
     this.regions = this.proxySettingsService.regions;
     this.serverMap = this.proxySettingsService.servers;
-    this.accountType = this.settingsService.proxySettingsService().accountType;
-
-    this.routing = this.settingsService.selectedServerSettings().routing;
-    this.defaultRouting = this.settingsService.defaultRoutingSettings();
     this.geoServers = this.appendLatency(this.proxySettingsService.serverArr);
     this.latencyServers = this.latencySort(this.settingsService.latencyList);
     this.alphaServers = this.alphaSort(this.geoServers);
     this.currentServers = this.geoServers;
     this.starredServers = settingsService.starredServers;
-
 
     // load site information
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
@@ -78,7 +74,7 @@ export class LocationComponent {
       let match = this.siteUrl.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
       this.siteUrl = match ? match[1] : null;
 
-      let protocol = this.siteUrl ? this.siteUrl.split('://')[0] : null;
+      let protocol = tabs[0].url ? tabs[0].url.split('://')[0] : null;
       let validProtocol = protocol === 'http' || protocol === 'https';
 
       // Load site fav icon
@@ -86,48 +82,45 @@ export class LocationComponent {
         this.favIconUrl = tabs[0].favIconUrl;
       }
 
-      // load proxy settings from localStorage if exists
-      let localRouting = this.routing[this.siteUrl];
-      if (localRouting && validProtocol) {
-        this.proxyMode = localRouting.type;
-        this.selectedServerId = localRouting.serverId;
+      // load overrides from settings
+      let localOverrides = this.overrides[this.siteUrl];
+      if (localOverrides && validProtocol) {
+        this.hasOverrides = true;
+
+        // set proxy connection type
+        if (localOverrides.type) { this.proxyMode = localOverrides.type; }
         if (this.proxyMode === 'SELECTED') { this.showServers = true; }
-        this.hasOverrides = true;
-      }
 
-      // load privacy settings from localStorage if exists
-      let privacySettings = this.settingsService.privacyFilterSettings();
-      this.privacyFilterWhitelist = privacySettings.whitelist;
+        // set proxy connection server
+        if (localOverrides.serverId) { this.selectedServerId = localOverrides.serverId; }
 
-      let localPrivacySettings = this.privacyFilterWhitelist[this.siteUrl];
-      if (localPrivacySettings && validProtocol) {
-        this.blockAds = localPrivacySettings.blockAds;
-        this.blockMalware = localPrivacySettings.blockMalware;
-        this.hasOverrides = true;
-      }
-      else {
-        this.blockAds = privacySettings.blockAds;
-        this.blockMalware = privacySettings.blockMalware;
+        // set block ads
+        if (localOverrides.blockAds !== undefined) { this.blockAds = localOverrides.blockAds; }
+
+        // set block malware
+        if (localOverrides.blockMalware !== undefined) {
+          this.blockMalware = localOverrides.blockMalware;
+        }
       }
     });
   }
 
   toggleBlockAds(enabled: boolean) {
-    let currentEntry = this.privacyFilterWhitelist[this.siteUrl];
+    let currentEntry = this.overrides[this.siteUrl];
     if (currentEntry) { currentEntry.blockAds = enabled; }
-    else { currentEntry = { blockAds: enabled, blockMalware: this.blockMalware }; }
-    this.privacyFilterWhitelist[this.siteUrl] = currentEntry;
-    this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
+    else { currentEntry = { blockAds: enabled }; }
+    this.overrides[this.siteUrl] = currentEntry;
+    this.settingsService.saveSiteOverrides(this.overrides);
     this.proxySettingsService.enableProxy();
     this.hasOverrides = true;
   }
 
   toggleBlockMalware(enabled: boolean) {
-    let currentEntry = this.privacyFilterWhitelist[this.siteUrl];
+    let currentEntry = this.overrides[this.siteUrl];
     if (currentEntry) { currentEntry.blockMalware = enabled; }
-    else { currentEntry = { blockAds: this.blockAds, blockMalware: enabled }; }
-    this.privacyFilterWhitelist[this.siteUrl] = currentEntry;
-    this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
+    else { currentEntry = { blockMalware: enabled }; }
+    this.overrides[this.siteUrl] = currentEntry;
+    this.settingsService.saveSiteOverrides(this.overrides);
     this.proxySettingsService.enableProxy();
     this.hasOverrides = true;
   }
@@ -136,8 +129,11 @@ export class LocationComponent {
     this.proxyMode = 'SMART';
     this.selectedServerId = '';
     this.showServers = false;
-    this.routing[this.siteUrl] = { type: 'SMART', serverId: '' };
-    this.settingsService.saveRouting(this.routing);
+    let currentEntry = this.overrides[this.siteUrl];
+    if (currentEntry) { currentEntry.type = 'SMART'; currentEntry.serverId = ''; }
+    else { currentEntry = { type: 'SMART' }; }
+    this.overrides[this.siteUrl] = currentEntry;
+    this.settingsService.saveSiteOverrides(this.overrides);
     this.proxySettingsService.enableProxy();
     this.hasOverrides = true;
   }
@@ -146,8 +142,11 @@ export class LocationComponent {
     this.proxyMode = 'FASTEST';
     this.selectedServerId = '';
     this.showServers = false;
-    this.routing[this.siteUrl] = { type: 'FASTEST', serverId: '' };
-    this.settingsService.saveRouting(this.routing);
+    let currentEntry = this.overrides[this.siteUrl];
+    if (currentEntry) { currentEntry.type = 'FASTEST'; currentEntry.serverId = ''; }
+    else { currentEntry = { type: 'FASTEST' }; }
+    this.overrides[this.siteUrl] = currentEntry;
+    this.settingsService.saveSiteOverrides(this.overrides);
     this.proxySettingsService.enableProxy();
     this.hasOverrides = true;
   }
@@ -156,8 +155,11 @@ export class LocationComponent {
     this.proxyMode = 'FASTESTUK';
     this.selectedServerId = '';
     this.showServers = false;
-    this.routing[this.siteUrl] = { type: 'FASTESTUK', serverId: '' };
-    this.settingsService.saveRouting(this.routing);
+    let currentEntry = this.overrides[this.siteUrl];
+    if (currentEntry) { currentEntry.type = 'FASTESTUK'; currentEntry.serverId = ''; }
+    else { currentEntry = { type: 'FASTESTUK' }; }
+    this.overrides[this.siteUrl] = currentEntry;
+    this.settingsService.saveSiteOverrides(this.overrides);
     this.proxySettingsService.enableProxy();
     this.hasOverrides = true;
   }
@@ -166,8 +168,11 @@ export class LocationComponent {
     this.proxyMode = 'FASTESTUS';
     this.selectedServerId = '';
     this.showServers = false;
-    this.routing[this.siteUrl] = { type: 'FASTESTUS', serverId: '' };
-    this.settingsService.saveRouting(this.routing);
+    let currentEntry = this.overrides[this.siteUrl];
+    if (currentEntry) { currentEntry.type = 'FASTESTUS'; currentEntry.serverId = ''; }
+    else { currentEntry = { type: 'FASTESTUS' }; }
+    this.overrides[this.siteUrl] = currentEntry;
+    this.settingsService.saveSiteOverrides(this.overrides);
     this.proxySettingsService.enableProxy();
     this.hasOverrides = true;
   }
@@ -176,10 +181,33 @@ export class LocationComponent {
     this.proxyMode = 'NONE';
     this.selectedServerId = '';
     this.showServers = false;
-    this.routing[this.siteUrl] = { type: 'NONE', serverId: '' };
-    this.settingsService.saveRouting(this.routing);
+    let currentEntry = this.overrides[this.siteUrl];
+    if (currentEntry) { currentEntry.type = 'NONE'; currentEntry.serverId = ''; }
+    else { currentEntry = { type: 'NONE' }; }
+    this.overrides[this.siteUrl] = currentEntry;
+    this.settingsService.saveSiteOverrides(this.overrides);
     this.proxySettingsService.enableProxy();
     this.hasOverrides = true;
+  }
+
+  selectProxy(server) {
+    this.proxyMode = 'SELECTED';
+    let valid: any = true;
+    if (server.level === 'premium' && this.accountType === 'free') { valid = false; }
+    else if (!server.enabled) { valid = false; }
+    else if (!server.httpDefault.length) { valid = false; }
+
+    if (valid === true) {
+      this.selectedServerId = server.id;
+      let currentEntry = this.overrides[this.siteUrl];
+      if (currentEntry) { currentEntry.type = 'SELECTED'; currentEntry.serverId = server.id; }
+      else { currentEntry = { type: 'SELECTED', serverId: server.id }; }
+      this.overrides[this.siteUrl] = currentEntry;
+      this.settingsService.saveSiteOverrides(this.overrides);
+      this.proxySettingsService.enableProxy();
+      this.settingsService.updateServerUsage(server.id);
+      this.hasOverrides = true;
+    }
   }
 
   useServer() { this.showServers = !this.showServers; }
@@ -203,40 +231,18 @@ export class LocationComponent {
     else { return false; }
   }
 
-  selectProxy(server) {
-    this.proxyMode = 'SELECTED';
-    let valid: any = true;
-    if (server.level === 'premium' && this.accountType === 'free') { valid = false; }
-    else if (!server.enabled) { valid = false; }
-    else if (!server.httpDefault.length) { valid = false; }
-
-    if (valid === true) {
-      this.selectedServerId = server.id;
-      this.routing[this.siteUrl] = { type: 'SELECTED', serverId: server.id };
-      this.settingsService.saveRouting(this.routing);
-      this.proxySettingsService.enableProxy();
-      this.settingsService.updateServerUsage(server.id);
-      this.hasOverrides = true;
-    }
-  }
-
   resetSiteOverrides() {
     if (!this.hasOverrides) { return; }
     this.proxyMode = '';
     this.selectedServerId = '';
+    this.blockAds = this.settingsService.privacyFilterAds;
+    this.blockMalware = this.settingsService.privacyFilterMalware;
     this.hasOverrides = false;
-    let privacySettings = this.settingsService.privacyFilterSettings();
-    this.blockAds = privacySettings.blockAds;
-    this.blockMalware = privacySettings.blockMalware;
 
     // reset privacy whitelist
-    delete this.privacyFilterWhitelist[this.siteUrl];
-    this.settingsService.savePrivacyFilterWhitelist(this.privacyFilterWhitelist);
+    delete this.overrides[this.siteUrl];
+    this.settingsService.saveSiteOverrides(this.overrides);
     chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
-
-    // reset proxy settings
-    delete this.routing[this.siteUrl];
-    this.settingsService.saveRouting(this.routing);
     this.proxySettingsService.enableProxy();
   }
 

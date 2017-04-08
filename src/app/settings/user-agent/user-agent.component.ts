@@ -13,8 +13,7 @@ export class UserAgentComponent {
   @Output() changeView = new EventEmitter<string>();
 
   title = 'User Agent';
-  userAgentSettings = this.settingsService.userAgentSettings();
-  selectedUserAgentType = this.userAgentSettings.userAgentType;
+  selectedUserAgentType = this.settingsService.userAgentType;
 
   userAgentStrings = {
     default: false,

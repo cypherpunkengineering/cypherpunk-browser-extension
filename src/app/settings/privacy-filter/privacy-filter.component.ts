@@ -11,9 +11,8 @@ export class PrivacyFilterComponent {
 
   title = 'Privacy Filter Settings';
 
-  privacyFilterSettings = this.settingsService.privacyFilterSettings();
-  blockAds = this.privacyFilterSettings.blockAds;
-  blockMalware = this.privacyFilterSettings.blockMalware;
+  blockAds = this.settingsService.privacyFilterAds;
+  blockMalware = this.settingsService.privacyFilterMalware;
 
   constructor(
     private settingsService: SettingsService,

@@ -22,11 +22,13 @@ export class PrivacyFilterComponent {
   toggleBlockAds(enabled: boolean) {
     this.settingsService.savePrivacyFilterAds(enabled);
     this.proxySettingsService.enableProxy();
+    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
   }
 
   toggleBlockMalware(enabled: boolean) {
     this.settingsService.savePrivacyFilterMalware(enabled);
     this.proxySettingsService.enableProxy();
+    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
   }
 
   goToView(name: string) {

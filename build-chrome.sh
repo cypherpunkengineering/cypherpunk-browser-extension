@@ -38,6 +38,10 @@ cp src/chrome.manifest.json src/manifest.json
 # build extension
 ./node_modules/.bin/ng build --prod --aot
 
+# copy ad and malware lists over		
+cp src/ad-list.js dist/
+cp src/malware-list.js dist/
+
 # package as zip
 npm run compress
 

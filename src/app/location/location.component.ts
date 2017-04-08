@@ -82,6 +82,7 @@ export class LocationComponent {
     this.overrides[this.siteUrl] = currentEntry;
     this.settingsService.saveSiteOverrides(this.overrides);
     this.proxySettingsService.enableProxy();
+    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
     this.hasOverrides = true;
   }
 
@@ -92,6 +93,7 @@ export class LocationComponent {
     this.overrides[this.siteUrl] = currentEntry;
     this.settingsService.saveSiteOverrides(this.overrides);
     this.proxySettingsService.enableProxy();
+    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
     this.hasOverrides = true;
   }
 

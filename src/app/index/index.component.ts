@@ -40,10 +40,6 @@ export class IndexComponent implements AfterViewChecked {
   starServerName: string;
   starServerFlag: string;
 
-  // site override
-  siteOverrides;
-  siteOverride = false;
-
   constructor(
     private router: Router,
     private hqService: HqService,
@@ -88,10 +84,6 @@ export class IndexComponent implements AfterViewChecked {
       this.validProtocol = protocol === 'http' || protocol === 'https';
 
       if (this.domain && this.validProtocol) {
-        // manage site overrides
-        this.siteOverrides = this.settingsService.siteOverrides;
-        if (this.siteOverrides[this.domain]) { this.siteOverride = true; }
-
         // Load fav icon
         // not sure if this is actually used
         if (curTab.favIconUrl && curTab.favIconUrl !== '' && curTab.favIconUrl.indexOf('chrome://favicon/') === -1) {
@@ -165,13 +157,6 @@ export class IndexComponent implements AfterViewChecked {
     else { this.proxySettingsService.disableProxy(); }
   }
 
-  setHelmetCSS() {
-    if (this.siteOverride && this.siteOverrides[this.domain].type === 'SMART') { return true; }
-    else if (this.siteOverride) { return false; }
-    else if (this.selectedRouteOpt === 'SMART') { return true; }
-    else { return false; }
-  }
-
   selectedRouteType() {
     if (this.selectedRouteOpt === 'Loading...') { return this.selectedRouteOpt; }
     let selectedRouteOpts = {
@@ -184,11 +169,7 @@ export class IndexComponent implements AfterViewChecked {
       none: 'No Proxy'
     };
 
-    if (this.siteOverride && this.siteOverrides[this.domain].type) {
-      let type = this.siteOverrides[this.domain].type;
-      return 'Override: ' + selectedRouteOpts[type.toLowerCase()];
-    }
-    else { return selectedRouteOpts[this.selectedRouteOpt.toLowerCase()]; }
+    return selectedRouteOpts[this.selectedRouteOpt.toLowerCase()];
   }
 
   /* Selects routing type, when user selects a type via the UI */
@@ -197,26 +178,24 @@ export class IndexComponent implements AfterViewChecked {
     if (type === 'STAR' && !this.starServerFlag) { return; }
 
     // create proxy binding from this domain to proxy type
-    if (!this.siteOverride) {
-      switch (type) {
-        case 'SMART':
-        this.applyCyperplayProxy();
-        break;
-        case 'FASTEST':
-        this.applyFastestProxy();
-        break;
-        case 'FASTESTUK':
-        this.applyFastestUKProxy();
-        break;
-        case 'FASTESTUS':
-        this.applyFastestUSProxy();
-        break;
-        case 'STAR':
-        if (this.starServerFlag) { this.applyStarProxy(); }
-        break;
-        default:
-        this.applyNoProxy();
-      }
+    switch (type) {
+      case 'SMART':
+      this.applyCyperplayProxy();
+      break;
+      case 'FASTEST':
+      this.applyFastestProxy();
+      break;
+      case 'FASTESTUK':
+      this.applyFastestUKProxy();
+      break;
+      case 'FASTESTUS':
+      this.applyFastestUSProxy();
+      break;
+      case 'STAR':
+      if (this.starServerFlag) { this.applyStarProxy(); }
+      break;
+      default:
+      this.applyNoProxy();
     }
 
     console.log('Applying Selected Routing Type: ' + type);
@@ -230,11 +209,6 @@ export class IndexComponent implements AfterViewChecked {
     // Check if override for domain exists, apply override settings if it does
     let type = this.settingsService.defaultRoutingType;
     let serverId = this.settingsService.defaultRoutingServer;
-
-    if (this.siteOverride) {
-      type = this.siteOverrides[this.domain].type;
-      serverId = this.siteOverrides[this.domain].selected;
-    }
 
     switch (type) {
       case 'SMART':
@@ -260,7 +234,7 @@ export class IndexComponent implements AfterViewChecked {
         this.applyNoProxy();
     }
 
-    this.selectedRouteOpt = this.settingsService.defaultRoutingType;
+    this.selectedRouteOpt = type;
     if (type === 'STAR' && !this.starServerFlag) {
       this.selectedRouteOpt = 'NONE';
       this.settingsService.saveRoutingInfo('NONE', null);

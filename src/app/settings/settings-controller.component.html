@@ -14,6 +14,6 @@
   <app-privacy-filter (changeView)="changeView($event)"></app-privacy-filter>
 </div>
 
-<div class="view-container child" [@slideIn]="type" *ngIf="currentView === 'app-crypto-profile'">
-  <app-crypto-profile (changeView)="changeView($event)"></app-crypto-profile>
+<div class="view-container child" [@slideIn]="type" *ngIf="currentView === 'app-proxy-mode'">
+  <app-proxy-mode (changeView)="changeView($event)"></app-proxy-mode>
 </div>

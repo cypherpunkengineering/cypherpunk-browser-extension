@@ -3,11 +3,11 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { ProxySettingsService } from '../../proxy-settings.service';
 
 @Component({
-  selector: 'app-crypto-profile',
-  templateUrl: './crypto-profile.component.html',
-  styleUrls: ['./crypto-profile.component.scss']
+  selector: 'app-proxy-mode',
+  templateUrl: './proxy-mode.component.html',
+  styleUrls: ['./proxy-mode.component.scss']
 })
-export class CryptoProfileComponent {
+export class ProxyModeComponent {
   @Output() changeView = new EventEmitter<string>();
   privacyMode: boolean;
 

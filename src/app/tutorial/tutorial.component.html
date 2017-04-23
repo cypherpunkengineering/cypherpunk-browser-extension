@@ -11,6 +11,9 @@
     <div class="next">
       <button (click)="tutorial = 2">Next</button>
     </div>
+    <div class="skip">
+      <a (click)="allowAnalytics()">Skip tutorial</a>
+    </div>
   </div>
 
   <div class="card" [ngClass]="{'visible': tutorial === 2, 'hidden-left': tutorial > 2, 'hidden-right': tutorial < 2 }">
@@ -24,6 +27,9 @@
     <div class="next">
       <button (click)="tutorial = 3">Next</button>
     </div>
+    <div class="skip">
+      <a (click)="allowAnalytics()">Skip tutorial</a>
+    </div>
   </div>
 
   <div class="card" [ngClass]="{'visible': tutorial === 3, 'hidden-left': tutorial > 3, 'hidden-right': tutorial < 3 }">
@@ -36,6 +42,9 @@
     </div>
     <div class="next">
       <button (click)="tutorial = 4">Next</button>
+    </div>
+    <div class="skip">
+      <a (click)="allowAnalytics()">Skip tutorial</a>
     </div>
   </div>
 
@@ -52,6 +61,7 @@
       <div class="deny" (click)="saveTutorialFinished()">Don't Allow</div>
     </div>
   </div>
+
   <div class="back-btn" *ngIf="tutorial > 1" (click)="tutorial = tutorial - 1">
     <span class="back-icon">&#x3008;</span><span class="text">Back</span>
   </div>

@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
-import { Component, style, animate, transition, state, trigger, ViewChild, ElementRef, Renderer } from '@angular/core';
+import { Component, NgZone, style, animate, transition, state, trigger, ViewChild, ElementRef, Renderer } from '@angular/core';
 
 @Component({
   templateUrl: './login.component.html',
@@ -32,6 +32,7 @@ export class LoginComponent {
   };
 
   constructor(
+    private zone: NgZone,
     private router: Router,
     private renderer: Renderer,
     private hqService: HqService,
@@ -90,10 +91,12 @@ export class LoginComponent {
   }
 
   goToEmail() {
-    this.currentView = 'email';
-    this.emailClassList = ['middle'];
-    this.loginClassList = ['right'];
-    this.registerClassList = ['right'];
+    this.zone.run(() => {
+      this.currentView = 'email';
+      this.emailClassList = ['middle'];
+      this.loginClassList = ['right'];
+      this.registerClassList = ['right'];
+    });
   }
 
   launchTos() {

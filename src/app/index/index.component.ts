@@ -149,6 +149,7 @@ export class IndexComponent implements AfterViewChecked {
   tutorialVisible(visible: boolean) { this.showTutorial = visible; }
 
   toggleCypherpunk(enabled: boolean) {
+    console.log('toggle enabled');
     this.cypherpunkEnabled = enabled;
     this.settingsService.saveCypherpunkEnabled(enabled);
     chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });

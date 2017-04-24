@@ -1,0 +1,359 @@
+@import '~bourbon/app/assets/stylesheets/_bourbon';
+@import '~bourbon-neat/app/assets/stylesheets/_neat';
+@import '~bourbon-bitters/app/assets/stylesheets/_variables';
+@import '~bourbon-bitters/app/assets/stylesheets/_buttons';
+@import '../../scss/variables';
+
+:host { width: 100%; height: 100%; overflow: hidden; display: block; }
+
+/* Main View Styles */
+#index { color: #fff; }
+
+/* Header Banner */
+#header__main {
+  height: 55px;
+  padding: 10px 0;
+  background-color: $primary-bg;
+  text-align: left;
+  border-bottom: 2px solid #19474c;
+  position: relative;
+
+  .account {
+    position: absolute;
+    top: 25px;
+    left: -30px;
+    width: 100px;
+    border: 2px solid #19474c;
+    border-radius: 50px;
+    text-align: center;
+    z-index: 2;
+    background-color: $primary-bg;
+    height: 60px;
+    padding: 10px 0 0 20px;
+
+    .logo { height: 35px; }
+  }
+
+  .title {
+    height: 20px;
+    margin: 8px 0 0 85px;
+  }
+
+  .settings {
+    position: absolute;
+    top: 25px;
+    right: -30px;
+    width: 100px;
+    border: 2px solid #19474c;
+    border-radius: 50px;
+    text-align: center;
+    z-index: 2;
+    background-color: $primary-bg;
+    height: 60px;
+    padding: 10px 20px 0 0;
+
+    .gear { width: 35px; }
+  }
+}
+
+#no-proxy-screen {
+  padding: 20px 20px 0;
+  text-align: center;
+  color: #61B8C1;
+
+  .title {
+    margin: 20px 0;
+    font-size: 16px;
+    color: #92FFFD;
+  }
+
+  .icon {
+    position: relative;
+    img { position: absolute; top: 30px; left: 109px; }
+  }
+
+  .protection-image {
+    width: 200px;
+    margin: 0 auto 40px;
+    img { width: 100%; }
+  }
+
+  .warning {
+    width: 250px;
+    margin: auto;
+    font-size: 16px;
+    padding-bottom: 20px;
+  }
+
+  .instructions {
+    width: 250px;
+    margin: auto;
+    font-size: 16px;
+    padding-bottom: 20px;
+
+    .name { color: #92FFFD; text-decoration: underline; }
+    a { font-size: 16px; color: #92FFFD; }
+  }
+}
+
+/* Disconnected Screen */
+#off-screen img { margin-top: 48px; width: 100%; }
+
+/* Connected Screen */
+#on-screen {
+  .flags-wrap {
+    @include pad(22px 12px 56px);
+    overflow: auto;
+    z-index: 20;
+
+    .banner {
+      position: absolute;
+      width: 230px;
+      top: 202px;
+      left: 60px;
+      z-index: 1;
+      img { width: 100%; }
+    }
+
+    .title {
+      @include span-columns(12);
+      font-size: 18px;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    .location {
+      @include span-columns(4);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      &.last { @include omega; cursor: pointer; }
+
+      .overlay {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border-radius: 5px;
+        color: #000;
+        padding: 5px 10px;
+        font-size: 12px;
+        text-align: left;
+
+        div {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        &:after {
+          content: ' ';
+          width: 0;
+          height: 0;
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
+          border-top: 10px solid #fff;
+          position: absolute;
+          bottom: -10px;
+          z-index: 2;
+        }
+      }
+
+      .actual-overlay {
+        top: 15px;
+        left: 30px;
+        width: 100px;
+        &:after { left: 12px; }
+      }
+
+      .route-overlay {
+        top: 15px;
+        right: 30px;
+        width: 130px;
+        &:after { right: 14px; }
+      }
+
+      .flag-container {
+        margin-top: 20px;
+        width: 105px;
+        height: 167px;
+
+        &.helmet {
+          background-image: url('/assets/index-helmet.png');
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 105px;
+        }
+        &.user {
+          background-image: url('/assets/index-location.png');
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: contain;
+          &:hover + .actual-overlay { display: block; }
+        }
+        &.site {
+          background-image: url('/assets/index-connected.png');
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: contain;
+          &:hover + .route-overlay { display: block; }
+        }
+        &.small {
+          width: 80px;
+          height: 100px;
+          margin: 85px auto 0;
+        }
+
+        img {
+          margin-top: 65px;
+          width: 44px;
+          height: 28px;
+          &.cypherplay { width: auto; }
+          &.flag { margin-top: 47px; }
+          &.favicon {
+            margin-top: 43px;
+            width: 35px;
+            height: 35px;
+          }
+        }
+      }
+
+      .no-wrap {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .subtitle {
+        margin-top: 10px;
+        text-align: center;
+        font-weight: 200;
+        max-width: 100%;
+
+        &.bold { font-weight: 400; }
+        a {
+          @include display(block);
+          line-height: 1.35;
+          font-weight: 200;
+          div {
+            -webkit-text-stroke: 1px rgba(169, 169, 169, 0.6);
+            color: rgba(169, 169, 169, 0.6);
+            margin-top: -4px;
+            font-size: 5px;
+          }
+          &:hover div {
+            -webkit-text-stroke: 1px rgba(169, 169, 169, 0.4);
+            color: rgba(169, 169, 169, 0.4);
+          }
+        }
+      }
+    }
+  }
+
+  .scrolling-binary {
+    position: absolute;
+    top: 208px;
+    left: 0;
+    right: 0;
+    margin: 0 92px;
+    z-index: 1;
+  }
+
+  .cypher-buttons {
+    width: 100%;
+    border-top: 15px solid #010011;
+    overflow: hidden;
+    color: #8dfffc;
+    background-color: $primary-bg;
+
+    .left {
+      float: left;
+      width: 25%;
+    }
+
+    .right {
+      float: left;
+      width: 75%;
+
+      .row {
+        overflow: auto;
+        border-bottom: 1px solid #010011;
+        &:last-child { border-bottom: 0; }
+
+        .third {
+          width: 33.33%;
+          float: left;
+          border-right: 1px solid #010011;
+          &:last-child { border-right: 0; }
+        }
+      }
+    }
+
+    .button {
+      width: 100%;
+      height: 90px;
+      float: left;
+      cursor: pointer;
+      &:hover { background-color: $primary-bg-light; }
+      &.disabled {
+        cursor: default;
+        background-color: $primary-bg-dark;
+      }
+
+      &.checked {
+        background-color: #010011;
+        .icon { border: 1px solid #ffe49a; }
+        .title { color: #ffe49a; }
+      }
+
+      &.tall {
+        width: 100%;
+        height: 180px;
+        border-right: 1px solid #010011;
+
+        .icon {
+          width: 64px;
+          height: 64px;
+          margin-top: 50px;
+          padding: 10px;
+        }
+      }
+
+      .icon {
+        width: 46px;
+        height: 46px;
+        margin: 10px auto 5px;
+        padding: 5px;
+        border-radius: 3px;
+        border: 1px solid #19474c;
+        background-color: #010011;
+        text-align: center;
+        img { height: 100%; }
+
+        .star {
+          color: #ffe49a;
+          font-size: 24px;
+        }
+
+        &.rocket {
+          padding: 10px 5px;
+          img { width: 100%; }
+        }
+
+        &.more {
+          padding: 16px 10px 20px;
+          img { width: 100%; }
+        }
+      }
+
+      .title {
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding: 0 5px;
+      }
+    }
+  }
+}
+
+.clickable { cursor: pointer; }

@@ -43,28 +43,53 @@
     </div>
   </div>
 
+  <!-- Cypherpunk is disabled screen -->
+  <div id="off-screen" *ngIf="!otherExt && !cypherpunkEnabled">
+    <img class="clickable" src="/assets/mascot-off.png" alt="" (click)="toggleCypherpunk(true)">
+  </div>
+
   <!-- Cypherpunk is enabled screen -->
-  <div id="on-screen" *ngIf="!otherExt">
-    <div class="connection-toggle" (click)="toggleCypherpunk(!cypherpunkEnabled)">
-      <div class="enabled" *ngIf="cypherpunkEnabled">
-        Enabled
+  <div id="on-screen" *ngIf="!otherExt && cypherpunkEnabled">
+    <!-- Floating head and flags -->
+    <div class="flags-wrap">
+      <div class="banner">
+        <img src="/assets/index-banner.png" alt="">
       </div>
 
-      <div class="disabled" *ngIf="!cypherpunkEnabled">
-        Disabled
+      <div class="location">
+        <div class="flag-container user small">
+          <img class="flag" *ngIf="actualCountryFlag" src="{{ actualCountryFlag }}" />
+        </div>
+        <div class="overlay actual-overlay">
+          Your real location<br>
+          <strong>{{ actualCountry }}</strong><br>
+          {{ 'IP: ' + actualIP }}
+        </div>
+        <div class="subtitle no-wrap">{{ actualCountry }}</div>
       </div>
-    </div>
 
-    <div class="connect-button off disconnected" (click)="toggleCypherpunk(!cypherpunkEnabled)" [ngClass]="{'on': cypherpunkEnabled, 'off': !cypherpunkEnabled, 'connecting': cypherpunkConnecting, 'connected': cypherpunkEnabled, 'disconnected': !cypherpunkEnabled }">
-      <div class="bg">
-        <div class="pipe"></div>
-        <div class="dot"></div>
-        <div class="frame"></div>
+      <div class="location">
+        <div class="flag-container helmet clickable" (click)="toggleCypherpunk(false)" title="Turn Off">
+          <img *ngIf="selectedRouteServerFlag" src="{{selectedRouteServerFlag}}" [ngClass]="{'cypherplay': selectedRouteOpt === 'SMART'}" />
+        </div>
+        <div class="subtitle no-wrap bold" title="{{selectedRouteType()}}">
+          {{ selectedRouteServerName }}
+          <br>
+          ( {{ selectedRouteType() }} )
+        </div>
       </div>
 
-      <div class="slider"></div>
-
-      <div class="knob"></div>
+      <div class="location last" routerLink="/location">
+        <div class="flag-container site small" routerLink="/location">
+          <img class="favicon" *ngIf="faviconUrl" src="{{faviconUrl}}" />
+        </div>
+        <div class="overlay route-overlay">
+          You are connected to: <br>
+          <div><strong>{{ domain }}</strong></div>
+          <div>via: {{ selectedRouteServerName }}</div>
+        </div>
+        <div class="subtitle no-wrap" [innerHTML]="domain"></div>
+      </div>
     </div>
 
     <div class="scrolling-binary">
@@ -297,6 +322,84 @@
         <span style="color: ce1a1a">@ </span>
         <span style="color: 008000">[ </span>
         <span style="color: 5d25b1">5 </span>
+      </div>
+    </div>
+
+    <!-- Cypher Buttons -->
+    <div class="cypher-buttons" [ngClass]="{'disabled': !validProtocol }">
+      <div class="left">
+        <div class="button tall" (click)="selectRouteType('SMART')" [ngClass]="{'checked': selectedRouteOpt === 'SMART' }">
+          <div class="icon">
+            <img src="/assets/index-key.png" alt="">
+          </div>
+          <div class="title">CypherPlay</div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="row">
+          <div class="third">
+            <div class="button" (click)="selectRouteType('FASTEST')" [ngClass]="{'checked': selectedRouteOpt === 'FASTEST' }">
+              <div class="icon rocket">
+                <img src="/assets/index-rocket.png" alt="">
+              </div>
+              <div class="title">Fastest</div>
+            </div>
+          </div>
+
+          <div class="third">
+            <div class="button" (click)="selectRouteType('FASTESTUK')" [ngClass]="{'checked': selectedRouteOpt === 'FASTESTUK' }">
+              <div class="icon">
+                <img src="/assets/flags/48/GB.png" alt="">
+              </div>
+
+              <div class="title">Fastest UK</div>
+            </div>
+          </div>
+
+          <div class="third">
+            <div class="button" (click)="selectRouteType('FASTESTUS')" [ngClass]="{'checked': selectedRouteOpt === 'FASTESTUS' }">
+              <div class="icon">
+                <img src="/assets/flags/48/US.png" alt="">
+              </div>
+
+              <div class="title">Fastest US</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="third">
+            <div class="button" (click)="selectRouteType('STAR')" [ngClass]="{'checked': selectedRouteOpt === 'STAR', 'disabled': !starServerFlag }">
+              <div class="icon">
+                <img src="{{starServerFlag}}" alt="" *ngIf="starServerFlag">
+                <span class="star" *ngIf="!starServerFlag">&#9733;</span>
+              </div>
+
+              <div class="title">{{starServerName}}</div>
+            </div>
+          </div>
+
+          <div class="third">
+            <div class="button" (click)="selectRouteType('NONE')" [ngClass]="{'checked': selectedRouteOpt === 'NONE' }">
+              <div class="icon">
+                <img src="/assets/index-noproxy.png" alt="">
+              </div>
+
+              <div class="title">Do not Proxy</div>
+            </div>
+          </div>
+
+          <div class="third">
+            <div class="button" (click)="selectRouteType('SELECTED')" [ngClass]="{'checked': selectedRouteOpt === 'SELECTED' }">
+              <div class="icon more">
+                <img src="/assets/index-more.png" alt="">
+              </div>
+
+              <div class="title">Select Server</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

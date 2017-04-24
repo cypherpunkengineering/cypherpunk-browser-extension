@@ -45,16 +45,6 @@
 
   <!-- Cypherpunk is enabled screen -->
   <div id="on-screen" *ngIf="!otherExt">
-    <div class="connection-toggle" (click)="toggleCypherpunk(!cypherpunkEnabled)">
-      <div class="enabled" *ngIf="cypherpunkEnabled">
-        Enabled
-      </div>
-
-      <div class="disabled" *ngIf="!cypherpunkEnabled">
-        Disabled
-      </div>
-    </div>
-
     <div class="connect-button off disconnected" (click)="toggleCypherpunk(!cypherpunkEnabled)" [ngClass]="{'on': cypherpunkEnabled, 'off': !cypherpunkEnabled, 'connecting': cypherpunkConnecting, 'connected': cypherpunkEnabled, 'disconnected': !cypherpunkEnabled }">
       <div class="bg">
         <div class="pipe"></div>
@@ -67,6 +57,12 @@
       <div class="knob"></div>
     </div>
 
+    <div class="connect-status">
+      <span>Status</span>
+      <span>Disconnected</span>
+    </div>
+
+    <!--
     <div class="scrolling-binary">
       <div class="right">
         <span style="color: #31afb7">x</span>
@@ -299,6 +295,7 @@
         <span style="color: 5d25b1">5 </span>
       </div>
     </div>
+    -->
   </div>
 </div>
 

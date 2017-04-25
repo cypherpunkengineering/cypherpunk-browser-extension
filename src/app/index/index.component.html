@@ -45,7 +45,65 @@
 
   <!-- Cypherpunk is enabled screen -->
   <div id="on-screen" *ngIf="!otherExt">
-    <div class="connect-button off disconnected" (click)="toggleCypherpunk(!cypherpunkEnabled)" [ngClass]="{'on': cypherpunkEnabled, 'off': !cypherpunkEnabled, 'connecting': cypherpunkConnecting, 'connected': cypherpunkEnabled, 'disconnected': !cypherpunkEnabled }">
+    <!-- Server Listing -->
+    <div class="location-list" [ngClass]="{'hidden': !showLocationList}">
+      <!-- Server listing header -->
+      <div class="header">
+        <div class="title" *ngIf="!cypherpunkEnabled">Connect To</div>
+        <div class="title" *ngIf="cypherpunkEnabled">Connected To</div>
+
+        <div class="cypherplay" *ngIf="cypherpunkEnabled && serverName === 'Cypherplay™'">
+          <img src="/assets/icon_cypherplay@2x.png">
+          Cypherplay&trade;
+        </div>
+        <div class="location" [ngClass]="{'premium': serverLevel === 'premium', 'free': serverLevel === 'free', 'developer': serverLevel === 'developer'}" *ngIf="cypherpunkEnabled && serverName !== 'Cypherplay™'">
+
+          <img class="flag" src="{{serverFlag}}" />
+
+          <span>{{serverName}}</span>
+        </div>
+
+        <div class="title" *ngIf="cypherpunkEnabled">Switch To</div>
+      </div>
+
+      <!-- Server Listing -->
+      <div class="list">
+        <!-- Cypherplay -->
+        <div class="cypherplay" [ngClass]="{'selected': (serverName === 'Cypherplay™') && cypherpunkEnabled}" (click)="setServerDetails({ name: 'cypherplay'})">
+          <img src="/assets/icon_cypherplay@2x.png">
+          Cypherplay&trade;
+          <span>AUTO</span>
+        </div>
+
+        <!-- Servers -->
+        <ng-container *ngFor="let server of servers; let i = index;">
+          <!-- regions row -->
+          <div class="header" *ngIf="(i === 0 || (i !== 0 && (servers[i-1].region !== server.region)))">
+            {{regions[server.region]}}
+          </div>
+
+          <div class="location" [ngClass]="{'disabled': disabledServer(server), 'premium': !disabledServer(server) && server.level === 'premium', 'free': !disabledServer(server) && server.level === 'free', 'developer': !disabledServer(server) && server.level === 'developer', 'selected': (serverName === server.name) && cypherpunkEnabled }" (click)="setServerDetails(server)">
+
+            <img class="flag" src="{{'/assets/flags/24/' + server.country + '.png' }}" />
+
+            <span [attr.data-tag]="parseServerLevel(server)">{{server.name}}</span>
+
+            <span class="ping-time"*ngIf="server.latency < 9999">{{server.latency + 'ms'}}</span>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Server listing footer -->
+      <div class="footer">
+        <span class="back" (click)="toggleLocationList(false)">
+          <i class="chevron left icon"></i>
+          Back
+        </span>
+      </div>
+    </div>
+
+    <!-- Main Screen Content -->
+    <div class="connect-button off disconnected" (click)="toggleCypherpunk(!cypherpunkEnabled)" [ngClass]="{'on': cypherpunkEnabled, 'off': !cypherpunkEnabled, 'connecting': cypherpunkConnecting, 'connected': cypherpunkEnabled, 'disconnected': !cypherpunkEnabled, 'hidden': showLocationList }">
       <div class="bg">
         <div class="pipe"></div>
         <div class="dot"></div>
@@ -57,15 +115,15 @@
       <div class="knob"></div>
     </div>
 
-    <div class="connect-status">
+    <div class="connect-status" [ngClass]="{'hidden': showLocationList}">
       <span>Status</span>
-      <span>Disconnected</span>
+      <span>{{ connectionStatus }}</span>
     </div>
 
-    <div class="location-selector">
+    <div class="location-selector" [ngClass]="{'hidden': showLocationList}" (click)="toggleLocationList(true)">
       <div class="location">
-        <img class="flag" src="/assets/flags/24/us.png">
-        <span>New York, New York</span>
+        <img class="flag" src="{{serverFlag}}">
+        <span>{{serverName}}</span>
       </div>
     </div>
 

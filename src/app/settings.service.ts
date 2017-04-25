@@ -3,11 +3,15 @@ import { LocalStorageService } from 'angular-2-local-storage';
 
 class Keys {
   // Account Info
-  public static ACCOUNT_TYPE = 'account.type';
+  public static ACCOUNT_TYPE = 'accountType';
   public static PROXY_USERNAME = 'proxy.username';
   public static PROXY_PASSWORD = 'proxy.password';
 
   // Server settings
+  public static SERVER_ID = 'serverId';
+  public static SERVER_NAME = 'serverName';
+  public static SERVER_FLAG = 'serverFlag';
+  public static SERVER_LEVEL = 'serverLevel';
   public static LATENCY_LIST = 'latencyList';
   public static PROXY_SERVERS = 'proxyServers';
   public static PROXY_SERVERS_ARR = 'proxyServersArr';
@@ -49,8 +53,12 @@ class Defaults {
     proxyServersArr: [],
     starredServers: [],
     premiumAccount: false,
-    account: { type: 'free' },
+    accountType: 'free',
     pacScriptConfig: null,
+    serverId: '',
+    serverName: '',
+    serverFlag: '',
+    serverLevel: '',
     settings: {
       forceHttps: true,
       siteOverrides: {},
@@ -97,6 +105,10 @@ export class SettingsService {
   userAgentString: string;
   ffWebRtcLeakProtection: boolean;
   webRtcLeakProtection: string;
+  serverId: string;
+  serverName: string;
+  serverFlag: string;
+  serverLevel: string;
 
   constructor (private localStorageService: LocalStorageService) {
     // Settings haven't been initialized yet, set defaults
@@ -117,6 +129,10 @@ export class SettingsService {
     this.privacyFilterMalware = this.defaultSetting(Keys.PRIVACY_FILTER_MALWARE);
     this.userAgentType = this.defaultSetting(Keys.USER_AGENT_TYPE);
     this.userAgentString = this.defaultSetting(Keys.USER_AGENT_STRING);
+    this.serverId = this.defaultSetting(Keys.SERVER_ID);
+    this.serverName = this.defaultSetting(Keys.SERVER_NAME);
+    this.serverFlag = this.defaultSetting(Keys.SERVER_FLAG);
+    this.serverLevel = this.defaultSetting(Keys.SERVER_LEVEL);
     if (this.isFirefox()) {
       this.ffWebRtcLeakProtection = this.defaultSetting(Keys.FF_WEB_RTC_LEAK_PROTECTION);
     }
@@ -275,6 +291,28 @@ export class SettingsService {
   saveSiteOverrides(overrides: Object) {
     this.siteOverrides = overrides;
     this.localStorageService.set(Keys.SITE_OVERRIDES, overrides);
+  }
+
+  /** New Main Page Layout Settings **/
+
+  saveServerId(id: string) {
+    this.serverId = id;
+    this.localStorageService.set(Keys.SERVER_ID, id);
+  }
+
+  saveServerName(name: string) {
+    this.serverName = name;
+    this.localStorageService.set(Keys.SERVER_NAME, name);
+  }
+
+  saveServerFlag(flag: string) {
+    this.serverFlag = flag;
+    this.localStorageService.set(Keys.SERVER_FLAG, flag);
+  }
+
+  saveServerLevel(level: string) {
+    this.serverLevel = level;
+    this.localStorageService.set(Keys.SERVER_LEVEL, level);
   }
 
 }

@@ -269,6 +269,32 @@ export class ProxySettingsService {
 
   generateDefaultRoutingRules() {
     let defaultRoutingRules = '';
+    let useCypherplay = !this.settingsService.serverId;
+    let serverId = this.settingsService.serverId;
+    let privacyMode = this.settingsService.privacyMode;
+    let blockAds = this.settingsService.privacyFilterAds;
+    let blockMalware = this.settingsService.privacyFilterMalware;
+    let protocol = privacyMode ? 'HTTPS' : 'PROXY';
+    let port = this.generatePort(blockAds, blockMalware, useCypherplay, privacyMode);
+
+    // Fastest/Smart: Route to fastest server for each TLD
+    if (useCypherplay) {
+      let fastestServer = this.getFastestServer();
+      if (fastestServer) {
+        let fastestServerIp = fastestServer.ipsecHostname;
+        defaultRoutingRules += `  else return '${protocol} ${fastestServerIp}:${port}';\n`;
+      }
+    }
+    // Selected: Route to the default selected server
+    else {
+      let proxyIp = this.servers[serverId].ipsecHostname;
+      defaultRoutingRules += `  else return '${protocol} ${proxyIp}:${port}';\n`;
+    }
+    return defaultRoutingRules;
+  }
+
+  old_generateDefaultRoutingRules() {
+    let defaultRoutingRules = '';
     let routingType = this.settingsService.defaultRoutingType;
     let serverId = this.settingsService.defaultRoutingServer;
     let privacyMode = this.settingsService.privacyMode;
@@ -322,9 +348,8 @@ export class ProxySettingsService {
     return defaultRoutingRules;
   }
 
-  generatePort(blockAds, blockMalware, routing, useTLS): string {
+  generatePort(blockAds, blockMalware, useCypherplay, useTLS): string {
     let port = 0;
-    let useCypherplay = routing === 'SMART';
 
     if (blockAds) { port += 1; }
     if (blockMalware) { port += 2; }

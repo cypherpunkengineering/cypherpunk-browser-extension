@@ -7,16 +7,7 @@ import { Component, ViewChild, style, animate, transition, state, trigger, Eleme
 @Component({
   selector: 'app-root',
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss'],
-  host: { '[@routeAnimation]': 'true' },
-  animations: [
-    trigger('routeAnimation', [
-      state('*',  style({transform: 'translateX(0)'})),
-      transition('* => void',
-        animate('0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000)', style({transform: 'translateX(0)'}))
-      )
-    ])
-  ]
+  styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements AfterViewChecked {
   @ViewChild('extIcon') extIcon: ElementRef;

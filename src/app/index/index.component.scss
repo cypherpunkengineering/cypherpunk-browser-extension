@@ -163,9 +163,8 @@
       position: absolute;
       white-space: pre;
       margin-left: -100px;
-      .is-focused & {
-        animation-play-state: running;
-      }
+      animation-duration: 26100ms;
+      &.connected { animation-play-state: running; }
       visibility: hidden;
       opacity: 0;
       transition: opacity 0.5s, visibility 0.5s step-end;
@@ -205,7 +204,7 @@
       transition: background 1s, box-shadow 1s, border 1s;
 
       &::before, &::after {
-        // .semanticIcon('');
+        content: '';
         position: absolute;
         width: 40px;
         height: 100%;
@@ -223,10 +222,12 @@
         display: none;
         left: 12px;
         content: '\f060';
+        font-family: FontAwesome;
       }
       &::after {
         right: 12px;
         content: '\f061';
+        font-family: FontAwesome;
         //transition-delay: 0.2s;
       }
     }
@@ -245,7 +246,8 @@
 
       &::before {
         opacity: 0;
-        // .semanticIcon('\f060');
+        content: '\f060';
+        font-family: FontAwesome;
         position: absolute;
         left: 0;
         top: 0;
@@ -316,6 +318,7 @@
         animation: connect-pipe-connected 0.8s linear;
       }
       .row1, .row2 {
+        animation-play-state: running;
         visibility: visible;
         opacity: 0.5;
         transition: opacity 2s 0.5s, visibility 2s 0.5s step-start;
@@ -324,7 +327,7 @@
     &.off.disconnecting {
       .bg {
         animation: connect-bg-disconnecting 1s linear infinite paused;
-        .is-focused & { animation-play-state: running; }
+        animation-play-state: running;
       }
       .dot {
         opacity: 0 !important;
@@ -416,8 +419,8 @@
     }
 
     &::after {
-      // .semanticIcon('\f021');
-      content: '>';
+      content: '\f021';
+      font-family: FontAwesome;
       margin-left: 10px;
       border-radius: 100px;
       display: inline-flex;
@@ -831,16 +834,4 @@
       color: rgba(255,255,255,0.5);
     }
   }
-
-
-  .scrolling-binary {
-    position: absolute;
-    top: 208px;
-    left: 0;
-    right: 0;
-    margin: 0 92px;
-    z-index: 1;
-  }
 }
-
-.clickable { cursor: pointer; }

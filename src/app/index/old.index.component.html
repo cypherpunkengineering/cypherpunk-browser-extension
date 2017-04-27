@@ -1,0 +1,409 @@
+<div id="index" *ngIf="!showTutorial">
+
+  <!-- Top Header Banner -->
+  <div id="header__main">
+    <!-- Account link -->
+    <div class="account">
+      <a routerLink="/account">
+        <img class="logo" src="/assets/account.png">
+      </a>
+    </div>
+
+    <!-- Center Logo -->
+    <img class="title" src="/assets/logo.png">
+
+    <!-- Settings link -->
+    <div class="settings">
+      <a routerLink="/settings">
+        <img class="gear" src="/assets/gear.png" alt="">
+      </a>
+    </div>
+  </div>
+
+  <!-- Cypherpunk no proxy screen -->
+  <div id="no-proxy-screen" *ngIf="otherExt">
+    <div class="title">Protection Disabled</div>
+
+    <div class="icon">
+      <img #extIcon src="#" alt="">
+    </div>
+
+    <div class="protection-image">
+      <img src="/assets/protection-disabled.png" alt="Protection Disabled">
+    </div>
+
+    <div class="warning">
+      <span>It looks like another browser extension is trying to control your connection.</span>
+    </div>
+
+    <div class="instructions">
+      <span>
+        We recommend you disable <span class="name">{{ otherExt.name }}</span> in your browser <a href="#" (click)="openSettingsPage()"><i>settings.</i></a>
+      </span>
+    </div>
+  </div>
+
+  <!-- Cypherpunk is disabled screen -->
+  <div id="off-screen" *ngIf="!otherExt && !cypherpunkEnabled">
+    <img class="clickable" src="/assets/mascot-off.png" alt="" (click)="toggleCypherpunk(true)">
+  </div>
+
+  <!-- Cypherpunk is enabled screen -->
+  <div id="on-screen" *ngIf="!otherExt && cypherpunkEnabled">
+    <!-- Floating head and flags -->
+    <div class="flags-wrap">
+      <div class="banner">
+        <img src="/assets/index-banner.png" alt="">
+      </div>
+
+      <div class="location">
+        <div class="flag-container user small">
+          <img class="flag" *ngIf="actualCountryFlag" src="{{ actualCountryFlag }}" />
+        </div>
+        <div class="overlay actual-overlay">
+          Your real location<br>
+          <strong>{{ actualCountry }}</strong><br>
+          {{ 'IP: ' + actualIP }}
+        </div>
+        <div class="subtitle no-wrap">{{ actualCountry }}</div>
+      </div>
+
+      <div class="location">
+        <div class="flag-container helmet clickable" (click)="toggleCypherpunk(false)" title="Turn Off">
+          <img *ngIf="selectedRouteServerFlag" src="{{selectedRouteServerFlag}}" [ngClass]="{'cypherplay': selectedRouteOpt === 'SMART'}" />
+        </div>
+        <div class="subtitle no-wrap bold" title="{{selectedRouteType()}}">
+          {{ selectedRouteServerName }}
+          <br>
+          ( {{ selectedRouteType() }} )
+        </div>
+      </div>
+
+      <div class="location last" routerLink="/location">
+        <div class="flag-container site small" routerLink="/location">
+          <img class="favicon" *ngIf="faviconUrl" src="{{faviconUrl}}" />
+        </div>
+        <div class="overlay route-overlay">
+          You are connected to: <br>
+          <div><strong>{{ domain }}</strong></div>
+          <div>via: {{ selectedRouteServerName }}</div>
+        </div>
+        <div class="subtitle no-wrap" [innerHTML]="domain"></div>
+      </div>
+    </div>
+
+    <div class="scrolling-binary">
+      <div class="right">
+        <span style="color: #31afb7">x</span>
+        <span style="color: #5d25b1">`</span>
+        <span style="color: #a5c509">8 </span>
+        <span style="color: #008000">0 </span>
+        <span style="color: #5d25b1"># </span>
+        <span style="color: #31afb7">= </span>
+        <span style="color: #ce1a1a">v </span>
+        <span style="color: #008000">7 </span>
+        <span style="color: #fff">m</span>
+        <span style="color: #5d25b1">b</span>
+        <span style="color: #a5c509">" </span>
+        <span style="color: #008000">| </span>
+        <span style="color: #fff">y </span>
+        <span style="color: #5d25b1">9 </span>
+        <span style="color: #a5c509"># </span>
+        <span style="color: #5d25b1">8 </span>
+        <span style="color: #ce1a1a">M </span>
+        <span style="color: #31afb7">] </span>
+        <span style="color: #a97619">_ </span>
+        <span style="color: #a5c509">+ </span>
+        <span style="color: #008000">k</span>
+        <span style="color: #a97619">l </span>
+        <span style="color: #ce1a1a">$ </span>
+        <span style="color: #5d25b1">#</span>
+        <span style="color: #a97619">m</span>
+        <span style="color: #fff">n </span>
+        <span style="color: #31afb7">x </span>
+        <span style="color: #008000">-</span>
+        <span style="color: #31afb7">( </span>
+        <span style="color: #a97619">]</span>
+        <span style="color: #a5c509">e </span>
+        <span style="color: #5d25b1">f </span>
+        <span style="color: #008000">l</span>
+        <span style="color: #fff">]</span>
+        <span style="color: #ce1a1a">> </span>
+        <span style="color: #31afb7">! </span>
+        <span style="color: #5d25b1">0</span>
+        <span style="color: #a97619">3 </span>
+        <span style="color: #008000">@</span>
+        <span style="color: #a5c509">j</span>
+        <span style="color: #ce1a1a">n</span>
+        <span style="color: #31afb7">o </span>
+        <span style="color: #008000">x</span>
+        <span style="color: #a97619">~</span>
+        <span style="color: #a5c509">`</span>
+        <span style="color: #fff">.</span>
+        <span style="color: #31afb7">x</span>
+        <span style="color: #5d25b1">l </span>
+        <span style="color: #ce1a1a">t</span>
+        <span style="color: #008000">y</span>
+        <span style="color: a97619">]</span>
+        <span style="color: 31afb7">[</span>
+        <span style="color: fff">s</span>
+        <span style="color: ce1a1a">x </span>
+        <span style="color: 008000">k </span>
+        <span style="color: 5d25b1">j </span>
+
+        <span style="color: #31afb7">x</span>
+        <span style="color: #5d25b1">`</span>
+        <span style="color: #a5c509">8 </span>
+        <span style="color: #008000">0 </span>
+        <span style="color: #5d25b1"># </span>
+        <span style="color: #31afb7">= </span>
+        <span style="color: #ce1a1a">v </span>
+        <span style="color: #008000">7 </span>
+        <span style="color: #fff">m</span>
+        <span style="color: #5d25b1">b</span>
+        <span style="color: #a5c509">" </span>
+        <span style="color: #008000">| </span>
+        <span style="color: #fff">y </span>
+        <span style="color: #5d25b1">9 </span>
+        <span style="color: #a5c509"># </span>
+        <span style="color: #5d25b1">8 </span>
+        <span style="color: #ce1a1a">M </span>
+        <span style="color: #31afb7">] </span>
+        <span style="color: #a97619">_ </span>
+        <span style="color: #a5c509">+ </span>
+        <span style="color: #008000">k</span>
+        <span style="color: #a97619">l </span>
+        <span style="color: #ce1a1a">$ </span>
+        <span style="color: #5d25b1">#</span>
+        <span style="color: #a97619">m</span>
+        <span style="color: #fff">n </span>
+        <span style="color: #31afb7">x </span>
+        <span style="color: #008000">-</span>
+        <span style="color: #31afb7">( </span>
+        <span style="color: #a97619">]</span>
+        <span style="color: #a5c509">e </span>
+        <span style="color: #5d25b1">f </span>
+        <span style="color: #008000">l</span>
+        <span style="color: #fff">]</span>
+        <span style="color: #ce1a1a">> </span>
+        <span style="color: #31afb7">! </span>
+        <span style="color: #5d25b1">0</span>
+        <span style="color: #a97619">3 </span>
+        <span style="color: #008000">@</span>
+        <span style="color: #a5c509">j</span>
+        <span style="color: #ce1a1a">n</span>
+        <span style="color: #31afb7">o </span>
+        <span style="color: #008000">x</span>
+        <span style="color: #a97619">~</span>
+        <span style="color: #a5c509">`</span>
+        <span style="color: #fff">.</span>
+        <span style="color: #31afb7">x</span>
+        <span style="color: #5d25b1">l </span>
+        <span style="color: #ce1a1a">t</span>
+        <span style="color: #008000">y</span>
+        <span style="color: a97619">]</span>
+        <span style="color: 31afb7">[</span>
+        <span style="color: fff">s</span>
+        <span style="color: ce1a1a">x </span>
+        <span style="color: 008000">k </span>
+        <span style="color: 5d25b1">j </span>
+      </div>
+      <div class="left">
+        <span style="color: #31afb7">d</span>
+        <span style="color: #5d25b1">s</span>
+        <span style="color: #a5c509">K </span>
+        <span style="color: #008000">7 </span>
+        <span style="color: #5d25b1">& </span>
+        <span style="color: #31afb7">[ </span>
+        <span style="color: #ce1a1a">*</span>
+        <span style="color: #008000">h </span>
+        <span style="color: #fff">^</span>
+        <span style="color: #5d25b1">% </span>
+        <span style="color: #a5c509">u </span>
+        <span style="color: #008000">x </span>
+        <span style="color: #fff">5 </span>
+        <span style="color: #5d25b1">8 </span>
+        <span style="color: #a5c509">0</span>
+        <span style="color: #5d25b1">0</span>
+        <span style="color: #ce1a1a">M</span>
+        <span style="color: #31afb7">< </span>
+        <span style="color: #a97619">K</span>
+        <span style="color: #a5c509">! </span>
+        <span style="color: #008000">@ </span>
+        <span style="color: #a97619">&</span>
+        <span style="color: #ce1a1a">6</span>
+        <span style="color: #5d25b1">^</span>
+        <span style="color: #a97619">d </span>
+        <span style="color: #fff">j</span>
+        <span style="color: #31afb7">k</span>
+        <span style="color: #008000">n </span>
+        <span style="color: #31afb7">7</span>
+        <span style="color: #a97619">0 </span>
+        <span style="color: #a5c509">:</span>
+        <span style="color: #5d25b1">9</span>
+        <span style="color: #008000">3</span>
+        <span style="color: #fff">j</span>
+        <span style="color: #ce1a1a">x </span>
+        <span style="color: #31afb7">p</span>
+        <span style="color: #5d25b1">0 </span>
+        <span style="color: #a97619">b</span>
+        <span style="color: #008000">x</span>
+        <span style="color: #a5c509">, </span>
+        <span style="color: #ce1a1a">8</span>
+        <span style="color: #31afb7">9</span>
+        <span style="color: #008000">0 </span>
+        <span style="color: #a97619">Q</span>
+        <span style="color: #a5c509">w </span>
+        <span style="color: #fff">;</span>
+        <span style="color: #31afb7">é </span>
+        <span style="color: #5d25b1">" </span>
+        <span style="color: #ce1a1a">></span>
+        <span style="color: #008000">?</span>
+        <span style="color: a97619">7 </span>
+        <span style="color: 31afb7">9 </span>
+        <span style="color: fff">3</span>
+        <span style="color: ce1a1a">@ </span>
+        <span style="color: 008000">[ </span>
+        <span style="color: 5d25b1">5 </span>
+
+        <span style="color: #31afb7">d</span>
+        <span style="color: #5d25b1">s</span>
+        <span style="color: #a5c509">K </span>
+        <span style="color: #008000">7 </span>
+        <span style="color: #5d25b1">& </span>
+        <span style="color: #31afb7">[ </span>
+        <span style="color: #ce1a1a">*</span>
+        <span style="color: #008000">h </span>
+        <span style="color: #fff">^</span>
+        <span style="color: #5d25b1">% </span>
+        <span style="color: #a5c509">u </span>
+        <span style="color: #008000">x </span>
+        <span style="color: #fff">5 </span>
+        <span style="color: #5d25b1">8 </span>
+        <span style="color: #a5c509">0</span>
+        <span style="color: #5d25b1">0</span>
+        <span style="color: #ce1a1a">M</span>
+        <span style="color: #31afb7">< </span>
+        <span style="color: #a97619">K</span>
+        <span style="color: #a5c509">! </span>
+        <span style="color: #008000">@ </span>
+        <span style="color: #a97619">&</span>
+        <span style="color: #ce1a1a">6</span>
+        <span style="color: #5d25b1">^</span>
+        <span style="color: #a97619">d </span>
+        <span style="color: #fff">j</span>
+        <span style="color: #31afb7">k</span>
+        <span style="color: #008000">n </span>
+        <span style="color: #31afb7">7</span>
+        <span style="color: #a97619">0 </span>
+        <span style="color: #a5c509">:</span>
+        <span style="color: #5d25b1">9</span>
+        <span style="color: #008000">3</span>
+        <span style="color: #fff">j</span>
+        <span style="color: #ce1a1a">x </span>
+        <span style="color: #31afb7">p</span>
+        <span style="color: #5d25b1">0 </span>
+        <span style="color: #a97619">b</span>
+        <span style="color: #008000">x</span>
+        <span style="color: #a5c509">, </span>
+        <span style="color: #ce1a1a">8</span>
+        <span style="color: #31afb7">9</span>
+        <span style="color: #008000">0 </span>
+        <span style="color: #a97619">Q</span>
+        <span style="color: #a5c509">w </span>
+        <span style="color: #fff">;</span>
+        <span style="color: #31afb7">é </span>
+        <span style="color: #5d25b1">" </span>
+        <span style="color: #ce1a1a">></span>
+        <span style="color: #008000">?</span>
+        <span style="color: a97619">7 </span>
+        <span style="color: 31afb7">9 </span>
+        <span style="color: fff">3</span>
+        <span style="color: ce1a1a">@ </span>
+        <span style="color: 008000">[ </span>
+        <span style="color: 5d25b1">5 </span>
+      </div>
+    </div>
+
+    <!-- Cypher Buttons -->
+    <div class="cypher-buttons" [ngClass]="{'disabled': !validProtocol }">
+      <div class="left">
+        <div class="button tall" (click)="selectRouteType('SMART')" [ngClass]="{'checked': selectedRouteOpt === 'SMART' }">
+          <div class="icon">
+            <img src="/assets/index-key.png" alt="">
+          </div>
+          <div class="title">CypherPlay</div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="row">
+          <div class="third">
+            <div class="button" (click)="selectRouteType('FASTEST')" [ngClass]="{'checked': selectedRouteOpt === 'FASTEST' }">
+              <div class="icon rocket">
+                <img src="/assets/index-rocket.png" alt="">
+              </div>
+              <div class="title">Fastest</div>
+            </div>
+          </div>
+
+          <div class="third">
+            <div class="button" (click)="selectRouteType('FASTESTUK')" [ngClass]="{'checked': selectedRouteOpt === 'FASTESTUK' }">
+              <div class="icon">
+                <img src="/assets/flags/48/GB.png" alt="">
+              </div>
+
+              <div class="title">Fastest UK</div>
+            </div>
+          </div>
+
+          <div class="third">
+            <div class="button" (click)="selectRouteType('FASTESTUS')" [ngClass]="{'checked': selectedRouteOpt === 'FASTESTUS' }">
+              <div class="icon">
+                <img src="/assets/flags/48/US.png" alt="">
+              </div>
+
+              <div class="title">Fastest US</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="third">
+            <div class="button" (click)="selectRouteType('STAR')" [ngClass]="{'checked': selectedRouteOpt === 'STAR', 'disabled': !starServerFlag }">
+              <div class="icon">
+                <img src="{{starServerFlag}}" alt="" *ngIf="starServerFlag">
+                <span class="star" *ngIf="!starServerFlag">&#9733;</span>
+              </div>
+
+              <div class="title">{{starServerName}}</div>
+            </div>
+          </div>
+
+          <div class="third">
+            <div class="button" (click)="selectRouteType('NONE')" [ngClass]="{'checked': selectedRouteOpt === 'NONE' }">
+              <div class="icon">
+                <img src="/assets/index-noproxy.png" alt="">
+              </div>
+
+              <div class="title">Do not Proxy</div>
+            </div>
+          </div>
+
+          <div class="third">
+            <div class="button" (click)="selectRouteType('SELECTED')" [ngClass]="{'checked': selectedRouteOpt === 'SELECTED' }">
+              <div class="icon more">
+                <img src="/assets/index-more.png" alt="">
+              </div>
+
+              <div class="title">Select Server</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tutorial Component - Visible on initial run -->
+<app-tutorial *ngIf="showTutorial" (tutorialVisible)="tutorialVisible($event)"></app-tutorial>

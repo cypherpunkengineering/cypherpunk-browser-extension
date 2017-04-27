@@ -1,4 +1,4 @@
-<div class="view-container parent" style="" [@slideIn]="'static'" *ngIf="currentView === 'app-settings'">
+<div class="view-container parent" [@slideIn]="'static'" *ngIf="currentView === 'app-settings'">
   <app-settings (changeView)="changeView($event)"></app-settings>
 </div>
 

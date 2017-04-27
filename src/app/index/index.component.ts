@@ -2,43 +2,45 @@ import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
 import { ProxySettingsService } from '../proxy-settings.service';
-import { Component, ViewChild, style, animate, transition, state, trigger, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, EventEmitter, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-connect',
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss'],
-  host: { '[@routeAnimation]': 'true' },
-  animations: [
-    trigger('routeAnimation', [
-      state('*',  style({transform: 'translateX(0)'})),
-      transition('* => void',
-        animate('0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000)', style({transform: 'translateX(0)'}))
-      )
-    ])
-  ]
+  styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements AfterViewChecked {
   @ViewChild('extIcon') extIcon: ElementRef;
-  // Misc Vars
-  validProtocol = true;
+  @Output() openAccount: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() openSettings: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   // Settings Vars
+  otherExt: any;
+  accountType: string;
   showTutorial: boolean;
+  showLocationList = false;
   cypherpunkEnabled: boolean;
 
-  // Proxy Connection Display Vars
-  otherExt: any;
-  domain: string;
-  faviconUrl: string;
-  actualIP: string;
-  actualCountry: string;
-  actualCountryFlag: string;
-  selectedRouteOpt: string;
-  selectedRouteServerName: string;
-  selectedRouteServerFlag: string;
-  starServerName: string;
-  starServerFlag: string;
+  // display Vars
+  serverId: string;
+  serverName: string;
+  serverFlag: string;
+  serverLevel: string;
+  connectionStatus = 'Disconnected';
+  regions = {}; // used in the view
+  servers = [];
+
+  // Map Vars
+  pi = Math.PI;
+  halfPi = this.pi / 2;
+  epsilon = Number.EPSILON;
+  currentServer;
+  hoverServer;
+  cypherplayMarker = {
+    scale: 0.5,
+    mapX: 939.232,
+    mapY: 530.757
+  };
 
   constructor(
     private router: Router,
@@ -47,8 +49,34 @@ export class IndexComponent implements AfterViewChecked {
     private proxySettingsService: ProxySettingsService
   ) {
     // get settings vars
-    this.cypherpunkEnabled = this.settingsService.enabled;
     this.showTutorial = !this.settingsService.initialized;
+    this.cypherpunkEnabled = this.settingsService.enabled;
+    this.regions = this.proxySettingsService.regions;
+    this.servers = this.proxySettingsService.serverArr;
+    this.serverId = this.settingsService.serverId;
+    this.serverName = this.settingsService.serverName;
+    this.serverFlag = this.settingsService.serverFlag;
+    this.serverLevel = this.settingsService.serverLevel;
+    this.accountType = this.settingsService.accountType;
+
+    // Check for Cypherplay set as default
+    if (!this.serverId) {
+      this.serverName = 'Cypherplay™';
+      this.serverFlag = '/assets/icon_cypherplay@2x.png';
+    }
+
+    // Double check connection status display
+    if (this.cypherpunkEnabled) { this.connectionStatus = 'Connected'; }
+
+    // generate XY points for all servers
+    this.translateLocations(this.servers);
+    // Set current Server for mapping
+    this.servers.map((server) => {
+      if (server.id === this.serverId) { this.currentServer = server; }
+    });
+
+    // if current server not set, use cypherplay
+    if (!this.currentServer) { this.currentServer = this.cypherplayMarker; }
 
     // manage other extensions
     this.proxySettingsService.proxyExtObservable.subscribe(
@@ -59,46 +87,15 @@ export class IndexComponent implements AfterViewChecked {
       (error) => { this.otherExt = null; }
     );
 
-    // set visible strings
-    this.domain = 'Loading...';
-    this.selectedRouteOpt = 'Loading...';
-    this.selectedRouteServerName = 'Loading...';
-    let starServer = this.proxySettingsService.getStarServer();
-    if (starServer) {
-      this.starServerName = starServer.name;
-      this.starServerFlag =  '/assets/flags/48/' + starServer.country + '.png';
-    }
-    else {
-      this.starServerName = 'Empty';
-      this.starServerFlag =  '';
-    }
-
-    chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
-      let curTab = tabs[0];
-      let url = curTab.url;
-
-      let match = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
-      this.domain = match ? match[1] : null;
-
-      let protocol = url ? url.split('://')[0] : null;
-      this.validProtocol = protocol === 'http' || protocol === 'https';
-
-      if (this.domain && this.validProtocol) {
-        // Load fav icon
-        // not sure if this is actually used
-        if (curTab.favIconUrl && curTab.favIconUrl !== '' && curTab.favIconUrl.indexOf('chrome://favicon/') === -1) {
-          this.faviconUrl = curTab.favIconUrl;
-        }
-      }
-    });
-
     // Initialize proxy servers. If latencyList is populated then background
     // script already populated server info
     if (this.proxySettingsService.latencyList && this.proxySettingsService.latencyList.length) {
+      this.appendLatency(this.servers);
       console.log('Servers data preloaded by background script');
       this.hqService.fetchUserStatus()
       .subscribe(
         res => {
+          this.accountType = res.account.type;
           this.settingsService.saveAccountType(res.account.type);
           this.init();
          },
@@ -108,11 +105,15 @@ export class IndexComponent implements AfterViewChecked {
     else { // latencyList isn't populated, populate manually in front end
       console.log('Server data being manually loaded');
       this.proxySettingsService.loadServers()
-      .then(res => { this.init(); })
+      .then(res => {
+        this.init();
+        this.appendLatency(this.servers);
+      })
       .catch(err => { this.toggleCypherpunk(false); });
     }
   }
 
+  // set icon for other extension
   ngAfterViewChecked() {
     if (this.extIcon && this.otherExt) {
       this.extIcon.nativeElement.src = this.otherExt.icons[0].url;
@@ -121,182 +122,155 @@ export class IndexComponent implements AfterViewChecked {
 
   init() {
     // Check if Cypherpunk is on and enable/disable proxy
+    // ** So this will restart the proxy everytime the extension is opened...
+    chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
     if (this.cypherpunkEnabled) { this.proxySettingsService.enableProxy(); }
     else { this.proxySettingsService.disableProxy(); }
+  }
 
-    // Get user's actual location
-    this.hqService.findNetworkStatus().subscribe(res => {
-      this.actualIP = res.ip;
-      this.actualCountry = this.proxySettingsService.countries[res.country];
-      this.actualCountryFlag = '/assets/flags/svg/flag-' + res.country + '.svg';
-    });
-
-    // If the user is on a tab with a valid domain/protocol. Select the user's stored
-    // routing settings in the UI, for display purposes.
-    if (this.domain && this.validProtocol) { this.selectedRoutingInit(); }
-    // Not on a valid website, apply no proxy
-    else {
-      this.selectedRouteOpt = 'NONE';
-      this.applyNoProxy();
-    }
-  };
-
+  // used in the proxy warning view
   openSettingsPage() {
     let url = 'chrome://settings';
     chrome.tabs.create({ url: url });
   }
 
+  vanDerGrinten3Raw(lambda, phi) {
+    if (Math.abs(phi) < this.epsilon) { return [lambda, 0]; }
+
+    let sinTheta = phi / this.halfPi;
+    let theta = Math.asin(sinTheta);
+
+    if (Math.abs(lambda) < this.epsilon || Math.abs(Math.abs(phi) - this.halfPi) < this.epsilon) {
+      return [0, this.pi * Math.tan(theta / 2)];
+    }
+
+    let A = (this.pi / lambda - lambda / this.pi) / 2;
+    let y1 = sinTheta / (1 + Math.cos(theta));
+
+    return [
+      this.pi * (Math.sign(lambda) * Math.sqrt(A * A + 1 - y1 * y1) - A),
+      this.pi * y1
+    ];
+  }
+
+  transformToXY(lat, long) {
+    let coords = this.vanDerGrinten3Raw((long - 11) * this.pi / 180, lat * this.pi / 180);
+    coords[0] = (coords[0] * 150 + (920 / 2)) * (2000 / 920);
+    coords[1] = (coords[1] * 150 + (500 / 2 + 500 * 0.15)) * (2000 / 920);
+    return coords;
+  }
+
+  translateLocations(servers) {
+    servers.forEach((server) => {
+      if (!server.lat || !server.lon) { return; }
+      let [ x, y ] = this.transformToXY(server.lat, server.lon);
+      server.mapX = x;
+      server.mapY = y;
+      server.scale = server.scale || 1;
+    });
+    return servers;
+  }
+
+  generateMapStyle() {
+    if (this.showLocationList && this.hoverServer) {
+      return { 'transform': `scale(${this.hoverServer.scale}) translate(-${this.hoverServer.mapX}px, -${this.hoverServer.mapY}px)`};
+    }
+    else if (!this.showLocationList && this.currentServer) {
+      return { 'transform': `scale(${this.currentServer.scale}) translate(-${this.currentServer.mapX}px, -${this.currentServer.mapY}px)`};
+    }
+    else {
+      return { 'transform': `scale(${this.cypherplayMarker.scale}) translate(-${this.cypherplayMarker.mapX}px, -${this.cypherplayMarker.mapY}px)`};
+    }
+  }
+
+  setHoverServer(server) { this.hoverServer = server; }
+
   tutorialVisible(visible: boolean) { this.showTutorial = visible; }
+
+  toggleLocationList(show: boolean) { this.showLocationList = show; }
 
   toggleCypherpunk(enabled: boolean) {
     this.cypherpunkEnabled = enabled;
     this.settingsService.saveCypherpunkEnabled(enabled);
     chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
 
-    if (enabled) { this.proxySettingsService.enableProxy(); }
-    else { this.proxySettingsService.disableProxy(); }
-  }
-
-  selectedRouteType() {
-    if (this.selectedRouteOpt === 'Loading...') { return this.selectedRouteOpt; }
-    let selectedRouteOpts = {
-      smart: 'CypherPlay',
-      fastest: 'Fastest',
-      fastestuk: 'Fastest UK',
-      fastestus: 'Fastest US',
-      selected: 'Selected Server',
-      star: 'Starred Server',
-      none: 'No Proxy'
-    };
-
-    return selectedRouteOpts[this.selectedRouteOpt.toLowerCase()];
-  }
-
-  /* Selects routing type, when user selects a type via the UI */
-  selectRouteType(type: string) {
-    if (type === 'SELECTED') { return this.router.navigate(['/selected-server']); }
-    if (type === 'STAR' && !this.starServerFlag) { return; }
-
-    // create proxy binding from this domain to proxy type
-    switch (type) {
-      case 'SMART':
-      this.applyCyperplayProxy();
-      break;
-      case 'FASTEST':
-      this.applyFastestProxy();
-      break;
-      case 'FASTESTUK':
-      this.applyFastestUKProxy();
-      break;
-      case 'FASTESTUS':
-      this.applyFastestUSProxy();
-      break;
-      case 'STAR':
-      if (this.starServerFlag) { this.applyStarProxy(); }
-      break;
-      default:
-      this.applyNoProxy();
+    if (enabled) {
+      this.connectionStatus = 'Connected';
+      this.proxySettingsService.enableProxy();
     }
-
-    console.log('Applying Selected Routing Type: ' + type);
-    this.selectedRouteOpt = type;
-    this.settingsService.saveRoutingInfo(type, null);
-    this.proxySettingsService.enableProxy(); // process proxy binding
-  }
-
-  /* Looks at stored settings and preselects correct routing type in the UI */
-  selectedRoutingInit() {
-    // Check if override for domain exists, apply override settings if it does
-    let type = this.settingsService.defaultRoutingType;
-    let serverId = this.settingsService.defaultRoutingServer;
-
-    switch (type) {
-      case 'SMART':
-        this.applyCyperplayProxy();
-        break;
-      case 'FASTEST':
-        this.applyFastestProxy();
-        break;
-      case 'FASTESTUK':
-        this.applyFastestUKProxy();
-        break;
-      case 'FASTESTUS':
-        this.applyFastestUSProxy();
-        break;
-      case 'SELECTED':
-        this.applySelectedProxy(serverId);
-        break;
-      case 'STAR':
-        if (this.starServerFlag) { this.applyStarProxy(); }
-        else { this.applyNoProxy(); }
-        break;
-      default:
-        this.applyNoProxy();
-    }
-
-    this.selectedRouteOpt = type;
-    if (type === 'STAR' && !this.starServerFlag) {
-      this.selectedRouteOpt = 'NONE';
-      this.settingsService.saveRoutingInfo('NONE', null);
-      this.proxySettingsService.enableProxy(); // process proxy binding
-    }
-  }
-
-  applyCyperplayProxy() {
-    this.selectedRouteServerFlag =  '/assets/index-key.png';
-    let fastestServer = this.proxySettingsService.getFastestServer();
-    if (fastestServer) { this.selectedRouteServerName = fastestServer.name; }
-    else { this.selectedRouteServerName = 'Cypherplay Server'; }
-  }
-
-  applyFastestProxy() {
-    let fastestServer = this.proxySettingsService.getFastestServer();
-    if (fastestServer) {
-      this.selectedRouteServerName = fastestServer.name;
-      this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + fastestServer.country + '.svg';
-    }
-  }
-
-  applyFastestUSProxy() {
-    let usServer = this.proxySettingsService.getFastestUSServer();
-    if (usServer) {
-      this.selectedRouteServerName = usServer.name;
-      this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + usServer.country + '.svg';
-    }
-  }
-
-  applyFastestUKProxy() {
-    let ukServer = this.proxySettingsService.getFastestUKServer();
-    if (ukServer) {
-      this.selectedRouteServerName = ukServer.name;
-      this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + ukServer.country + '.svg';
-    }
-  }
-
-  applyStarProxy() {
-    let starServer = this.proxySettingsService.getStarServer();
-    if (starServer) {
-      this.selectedRouteServerName = starServer.name;
-      this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + starServer.country + '.svg';
-      this.starServerName = starServer.name;
-      this.starServerFlag =  '/assets/flags/48/' + starServer.country + '.png';
-    }
-    /* blank state */
     else {
-      this.starServerName = 'Empty';
-      this.starServerFlag = '';
+      this.connectionStatus = 'Disconnected';
+      this.proxySettingsService.disableProxy();
     }
   }
 
-  applyNoProxy() {
-    this.selectedRouteServerName = 'Unprotected';
-    this.selectedRouteServerFlag = undefined;
+  appendLatency(servers) {
+    let latencyList = this.settingsService.latencyList;
+    this.servers.forEach((server) => {
+      latencyList.map((latencyServer) => {
+        if (latencyServer.id === server.id) {
+          server.latency = latencyServer.latency;
+        }
+      });
+    });
   }
 
-  applySelectedProxy(serverId) {
-    if (!serverId) { return; }
-    let server = this.proxySettingsService.servers[serverId];
-    this.selectedRouteServerName = server.name;
-    this.selectedRouteServerFlag =  '/assets/flags/svg/flag-' + server.country + '.svg';
+  parseServerLevel(server) {
+    if (!server.httpDefault.length || !server.enabled) { return 'UNAVAILABLE'; }
+    if (server.level === 'developer') { return 'DEV'; }
+    if (server.level === 'premium') { return 'PREMIUM'; }
+    else { return; }
+  }
+
+  disabledServer(server) {
+    if (server.level === 'premium' && this.accountType === 'free') { return true; }
+    else if (!server.enabled) { return true; }
+    else if (!server.httpDefault.length) { return true; }
+    else { return false; }
+  }
+
+  setServerDetails(server) {
+    if (server.name === 'cypherplay' && this.serverName === 'Cypherplay™' && this.cypherpunkEnabled) { return; }
+    else if (server.name === 'cypherplay') { /** do nothing **/ }
+    else if (this.disabledServer(server)) { return; }
+    else if ((server.id === this.serverId) && this.cypherpunkEnabled) { return; }
+
+    // view related variables
+    this.cypherpunkEnabled = true;
+    this.showLocationList = false;
+    this.connectionStatus = 'Connected';
+    if (server.name === 'cypherplay') {
+      this.serverId = '';
+      this.serverLevel = '';
+      this.serverName = 'Cypherplay™';
+      this.serverFlag = '/assets/icon_cypherplay@2x.png';
+      this.currentServer = this.cypherplayMarker;
+      this.hoverServer = this.cypherplayMarker;
+    }
+    else {
+      this.serverId = server.id;
+      this.serverName = server.name;
+      this.serverLevel = server.level;
+      this.serverFlag = `/assets/flags/24/${server.country}.png`;
+      this.currentServer = server;
+      this.hoverServer = server;
+    }
+
+    // proxy related variables
+    this.settingsService.saveCypherpunkEnabled(true);
+    this.settingsService.saveServerId(this.serverId);
+    this.settingsService.saveServerName(this.serverName);
+    this.settingsService.saveServerFlag(this.serverFlag);
+    this.settingsService.saveServerLevel(this.serverLevel);
+    chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
+    this.proxySettingsService.enableProxy();
+  }
+
+  accountEmit() {
+    this.openAccount.emit(true);
+  }
+
+  settingsEmit() {
+    this.openSettings.emit(true);
   }
 }

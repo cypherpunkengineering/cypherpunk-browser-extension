@@ -4,7 +4,7 @@
   <div id="header__main">
     <!-- Account link -->
     <div class="account">
-      <a routerLink="/account">
+      <a (click)="accountEmit()">
         <img class="logo" src="/assets/account.png">
       </a>
     </div>
@@ -14,7 +14,7 @@
 
     <!-- Settings link -->
     <div class="settings">
-      <a routerLink="/settings">
+      <a (click)="settingsEmit()">
         <img class="gear" src="/assets/gear.png" alt="">
       </a>
     </div>
@@ -46,7 +46,7 @@
   <!-- Cypherpunk is enabled screen -->
   <div id="on-screen" *ngIf="!otherExt">
     <!-- World Map -->
-    <div class="worldmap">
+    <div class="worldmap" [ngClass]="{'side': showLocationList}">
       <div class="world" [ngStyle]="generateMapStyle()">
         <img src="/assets/worldmap_2000.png" width="2000">
         <div class="point" [style.left.px]="server.mapX" [style.top.px]="server.mapY" *ngFor="let server of servers">

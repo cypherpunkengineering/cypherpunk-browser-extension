@@ -1,5 +1,5 @@
 <div id="sub-menu">
-  <div id="header" routerLink="/" routerLinkActive="active" class="page-header bottom-separator">
+  <div id="header" (click)="goToView('home')" class="page-header bottom-separator">
     <span class="back-icon">&#x3008;</span>Settings
   </div>
 
@@ -21,8 +21,8 @@
 
   <!-- WebRTC Leak Protection - Chrome -->
   <div (click)="goToView('app-web-rtc')" class="switch-row highlighted clickable bottom-separator" *ngIf="!isFirefox">
-    <div class="label half">WebRTC Leak Prevention</div>
-    <div class="switch half">
+    <div class="label more-than-half">WebRTC Leak Prevention</div>
+    <div class="switch less-than-half">
       {{webRTCType}}
       <span class="forward-icon">&#x3009;</span>
     </div>

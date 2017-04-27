@@ -1,0 +1,12 @@
+<div class="panel left" [ngClass]="{'slide': showAccount}">
+  <app-account-main (viewConnect)="viewConnect()"></app-account-main>
+</div>
+
+<div class="panel center" [ngClass]="{'slide-right': showAccount, 'slide-left': showSettings}">
+  <app-connect (openAccount)="openAccount()" (openSettings)="openSettings()"></app-connect>
+  <div class="overlay" (click)="viewConnect()" [ngClass]="{'show': showAccount || showSettings}"></div>
+</div>
+
+<div class="panel right" [ngClass]="{'slide': showSettings}">
+  <app-settings-controller (viewConnect)="viewConnect()"></app-settings-controller>
+</div>

@@ -111,6 +111,18 @@ body {
     div { @include display(inline-block); }
     &.half { @include span-columns(6); }
     &.full { @include span-columns(12); }
+    &.more-than-half {
+      float: left;
+      display: block;
+      margin-right: 2.35765%;
+      width: 52.82117%;
+    }
+    &.less-than-half {
+      float: right;
+      display: block;
+      margin-right: 0%;
+      width: 44.82117%;
+    }
   }
   &.large.top-separator { border-top: solid 2px $border--separator; }
   &.large .label {
@@ -128,6 +140,12 @@ body {
     text-align: right;
     color: #8dfffc;
     &.half { @include span-columns(6); }
+    &.less-than-half {
+      float: right;
+      display: block;
+      margin-right: 0;
+      width: 44.82117%;
+    }
   }
 }
 

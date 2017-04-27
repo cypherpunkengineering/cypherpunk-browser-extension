@@ -2,15 +2,17 @@ import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
 import { ProxySettingsService } from '../proxy-settings.service';
-import { Component, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, EventEmitter, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-connect',
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements AfterViewChecked {
   @ViewChild('extIcon') extIcon: ElementRef;
+  @Output() openAccount: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() openSettings: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   // Settings Vars
   otherExt: any;
@@ -262,5 +264,13 @@ export class IndexComponent implements AfterViewChecked {
     this.settingsService.saveServerLevel(this.serverLevel);
     chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
     this.proxySettingsService.enableProxy();
+  }
+
+  accountEmit() {
+    this.openAccount.emit(true);
+  }
+
+  settingsEmit() {
+    this.openSettings.emit(true);
   }
 }

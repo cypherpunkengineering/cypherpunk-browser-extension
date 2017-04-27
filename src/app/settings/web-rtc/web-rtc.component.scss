@@ -3,9 +3,9 @@
 @import '../../../scss/variables';
 
 .option {
-  height: 95px;
   color: #fff;
   cursor: pointer;
+  padding: 10px 0;
   background-color: $primary-bg-light;
 
   &:hover, &.checked:hover { background-color: darken($primary-bg-light, 5%); }
@@ -14,6 +14,7 @@
     width: 50px;
     height: 100%;
     display: inline-block;
+    vertical-align: middle;
 
     .circle {
       width: 20px;
@@ -22,22 +23,17 @@
       border-radius: 50px;
       margin: auto;
       position: relative;
-      top: 50%;
-      transform: translateY(-50%);
       &.checked { background-color: #b39542; }
     }
   }
 
   .text {
     display: inline-block;
-    width: 300px;
+    width: 235px;
     height: 100%;
     text-align: left;
-    vertical-align: top;
-    .label {
-      font-size: 14px;
-      padding-top: 10px;
-    }
+    vertical-align: middle;
+    .label { font-size: 14px; }
     .desc {
       font-size: 10.5px;
       line-height: 1.5;

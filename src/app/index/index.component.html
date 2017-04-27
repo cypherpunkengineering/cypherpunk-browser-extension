@@ -45,6 +45,17 @@
 
   <!-- Cypherpunk is enabled screen -->
   <div id="on-screen" *ngIf="!otherExt">
+    <!-- World Map -->
+    <div class="worldmap">
+      <div class="world" [ngStyle]="generateMapStyle()">
+        <img src="/assets/worldmap_2000.png" width="2000">
+        <div class="point" [style.left.px]="server.mapX" [style.top.px]="server.mapY" *ngFor="let server of servers">
+        </div>
+      </div>
+
+      <i class="marker icon"></i>
+    </div>
+
     <!-- Server Listing -->
     <div class="location-list" [ngClass]="{'hidden': !showLocationList}">
       <!-- Server listing header -->
@@ -69,7 +80,7 @@
       <!-- Server Listing -->
       <div class="list">
         <!-- Cypherplay -->
-        <div class="cypherplay" [ngClass]="{'selected': (serverName === 'Cypherplay™') && cypherpunkEnabled}" (click)="setServerDetails({ name: 'cypherplay'})">
+        <div class="cypherplay" [ngClass]="{'selected': (serverName === 'Cypherplay™') && cypherpunkEnabled}" (click)="setServerDetails({ name: 'cypherplay'})" (mouseenter)="setHoverServer(cypherplayMarker)">
           <img src="/assets/icon_cypherplay@2x.png">
           Cypherplay&trade;
           <span>AUTO</span>
@@ -82,7 +93,7 @@
             {{regions[server.region]}}
           </div>
 
-          <div class="location" [ngClass]="{'disabled': disabledServer(server), 'premium': !disabledServer(server) && server.level === 'premium', 'free': !disabledServer(server) && server.level === 'free', 'developer': !disabledServer(server) && server.level === 'developer', 'selected': (serverName === server.name) && cypherpunkEnabled }" (click)="setServerDetails(server)">
+          <div class="location" [ngClass]="{'disabled': disabledServer(server), 'premium': !disabledServer(server) && server.level === 'premium', 'free': !disabledServer(server) && server.level === 'free', 'developer': !disabledServer(server) && server.level === 'developer', 'selected': (serverName === server.name) && cypherpunkEnabled }" (click)="setServerDetails(server)" (mouseenter)="setHoverServer(server)">
 
             <img class="flag" src="{{'/assets/flags/24/' + server.country + '.png' }}" />
 

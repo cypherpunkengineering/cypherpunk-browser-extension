@@ -1,47 +1,33 @@
-<div id="sub-menu">
-  <div id="header" (click)="goToView('home')" class="page-header bottom-separator">
-    <span class="back-icon">&#x3008;</span>Settings
+<div class="settings">
+  <div class="settings-banner">
+    <span>Configuration</span>
   </div>
 
-  <!-- Crypto Profile -->
-  <div (click)="goToView('app-proxy-mode')" class="switch-row highlighted clickable bottom-separator">
-    <div class="label half">Proxy Mode</div>
-    <div class="switch half">
-      <span class="forward-icon">&#x3009;</span>
-    </div>
-  </div>
+  <div class="content">
+    <div class="pane">
+      <!-- Crypto Profile -->
+      <div (click)="goToView('app-proxy-mode')" class="setting bottom-separator">
+        <div class="icon page">Proxy Mode</div>
+      </div>
 
-  <!-- Privacy Filter -->
-  <div (click)="goToView('app-privacy-filter')" class="switch-row highlighted clickable bottom-separator">
-    <div class="label half">Privacy Filter</div>
-    <div class="switch half">
-      <span class="forward-icon">&#x3009;</span>
-    </div>
-  </div>
+      <!-- Privacy Filter -->
+      <div (click)="goToView('app-privacy-filter')" class="setting bottom-separator">
+        <div class="icon page">Privacy Filter</div>
+      </div>
 
-  <!-- WebRTC Leak Protection - Chrome -->
-  <div (click)="goToView('app-web-rtc')" class="switch-row highlighted clickable bottom-separator" *ngIf="!isFirefox">
-    <div class="label more-than-half">WebRTC Leak Prevention</div>
-    <div class="switch less-than-half">
-      {{webRTCType}}
-      <span class="forward-icon">&#x3009;</span>
-    </div>
-  </div>
+      <!-- WebRTC Leak Protection - Chrome -->
+      <div (click)="goToView('app-web-rtc')" class="setting bottom-separator" *ngIf="!isFirefox">
+        <div class="data" [attr.data-value]="webRTCType">WebRTC Leak Prevention</div>
+      </div>
 
-  <div (click)="goToView('app-web-rtc')" class="switch-row highlighted clickable bottom-separator" *ngIf="isFirefox">
-    <div class="label more-than-half">WebRTC Leak Prevention</div>
-    <div class="switch less-than-half">
-      {{ffWebRTCType}}
-      <span class="forward-icon">&#x3009;</span>
-    </div>
-  </div>
+      <div (click)="goToView('app-web-rtc')" class="setting bottom-separator" *ngIf="isFirefox">
+        <div class="data" [attr.data-value]="ffWebRTCType">WebRTC Leak Prevention</div>
+      </div>
 
-  <!-- User Agent -->
-  <div (click)="goToView('app-user-agent')" class="switch-row highlighted clickable bottom-separator">
-    <div class="label half">User Agent</div>
-    <div class="switch half">
-      {{userAgentType}}
-      <span class="forward-icon">&#x3009;</span>
+      <!-- User Agent -->
+      <div (click)="goToView('app-user-agent')" class="setting">
+        <div class="data" [attr.data-value]="userAgentType">User Agent</div>
+      </div>
     </div>
   </div>
 </div>

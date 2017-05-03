@@ -1,6 +1,13 @@
-<div id="sub-menu">
-  <div id="header" (click)="goToView('app-settings')" class="page-header bottom-separator">
-    <span class="back-icon">&#x3008;</span>{{title}}
+<div class="page">
+  <div class="page-banner">
+    <div class="back" (click)="goToView('app-settings')">
+      <i class="fa fa-angle-left"></i>
+    </div>
+
+    <span>User Agent</span>
+
+    <div class="back">
+    </div>
   </div>
 
   <!-- Private User Agent -->
@@ -37,7 +44,7 @@
   </div>
 
   <!-- Android User Agent -->
-  <div (click)="setUserAgent('ANDROID')" class="option bottom-separator">
+  <div (click)="setUserAgent('ANDROID')" class="option">
     <div class="selected">
       <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'ANDROID'}"></div>
     </div>

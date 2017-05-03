@@ -4,12 +4,11 @@ import { ProxySettingsService } from '../../proxy-settings.service';
 
 @Component({
   selector: 'app-privacy-filter',
-  templateUrl: './privacy-filter.component.html'
+  templateUrl: './privacy-filter.component.html',
+  styleUrls: ['./privacy-filter.component.scss']
 })
 export class PrivacyFilterComponent {
   @Output() changeView = new EventEmitter<string>();
-
-  title = 'Privacy Filter Settings';
 
   blockAds = this.settingsService.privacyFilterAds;
   blockMalware = this.settingsService.privacyFilterMalware;

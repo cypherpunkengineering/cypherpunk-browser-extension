@@ -1,13 +1,18 @@
-<div id="sub-menu">
-  <div id="header" (click)="goToView('app-settings')" class="page-header bottom-separator">
-    <span class="back-icon">&#x3008;</span>WebRTC Leak Prevention
+<div class="page">
+  <div class="page-banner">
+    <div class="back" (click)="goToView('app-settings')">
+      <i class="fa fa-angle-left"></i>
+    </div>
+
+    <span>WebRTC Leak Prevention</span>
+
+    <div class="back">
+    </div>
   </div>
 
   <!-- leak warning -->
-  <div class="single-row highlighted bottom-separator">
-    <div class="label">
-      Activating webrtc leak protection may cause Skype, Google Hangouts, and other video call services from working
-    </div>
+  <div class="single">
+    Activating webrtc leak protection may cause Skype, Google Hangouts, and other video call services from working
   </div>
 
   <!-- Default -->
@@ -47,7 +52,7 @@
   </div>
 
   <!-- Do Not Proxy -->
-  <div class="option bottom-separator" (click)="setWebRTCIPHandlingPolicy('DISABLE_NON_PROXIED_UDP')" *ngIf="!isFirefox">
+  <div class="option" (click)="setWebRTCIPHandlingPolicy('DISABLE_NON_PROXIED_UDP')" *ngIf="!isFirefox">
     <div class="selected">
       <div class="circle" [ngClass]="{'checked': webRtcLeakProtection === 'DISABLE_NON_PROXIED_UDP'}"></div>
     </div>
@@ -71,7 +76,7 @@
   </div>
 
   <!-- Do Not Proxy -->
-  <div class="option bottom-separator" (click)="setFFWebRTCIPHandlingPolicy(true)" *ngIf="isFirefox">
+  <div class="option" (click)="setFFWebRTCIPHandlingPolicy(true)" *ngIf="isFirefox">
     <div class="selected">
       <div class="circle" [ngClass]="{'checked': ffWebRtcLeakProtection === true}"></div>
     </div>

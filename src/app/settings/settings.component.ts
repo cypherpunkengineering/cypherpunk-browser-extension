@@ -3,7 +3,8 @@ import { SettingsService } from '../settings.service';
 
 @Component({
   selector: 'app-settings',
-  templateUrl: './settings.component.html'
+  templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent {
   @Output() changeView = new EventEmitter<string>();

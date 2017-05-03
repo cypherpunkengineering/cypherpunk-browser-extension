@@ -1,10 +1,17 @@
-<div id="sub-menu">
-  <div id="header" (click)="goToView('app-settings')" class="page-header bottom-separator">
-    <span class="back-icon">&#x3008;</span>{{title}}
+<div class="page">
+  <div class="page-banner">
+    <div class="back" (click)="goToView('app-settings')">
+      <i class="fa fa-angle-left"></i>
+    </div>
+
+    <span>Privacy Filter</span>
+
+    <div class="back">
+    </div>
   </div>
 
   <!-- Block Ads -->
-  <div class="switch-row highlighted bottom-separator">
+  <div class="option bottom-separator">
     <div class="label">Block Ads</div>
     <div class="switch">
       <label class="label-switch">
@@ -15,7 +22,7 @@
   </div>
 
   <!-- Block Malware -->
-  <div class="switch-row highlighted bottom-separator">
+  <div class="option">
     <div class="label">Block Malware</div>
     <div class="switch">
       <label class="label-switch">

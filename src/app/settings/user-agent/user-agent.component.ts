@@ -12,7 +12,6 @@ import { SettingsService } from '../../settings.service';
 export class UserAgentComponent {
   @Output() changeView = new EventEmitter<string>();
 
-  title = 'User Agent';
   selectedUserAgentType = this.settingsService.userAgentType;
 
   userAgentStrings = {

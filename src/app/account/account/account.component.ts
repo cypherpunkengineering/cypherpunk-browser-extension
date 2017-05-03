@@ -6,6 +6,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 @Component({
   selector: 'app-account',
   templateUrl: './account.component.html',
+  styleUrls: ['./account.component.scss']
 })
 export class AccountComponent {
   @Input() user;
@@ -18,6 +19,21 @@ export class AccountComponent {
   ) { }
 
   open(url: string) { chrome.tabs.create({ url: url }); }
+
+  printEmail() {
+    if (this.user && this.user.account) { return this.user.account.email; }
+    else { return ''; }
+  }
+
+  printType() {
+    if (this.user && this.user.account) { return this.user.account.type; }
+    else { return ''; }
+  }
+
+  printRenewal() {
+    if (this.user && this.user.subscription) { return this.user.subscription.renewal; }
+    else { return ''; }
+  }
 
   goToPage(url: string) {
     let urlPrepend = 'https://cypherpunk.com';

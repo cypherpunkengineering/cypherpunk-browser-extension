@@ -23,18 +23,15 @@ export class MainComponent {
   }
 
   openAccount() {
-    console.log('hit openAccount');
     this.showAccount = true;
   }
 
   viewConnect() {
-    console.log('view connect');
     this.showAccount = false;
     this.showSettings = false;
   }
 
   openSettings() {
-    console.log('hit openSettings');
     this.showSettings = true;
   }
 }

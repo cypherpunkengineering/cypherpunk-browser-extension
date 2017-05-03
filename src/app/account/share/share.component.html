@@ -1,17 +1,35 @@
-<div id="sub-menu" class="account" style="color: white">
-  <div id="header" (click)="goToView('app-account')" class="page-header bottom-separator">
-    <span class="back-icon">&#x3008;</span>Share
+<div class="share">
+  <div class="share-banner">
+    <div class="back" (click)="goToView('app-account')">
+      <i class="fa fa-angle-left"></i>
+    </div>
+
+    <span>Share</span>
+
+    <div class="back">
+    </div>
   </div>
 
-  <div class="switch-row highlighted clickable bottom-separator" (click)="open('https://www.facebook.com/sharer/sharer.php?u=cypherpunk.com')">
-    <div class="label full">Facebook</div>
-  </div>
+  <div class="content">
+    <div class="pane">
+      Like Cypherpunk Privacy?
+      <br>
+      Please share with your friends!
+    </div>
 
-  <div class="switch-row highlighted clickable bottom-separator" (click)="open('https://twitter.com/home?status=Checkout%20cypherpunk.com')">
-    <div class="label full">Twitter</div>
-  </div>
 
-  <div class="switch-row highlighted clickable bottom-separator" (click)="open('mailto:?subject=Checkout Cypherpunk.com&body=I\'m using Cypherpunk\'s VPN and security products. You should too!')">
-    <div class="label full">Email</div>
+    <div class="share">
+      <div class="row" (click)="open('https://www.facebook.com/sharer/sharer.php?u=cypherpunk.com')">
+        <i class="i fa fa-facebook-official"></i>Facebook
+      </div>
+
+      <div class="row" (click)="open('https://twitter.com/home?status=Checkout%20cypherpunk.com')">
+        <i class="i fa fa-twitter"></i>Twitter
+      </div>
+
+      <div class="row" (click)="open('mailto:?subject=Checkout Cypherpunk.com&body=I\'m using Cypherpunk\'s VPN and security products. You should too!')">
+        <i class="i fa fa-envelope"></i>Email
+      </div>
+    </div>
   </div>
 </div>

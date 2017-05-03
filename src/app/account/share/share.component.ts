@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 @Component({
   selector: 'app-share',
   templateUrl: './share.component.html',
+  styleUrls: ['./share.component.scss']
 })
 export class ShareComponent {
   @Input() user;

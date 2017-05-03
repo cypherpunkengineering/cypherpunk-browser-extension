@@ -1,50 +1,71 @@
-<div id="sub-menu" class="account" style="color: white">
-  <div id="header" (click)="goToView('home')" class="page-header bottom-separator">
-    <span class="back-icon">&#x3008;</span>Back
-  </div>
-
-  <div class="account-banner switch-row bottom-separator">
+<div class="account">
+  <div class="account-banner">
     My Account
   </div>
 
-  <div class="account-info">
-    <div>{{ user.account.email }}</div>
-    <div class="type">{{ user.account.type}}</div>
+  <div class="scrollable">
+    <div class="account-info">
+      <div>{{ printEmail() }}</div>
+      <div class="type">{{ printType() }}</div>
+      <div class="small">{{ printRenewal() }}</div>
+    </div>
+
+    <section class="account-menu">
+      <div class="header">Account Settings</div>
+
+      <div class="setting bottom-separator" (click)="goToPage('/account/upgrade')">
+        <div class="icon external">Manage Account</div>
+      </div>
+
+      <div class="setting bottom-separator" (click)="goToPage('/account')">
+        <div class="icon external">
+          <div>
+            Email
+            <div class="small">{{ printEmail() }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting" (click)="goToPage('/account')">
+        <div class="icon external">Password</div>
+      </div>
+    </section>
+
+    <section class="account-menu">
+      <div class="header">More</div>
+
+      <div class="setting bottom-separator" (click)="goToView('app-share')">
+        <div class="icon page">Share Cypherpunk with a friend</div>
+      </div>
+
+      <div class="setting bottom-separator" (click)="open('https://support.cypherpunk.com/hc/request/new')">
+        <div class="icon external">
+          <div>
+            Open a Support Ticket
+            <div class="small">Your satisfaction is important to us!</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting bottom-separator" (click)="open('https://support.cypherpunk.com/hc')">
+        <div class="icon external">Go to Help Center</div>
+      </div>
+
+      <div class="setting" (click)="logout()">
+        <div class="icon logout">Sign Out</div>
+      </div>
+    </section>
+
+    <section class="links">
+      <div class="icon external" (click)="open('https://cypherpunk.com/terms-of-service')">
+        Terms of Service
+      </div>
+
+      <div class="icon external" (click)="open('https://cypherpunk.com/privacy-policy')">
+        Privacy Policy
+      </div>
+
+    </section>
   </div>
 
-  <section class="account-menu">
-    <div class="header bottom-separator">Account Settings</div>
-
-    <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/account/upgrade')">
-      <div class="label full">Upgrade to Premium</div>
-    </div>
-
-    <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/account')">
-      <div class="label full">Change Email</div>
-    </div>
-
-    <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/account')">
-      <div class="label full">Change Password</div>
-    </div>
-  </section>
-
-  <section class="account-menu">
-    <div class="header bottom-separator">More</div>
-
-    <div class="switch-row highlighted clickable bottom-separator" (click)="goToView('app-share')">
-      <div class="label full">Share with a friend</div>
-    </div>
-
-    <div class="switch-row highlighted clickable bottom-separator" (click)="goToPage('/feedback')">
-      <div class="label full">Feedback</div>
-    </div>
-
-    <div class="switch-row highlighted clickable bottom-separator" (click)="open('https://support.cypherpunk.com/hc')">
-      <div class="label full">Help</div>
-    </div>
-
-    <div class="switch-row highlighted clickable bottom-separator" (click)="logout()">
-      <div class="label full">Log Out</div>
-    </div>
-  </section>
 </div>

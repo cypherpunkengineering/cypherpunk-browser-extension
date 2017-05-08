@@ -1,11 +1,3 @@
-@import '~bourbon/app/assets/stylesheets/_bourbon';
-@import '~bourbon-neat/app/assets/stylesheets/_neat';
-@import '~bourbon-bitters/app/assets/stylesheets/_variables';
-@import '~bourbon-bitters/app/assets/stylesheets/_buttons';
-@import '../../scss/variables';
-
-:host { width: 100%; height: 100%; overflow: hidden; display: block; }
-
 /* Main View Styles */
 #index { color: #fff; }
 
@@ -13,10 +5,11 @@
 #header__main {
   height: 55px;
   padding: 10px 0;
-  background-color: $primary-bg;
+  background-color: #0c1b1e;
   text-align: left;
   border-bottom: 2px solid #19474c;
   position: relative;
+  z-index: 20;
 
   .account {
     position: absolute;
@@ -27,7 +20,7 @@
     border-radius: 50px;
     text-align: center;
     z-index: 2;
-    background-color: $primary-bg;
+    background-color: #0c1b1e;
     height: 60px;
     padding: 10px 0 0 20px;
 
@@ -49,7 +42,7 @@
     border-radius: 50px;
     text-align: center;
     z-index: 2;
-    background-color: $primary-bg;
+    background-color: #0c1b1e;
     height: 60px;
     padding: 10px 20px 0 0;
 
@@ -653,7 +646,7 @@
     flex-direction: column;
     align-items: stretch;
 
-    top: 70px; // edge of titlebar
+    top: 55px; // edge of titlebar
     left: 0;
     width: 100%;
     bottom: 0;

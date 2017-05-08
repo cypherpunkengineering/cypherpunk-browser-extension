@@ -63,11 +63,25 @@
     .circle {
       width: 20px;
       height: 20px;
-      background-color: #fff;
       border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
       margin: auto;
       position: relative;
-      &.checked { background-color: #b39542; }
+      &.checked {
+        border: none !important;
+        box-shadow: 0 0 10px #f8e71c;
+        .circle-inner { background-color: #f8e71c; }
+      }
+
+      .circle-inner {
+        width: 10px;
+        height: 10px;
+        border-radius: 10px;
+        margin: auto;
+        transform: translateY(50%);
+        opacity: 0.8;
+        background-color: transparent;
+      }
     }
   }
 

@@ -18,7 +18,9 @@
   <!-- Default -->
   <div class="option bottom-separator" (click)="setWebRTCIPHandlingPolicy('DEFAULT')" *ngIf="!isFirefox">
     <div class="selected">
-      <div class="circle" [ngClass]="{'checked': webRtcLeakProtection === 'DEFAULT'}"></div>
+      <div class="circle" [ngClass]="{'checked': webRtcLeakProtection === 'DEFAULT'}">
+        <div class="circle-inner"></div>
+      </div>
     </div>
 
     <div class="text">
@@ -30,7 +32,9 @@
   <!-- Fastest Server -->
   <div class="option bottom-separator" (click)="setWebRTCIPHandlingPolicy('DEFAULT_PUBLIC_INTERFACE_ONLY')" *ngIf="!isFirefox">
     <div class="selected">
-      <div class="circle" [ngClass]="{'checked': webRtcLeakProtection === 'DEFAULT_PUBLIC_INTERFACE_ONLY'}"></div>
+      <div class="circle" [ngClass]="{'checked': webRtcLeakProtection === 'DEFAULT_PUBLIC_INTERFACE_ONLY'}">
+        <div class="circle-inner"></div>
+      </div>
     </div>
 
     <div class="text">
@@ -42,7 +46,9 @@
   <!-- Specific Country -->
   <div class="option bottom-separator" (click)="setWebRTCIPHandlingPolicy('DEFAULT_PUBLIC_AND_PRIVATE_INTERFACES')" *ngIf="!isFirefox">
     <div class="selected">
-      <div class="circle" [ngClass]="{'checked': webRtcLeakProtection === 'DEFAULT_PUBLIC_AND_PRIVATE_INTERFACES'}"></div>
+      <div class="circle" [ngClass]="{'checked': webRtcLeakProtection === 'DEFAULT_PUBLIC_AND_PRIVATE_INTERFACES'}">
+        <div class="circle-inner"></div>
+      </div>
     </div>
 
     <div class="text">
@@ -54,7 +60,9 @@
   <!-- Do Not Proxy -->
   <div class="option" (click)="setWebRTCIPHandlingPolicy('DISABLE_NON_PROXIED_UDP')" *ngIf="!isFirefox">
     <div class="selected">
-      <div class="circle" [ngClass]="{'checked': webRtcLeakProtection === 'DISABLE_NON_PROXIED_UDP'}"></div>
+      <div class="circle" [ngClass]="{'checked': webRtcLeakProtection === 'DISABLE_NON_PROXIED_UDP'}">
+        <div class="circle-inner"></div>
+      </div>
     </div>
 
     <div class="text">
@@ -66,7 +74,9 @@
   <!-- Specific Country -->
   <div class="option bottom-separator" (click)="setFFWebRTCIPHandlingPolicy(false)" *ngIf="isFirefox">
     <div class="selected">
-      <div class="circle" [ngClass]="{'checked': ffWebRtcLeakProtection === false}"></div>
+      <div class="circle" [ngClass]="{'checked': ffWebRtcLeakProtection === false}">
+        <div class="circle-inner"></div>
+      </div>
     </div>
 
     <div class="text">
@@ -78,7 +88,9 @@
   <!-- Do Not Proxy -->
   <div class="option" (click)="setFFWebRTCIPHandlingPolicy(true)" *ngIf="isFirefox">
     <div class="selected">
-      <div class="circle" [ngClass]="{'checked': ffWebRtcLeakProtection === true}"></div>
+      <div class="circle" [ngClass]="{'checked': ffWebRtcLeakProtection === true}">
+        <div class="circle-inner"></div>
+      </div>
     </div>
 
     <div class="text">

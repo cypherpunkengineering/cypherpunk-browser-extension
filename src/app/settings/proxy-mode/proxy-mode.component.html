@@ -13,7 +13,9 @@
   <!-- Smart Routing -->
   <div (click)="selectPrivacyMode(false)" class="option bottom-separator">
     <div class="selected">
-      <div class="circle" [ngClass]="{'checked': !privacyMode}"></div>
+      <div class="circle" [ngClass]="{'checked': !privacyMode}">
+        <div class="circle-inner"></div>
+      </div>
     </div>
     <div class="text">
       <div class="label">Max Speed</div>
@@ -27,7 +29,9 @@
   <!-- Fastest Server -->
   <div (click)="selectPrivacyMode(true)" class="option bottom-separator">
     <div class="selected">
-      <div class="circle" [ngClass]="{'checked': privacyMode}"></div>
+      <div class="circle" [ngClass]="{'checked': privacyMode}">
+        <div class="circle-inner"></div>
+      </div>
     </div>
     <div class="text">
       <div class="label">Max Privacy</div>

@@ -228,11 +228,10 @@ body {
     display: none;
 
     + .checkbox {
-      background: $switch-background;
       border: 0;
       border-radius: $switch-radius;
       cursor: pointer;
-      height: $switch-height;
+      height: 15px;
       margin: 0;
       padding: 0;
       position: relative;
@@ -242,20 +241,21 @@ body {
       box-shadow: $switch-shadow;
 
       &::before {
-        @include position(absolute, 2px 0 0 2px);
+        @include position(absolute, 6px 0 0 2px);
         border-radius: $switch-radius;
         content: "";
-        height: $knob-radius;
-        transform: scale(1);
+        height: 14px;
+        background: rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
-        width: $switch-width - ($switch-padding * 2);
+        width: 40px;
         z-index: 1;
       }
 
       &::after {
         @include position(absolute, 3px 0 0 4px);
-        @include size($knob-size);
-        background: $knob-color;
+        width: 20px;
+        height: 20px;
+        background: #cee linear-gradient(135deg, transparent 45%, rgba(0,0,0,0.2) 55%);
         border-radius: $knob-radius;
         box-shadow: $knob-shadow;
         content: "";
@@ -273,13 +273,12 @@ body {
 
     &:checked {
       + .checkbox {
-        background: $switch-active-color;
-
-        &::before { transform: scale(0); }
+        &::before {
+          background-color: #b69812 !important;
+        }
         &::after {
-          background: $knob-active-color;
+          background-color: #f8cf1c;
           left: 22px;
-          top: 3px;
         }
       }
     }

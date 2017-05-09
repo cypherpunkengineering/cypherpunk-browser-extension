@@ -12,56 +12,57 @@
     </div>
   </div>
 
-  <!-- Private User Agent -->
-  <div (click)="setUserAgent('PRIVATE')" class="option bottom-separator">
-    <div class="selected">
-      <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'PRIVATE'}">
-        <div class="circle-inner"></div>
+  <div class="pane">
+    <!-- Private User Agent -->
+    <div (click)="setUserAgent('PRIVATE')" class="option bottom-separator" [ngClass]="{'active': selectedUserAgentType === 'PRIVATE'}">
+      <div class="selected">
+        <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'PRIVATE'}">
+          <div class="circle-inner"></div>
+        </div>
+      </div>
+
+      <div class="text">
+        <div class="label">Private User Agent</div>
       </div>
     </div>
 
-    <div class="text">
-      <div class="label">Private User Agent</div>
-    </div>
-  </div>
+    <!-- Default User Agent -->
+    <div (click)="setUserAgent('DEFAULT')" class="option bottom-separator" [ngClass]="{'active': selectedUserAgentType === 'DEFAULT'}">
+      <div class="selected">
+        <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'DEFAULT'}">
+          <div class="circle-inner"></div>
+        </div>
+      </div>
 
-  <!-- Default User Agent -->
-  <div (click)="setUserAgent('DEFAULT')" class="option bottom-separator">
-    <div class="selected">
-      <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'DEFAULT'}">
-        <div class="circle-inner"></div>
+      <div class="text">
+        <div class="label">Default User Agent</div>
       </div>
     </div>
 
-    <div class="text">
-      <div class="label">Default User Agent</div>
-    </div>
-  </div>
+    <!-- iOS User Agent -->
+    <div (click)="setUserAgent('IOS')" class="option bottom-separator" [ngClass]="{'active': selectedUserAgentType === 'IOS'}">
+      <div class="selected">
+        <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'IOS'}">
+          <div class="circle-inner"></div>
+        </div>
+      </div>
 
-  <!-- iOS User Agent -->
-  <div (click)="setUserAgent('IOS')" class="option bottom-separator">
-    <div class="selected">
-      <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'IOS'}">
-        <div class="circle-inner"></div>
+      <div class="text">
+        <div class="label">iOS User Agent</div>
       </div>
     </div>
 
-    <div class="text">
-      <div class="label">iOS User Agent</div>
-    </div>
-  </div>
+    <!-- Android User Agent -->
+    <div (click)="setUserAgent('ANDROID')" class="option" [ngClass]="{'active': selectedUserAgentType === 'ANDROID'}">
+      <div class="selected">
+        <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'ANDROID'}">
+          <div class="circle-inner"></div>
+        </div>
+      </div>
 
-  <!-- Android User Agent -->
-  <div (click)="setUserAgent('ANDROID')" class="option">
-    <div class="selected">
-      <div class="circle" [ngClass]="{'checked': selectedUserAgentType === 'ANDROID'}">
-        <div class="circle-inner"></div>
+      <div class="text">
+        <div class="label">Android User Agent</div>
       </div>
     </div>
-
-    <div class="text">
-      <div class="label">Android User Agent</div>
-    </div>
   </div>
-
 </div>

@@ -12,25 +12,27 @@
     </div>
   </div>
 
-  <!-- Block Ads -->
-  <div class="option bottom-separator">
-    <div class="label">Block Ads</div>
-    <div class="switch">
-      <label class="label-switch">
-        <input #forceHttps type="checkbox" [(ngModel)]="blockAds" (ngModelChange)="toggleBlockAds($event)" />
-        <div class="checkbox"></div>
-      </label>
+  <div class="pane">
+    <!-- Block Ads -->
+    <div class="option bottom-separator" [ngClass]="{'active': blockAds}">
+      <div class="label">Block Ads</div>
+      <div class="switch">
+        <label class="label-switch">
+          <input #forceHttps type="checkbox" [(ngModel)]="blockAds" (ngModelChange)="toggleBlockAds($event)" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
     </div>
-  </div>
 
-  <!-- Block Malware -->
-  <div class="option">
-    <div class="label">Block Malware</div>
-    <div class="switch">
-      <label class="label-switch">
-        <input #forceHttps type="checkbox" [(ngModel)]="blockMalware" (ngModelChange)="toggleBlockMalware($event)" />
-        <div class="checkbox"></div>
-      </label>
+    <!-- Block Malware -->
+    <div class="option" [ngClass]="{'active': blockMalware}">
+      <div class="label">Block Malware</div>
+      <div class="switch">
+        <label class="label-switch">
+          <input #forceHttps type="checkbox" [(ngModel)]="blockMalware" (ngModelChange)="toggleBlockMalware($event)" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
     </div>
   </div>
 </div>

@@ -13,33 +13,35 @@
   </div>
 
   <!-- Smart Routing -->
-  <div (click)="selectPrivacyMode(false)" class="option bottom-separator">
-    <div class="selected">
-      <div class="circle" [ngClass]="{'checked': !privacyMode}">
-        <div class="circle-inner"></div>
+  <div class="pane">
+    <div (click)="selectPrivacyMode(false)" class="option bottom-separator" [ngClass]="{'active': !privacyMode}">
+      <div class="selected">
+        <div class="circle" [ngClass]="{'checked': !privacyMode}">
+          <div class="circle-inner"></div>
+        </div>
+      </div>
+      <div class="text">
+        <div class="label">Max Speed</div>
+        <div class="desc">No Additional encryption</div>
+        <div class="info">
+          HTTP Proxy mode
+        </div>
       </div>
     </div>
-    <div class="text">
-      <div class="label">Max Speed</div>
-      <div class="desc">No Additional encryption</div>
-      <div class="info">
-        HTTP Proxy mode
-      </div>
-    </div>
-  </div>
 
-  <!-- Fastest Server -->
-  <div (click)="selectPrivacyMode(true)" class="option bottom-separator">
-    <div class="selected">
-      <div class="circle" [ngClass]="{'checked': privacyMode}">
-        <div class="circle-inner"></div>
+    <!-- Fastest Server -->
+    <div (click)="selectPrivacyMode(true)" class="option" [ngClass]="{'active': privacyMode}">
+      <div class="selected">
+        <div class="circle" [ngClass]="{'checked': privacyMode}">
+          <div class="circle-inner"></div>
+        </div>
       </div>
-    </div>
-    <div class="text">
-      <div class="label">Max Privacy</div>
-      <div class="desc">Strong Encryption</div>
-      <div class="info">
-        HTTPS / TLS Proxy mode
+      <div class="text">
+        <div class="label">Max Privacy</div>
+        <div class="desc">Strong Encryption</div>
+        <div class="info">
+          HTTPS / TLS Proxy mode
+        </div>
       </div>
     </div>
   </div>

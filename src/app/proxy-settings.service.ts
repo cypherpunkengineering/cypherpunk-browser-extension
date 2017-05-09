@@ -130,6 +130,7 @@ export class ProxySettingsService {
   }
 
   enableProxy() {
+    if (!this.settingsService.enabled) { return; }
     if (!this.latencyList || !this.servers) { return; }
     let config = this.generatePACConfig();
 

@@ -246,7 +246,7 @@
 //     this.selectedRouteServerFlag =  '/assets/index-key.png';
 //     let fastestServer = this.proxySettingsService.getFastestServer();
 //     if (fastestServer) { this.selectedRouteServerName = fastestServer.name; }
-//     else { this.selectedRouteServerName = 'Cypherplay Server'; }
+//     else { this.selectedRouteServerName = 'CypherPlay Server'; }
 //   }
 //
 //   applyFastestProxy() {

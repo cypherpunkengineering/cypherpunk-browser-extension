@@ -62,11 +62,11 @@
         <div class="title" *ngIf="!cypherpunkEnabled">Connect To</div>
         <div class="title" *ngIf="cypherpunkEnabled">Connected To</div>
 
-        <div class="cypherplay" *ngIf="cypherpunkEnabled && serverName === 'Cypherplay™'">
+        <div class="cypherplay" *ngIf="cypherpunkEnabled && serverName === 'CypherPlay™'">
           <img src="/assets/icon_cypherplay@2x.png">
-          Cypherplay&trade;
+          CypherPlay&trade;
         </div>
-        <div class="location" [ngClass]="{'premium': serverLevel === 'premium', 'free': serverLevel === 'free', 'developer': serverLevel === 'developer'}" *ngIf="cypherpunkEnabled && serverName !== 'Cypherplay™'">
+        <div class="location" [ngClass]="{'premium': serverLevel === 'premium', 'free': serverLevel === 'free', 'developer': serverLevel === 'developer'}" *ngIf="cypherpunkEnabled && serverName !== 'CypherPlay™'">
 
           <img class="flag" src="{{serverFlag}}" />
 
@@ -78,10 +78,10 @@
 
       <!-- Server Listing -->
       <div class="list">
-        <!-- Cypherplay -->
-        <div class="cypherplay" [ngClass]="{'selected': (serverName === 'Cypherplay™') && cypherpunkEnabled}" (click)="setServerDetails({ name: 'cypherplay'})" (mouseenter)="setHoverServer(cypherplayMarker)">
+        <!-- CypherPlay -->
+        <div class="cypherplay" [ngClass]="{'selected': (serverName === 'CypherPlay™') && cypherpunkEnabled}" (click)="setServerDetails({ name: 'cypherplay'})" (mouseenter)="setHoverServer(cypherplayMarker)">
           <img src="/assets/icon_cypherplay@2x.png">
-          Cypherplay&trade;
+          CypherPlay&trade;
           <span>AUTO</span>
         </div>
 

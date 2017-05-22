@@ -59,9 +59,9 @@ export class IndexComponent implements AfterViewChecked {
     this.serverLevel = this.settingsService.serverLevel;
     this.accountType = this.settingsService.accountType;
 
-    // Check for Cypherplay set as default
+    // Check for CypherPlay set as default
     if (!this.serverId) {
-      this.serverName = 'Cypherplay™';
+      this.serverName = 'CypherPlay™';
       this.serverFlag = '/assets/icon_cypherplay@2x.png';
     }
 
@@ -230,7 +230,7 @@ export class IndexComponent implements AfterViewChecked {
   }
 
   setServerDetails(server) {
-    if (server.name === 'cypherplay' && this.serverName === 'Cypherplay™' && this.cypherpunkEnabled) { return; }
+    if (server.name === 'cypherplay' && this.serverName === 'CypherPlay™' && this.cypherpunkEnabled) { return; }
     else if (server.name === 'cypherplay') { /** do nothing **/ }
     else if (this.disabledServer(server)) { return; }
     else if ((server.id === this.serverId) && this.cypherpunkEnabled) { return; }
@@ -242,7 +242,7 @@ export class IndexComponent implements AfterViewChecked {
     if (server.name === 'cypherplay') {
       this.serverId = '';
       this.serverLevel = '';
-      this.serverName = 'Cypherplay™';
+      this.serverName = 'CypherPlay™';
       this.serverFlag = '/assets/icon_cypherplay@2x.png';
       this.currentServer = this.cypherplayMarker;
       this.hoverServer = this.cypherplayMarker;

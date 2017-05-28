@@ -6,7 +6,7 @@
 
 .left {
   width: 290px;
-  transform: translateX(-100%);
+  transform: translateX(-75%);
   display: block;
   position: absolute;
   z-index: 5;
@@ -16,6 +16,7 @@
 .center {
   position: absolute;
   overflow: hidden;
+  z-index: 50;
   &.slide-right { transform: translateX(290px); }
   &.slide-left { transform: translateX(-290px); }
 
@@ -40,7 +41,7 @@
 
 .right {
   width: 290px;
-  transform: translateX(360px);
+  transform: translateX(290px);
   display: block;
   position: absolute;
   z-index: 5;

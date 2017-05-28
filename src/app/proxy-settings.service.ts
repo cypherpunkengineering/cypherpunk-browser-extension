@@ -18,10 +18,10 @@ export class ProxySettingsService {
 
   constructor (
     private http: Http,
-    private localStorageService: LocalStorageService,
-    private settingsService: SettingsService,
     private hqService: HqService,
-    private pingService: PingService
+    private pingService: PingService,
+    private settingsService: SettingsService,
+    private localStorageService: LocalStorageService
   ) {
     // Try to load cached server info
     let serverData = this.settingsService.proxySettingsService();

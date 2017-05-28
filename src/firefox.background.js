@@ -15,9 +15,9 @@ var PROXY_SERVERS_ARR = 'cypherpunk.proxyServersArr';
 var PAC_SCRIPT_CONFIG = 'cypherpunk.pacScriptConfig';
 var USER_AGENT_STRING = 'cypherpunk.settings.userAgent.string';
 var WEB_RTC_LEAK_PROTECTION = 'cypherpunk.settings.ffWebRTCLeakProtection';
-var SITE_OVERRIDES = 'cypherpunk.settings.siteOverrides';
 var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
 var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
+var MICROPHONE_PROTECTION = 'cypherpunk.microphoneProtection';
 
 // variables from localStorage
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
@@ -25,30 +25,41 @@ var cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
 var serverArr = JSON.parse(localStorage.getItem(PROXY_SERVERS_ARR));
 var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
 var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
-var siteOverrides = JSON.parse(localStorage.getItem(SITE_OVERRIDES));
+var microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
+
 
 /** Start up code **/
+
+// Enable Ad/Malware blocking
+if (globalBlockAds || globalBlockMalware) { enablePrivacyFilter(); }
+else { disablePrivacyFilter(); }
+
+// Enable user agent spoofing if user agent string supplied
+userAgentString = localStorage.getItem(USER_AGENT_STRING);
+if (userAgentString) { enableUserAgentSpoofing(); }
+else { disableUserAgentSpoofing(); }
+
+// Enable/Disable WebRTC leak protection depending on saved setting
+var webRTCLeakProtectionEnabled = localStorage.getItem(WEB_RTC_LEAK_PROTECTION) === 'true';
+if (webRTCLeakProtectionEnabled) { enableWebRTCLeakProtection(); }
+else { disableWebRTCLeakProtection(); }
+
+microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
+if (microphoneProtection) { enableMicrophoneProtection(); }
+else { disableMicrophoneProtection(); }
+
+// save all the open tabs
+if (cypherpunkEnabled) { init(); }
+else {
+  // Attempt to load proxy servers even if not enabled
+  loadProxies();
+  destroy();
+}
 
 function init() {
   loadProxies(); // Attempt to fetch Proxy Servers
   applyProxy(); // Attempt to load PAC Script
 
-  // Enable Ad/Malware blocking
-  siteOverrides = JSON.parse(localStorage.getItem(SITE_OVERRIDES));
-  if (siteOverrides) { enablePrivacyFilter(); }
-  else { disablePrivacyFilter(); }
-
-  // Enable user agent spoofing if user agent string supplied
-  userAgentString = localStorage.getItem(USER_AGENT_STRING);
-  if (userAgentString) { enableUserAgentSpoofing(); }
-  else { disableUserAgentSpoofing(); }
-
-  // Enable/Disable WebRTC leak protection depending on saved setting
-  var webRTCLeakProtectionEnabled = localStorage.getItem(WEB_RTC_LEAK_PROTECTION) === 'true';
-  if (webRTCLeakProtectionEnabled) { enableWebRTCLeakProtection(); }
-  else { disableWebRTCLeakProtection(); }
-
-  // Set icon to colored Cypherpunk
   chrome.browserAction.setIcon({
    path : {
      "128": "assets/cypherpunk_shaded_128.png",
@@ -67,6 +78,7 @@ function destroy() {
   disableUserAgentSpoofing(); // Disable user agent spoofing
   disableWebRTCLeakProtection(); // Disable webRTC leak protection
   disablePrivacyFilter(); // Disable proxy filter onWebRequest
+  disableMicrophoneProtection();
 
   // Set icon to grey Cypherpunk
   chrome.browserAction.setIcon({
@@ -81,15 +93,6 @@ function destroy() {
      }
   });
 }
-
-// save all the open tabs
-if (cypherpunkEnabled) { init(); }
-else {
-  // Attempt to load proxy servers even if not enabled
-  loadProxies();
-  destroy();
-}
-
 
 /* PROXY SERVER PINGING FUNCTIONALITY */
 
@@ -281,36 +284,17 @@ function cancelRequest(details) {
   // so keeping track of tabs is unnecessary
   if (!details.originUrl) { return { cancel: false }; }
 
-  // find tab that request originated from
-  var originUrl = details.originUrl;
-  let match = originUrl.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
-  originUrl = match ? match[1] : null;
-
-  // booleans that indicate whether which lists to lookup
-  var checkAds = false;
-  var checkMalware = false;
-
-  // check if originUrl is part of whitelist
-  var localPrivacySettings = siteOverrides[originUrl];
-  if (localPrivacySettings) {
-    checkAds = localPrivacySettings.blockAds;
-    checkMalware = localPrivacySettings.blockMalware;
-  }
-  else {
-    checkAds = globalBlockAds;
-    checkMalware = globalBlockMalware;
-  }
-
+  // check list based on global boolean values
   var outgoingUrl = details.url;
   var adListFound = false;
-  if (checkAds) {
+  if (globalBlockAds) {
     adListFound = !!adList.find(function(adUrl) {
       return outgoingUrl.indexOf(adUrl) !==1;
     });
   }
 
   var malwareListFound = false;
-  if (checkMalware) {
+  if (globalBlockMalware) {
     malwareListFound = !!malwareList.find(function(malwareUrl) {
       return outgoingUrl.indexOf(malwareUrl) !==1;
     });
@@ -337,7 +321,7 @@ function enablePrivacyFilter() {
 
 
 /* Event Listener Triggers */
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request) {
   if (request.action === 'CypherpunkEnabled') {
     console.log('cypher enabled');
     cypherpunkEnabled = localStorage.getItem('cypherpunk.enabled') === 'true';
@@ -352,16 +336,20 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     else { disableUserAgentSpoofing(); }
   }
   else if (request.action === 'updatePrivacyFilter') {
-    cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
-    if (!cypherpunkEnabled) { return; }
-    siteOverrides = JSON.parse(localStorage.getItem(SITE_OVERRIDES));		
     globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
     globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
+    if (globalBlockAds || globalBlockMalware) { enablePrivacyFilter(); }
+    else { disablePrivacyFilter(); }
+  }
+  else if (request.action === 'updateMicrophoneProtection') {
+    microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
+    if (microphoneProtection) { enableMicrophoneProtection(); }
+    else { disableMicrophoneProtection(); }
   }
 });
 
 /* Clear cache on url change so ip doesn't leak from previous site */
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
   if (changeInfo.status === 'loading') {
     chrome.runtime.sendMessage({ action: 'ClearCache' });
   }
@@ -371,3 +359,17 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 chrome.management.onUninstalled.addListener((extId) => {
   if (extId === chrome.runtime.id) { destroy(); }
 });
+
+function enableMicrophoneProtection() {
+  chrome.contentSettings.microphone.set({
+    primaryPattern: '<all_urls>',
+    setting: 'block'
+  });
+}
+
+function disableMicrophoneProtection() {
+  chrome.contentSettings.microphone.set({
+    primaryPattern: '<all_urls>',
+    setting: 'ask'
+  });
+}

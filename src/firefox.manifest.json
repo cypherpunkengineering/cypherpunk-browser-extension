@@ -28,6 +28,7 @@
     "webRequest",
     "webRequestBlocking",
     "storage",
+    "contentSettings",
     "<all_urls>"
   ],
 

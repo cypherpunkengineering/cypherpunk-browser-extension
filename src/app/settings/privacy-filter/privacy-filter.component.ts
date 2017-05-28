@@ -12,6 +12,7 @@ export class PrivacyFilterComponent {
 
   blockAds = this.settingsService.privacyFilterAds;
   blockMalware = this.settingsService.privacyFilterMalware;
+  microphoneProtection = this.settingsService.microphoneProtection;
 
   constructor(
     private settingsService: SettingsService,
@@ -28,6 +29,11 @@ export class PrivacyFilterComponent {
     this.settingsService.savePrivacyFilterMalware(enabled);
     this.proxySettingsService.enableProxy();
     chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
+  }
+
+  toggleMicrophoneProtection(enabled: boolean) {
+    this.settingsService.saveMicrophoneProtection(enabled);
+    chrome.runtime.sendMessage({ action: 'updateMicrophoneProtection' });
   }
 
   goToView(name: string) {

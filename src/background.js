@@ -16,44 +16,60 @@ var PROXY_SERVERS_ARR = 'cypherpunk.proxyServersArr';
 var PAC_SCRIPT_CONFIG = 'cypherpunk.pacScriptConfig';
 var USER_AGENT_STRING = 'cypherpunk.settings.userAgent.string';
 var WEB_RTC_LEAK_PROTECTION = 'cypherpunk.settings.webRTCLeakProtection';
-var SITE_OVERRIDES ='cypherpunk.settings.siteOverrides';
 var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
 var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
+var MICROPHONE_PROTECTION = 'cypherpunk.microphoneProtection';
 
 // variables from localStorage
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
 var cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
 var serverArr = JSON.parse(localStorage.getItem(PROXY_SERVERS_ARR));
 var webRTCLeakProtectionType = JSON.parse(localStorage.getItem(WEB_RTC_LEAK_PROTECTION));
-var siteOverrides = JSON.parse(localStorage.getItem(SITE_OVERRIDES));
 var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
 var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
+var microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
 
 
 /** Start up code **/
 
+// Enable Privacy Filter
+if (globalBlockAds || globalBlockMalware) { enablePrivacyFilter(); }
+else { disablePrivacyFilter(); }
+
+// Enable user agent spoofing if user agent string supplied
+userAgentString = localStorage.getItem(USER_AGENT_STRING);
+if (userAgentString) { enableUserAgentSpoofing(); }
+else { disableUserAgentSpoofing(); }
+
+// Enable Web RTC Leak Protection
+webRTCLeakProtectionType = JSON.parse(localStorage.getItem(WEB_RTC_LEAK_PROTECTION));
+if (webRTCLeakProtectionType) { updateWebRTCLeakProtection(webRTCLeakProtectionType); }
+else { updateWebRTCLeakProtection('DEFAULT'); }
+
+// Enable force http if it's enabled
+// if (forceHttps) { enableForceHttps(); }
+// else { disableForceHttps(); }
+
+// Microphone protection
+microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
+if (microphoneProtection) { enableMicrophoneProtection(); }
+else { disableMicrophoneProtection(); }
+
+// save all the open tabs
+chrome.tabs.query({}, function(results) {
+  results.forEach(function(tab) { tabs[tab.id] = tab; });
+});
+
+if (cypherpunkEnabled) { init(); }
+else {
+  // Try to load servers even if cypherpunk is not enabled
+  loadProxies();
+  disableProxy();
+}
+
 function init() {
   applyProxy();  // Attempt to load PAC Script
   loadProxies(); // Attempt to fetch Proxy Servers
-
-  // Enable force http if it's enabled
-  // if (forceHttps) { enableForceHttps(); }
-  // else { disableForceHttps(); }
-
-  // Enable Privacy Filter
-  siteOverrides = JSON.parse(localStorage.getItem(SITE_OVERRIDES));
-  if (siteOverrides) { enablePrivacyFilter(); }
-  else { disablePrivacyFilter(); }
-
-  // Enable user agent spoofing if user agent string supplied
-  userAgentString = localStorage.getItem(USER_AGENT_STRING);
-  if (userAgentString) { enableUserAgentSpoofing(); }
-  else { disableUserAgentSpoofing(); }
-
-  // Enable Web RTC Leak Protection
-  webRTCLeakProtectionType = JSON.parse(localStorage.getItem(WEB_RTC_LEAK_PROTECTION));
-  if (webRTCLeakProtectionType) { updateWebRTCLeakProtection(webRTCLeakProtectionType); }
-  else { updateWebRTCLeakProtection('DEFAULT'); }
 
   chrome.browserAction.setIcon({
    path : {
@@ -75,6 +91,8 @@ function destroy() {
   disableProxy();
   disablePrivacyFilter();
   updateWebRTCLeakProtection('DEFAULT');
+  disableMicrophoneProtection();
+
   chrome.browserAction.setIcon({
     path : {
       "128": "assets/cypherpunk_grey_128.png",
@@ -86,18 +104,6 @@ function destroy() {
       "16": "assets/cypherpunk_grey_16.png"
      }
   });
-}
-
-// save all the open tabs
-chrome.tabs.query({}, function(results) {
-  results.forEach(function(tab) { tabs[tab.id] = tab; });
-});
-
-if (cypherpunkEnabled) { init(); }
-else {
-  // Try to load servers even if cypherpunk is not enabled
-  loadProxies();
-  destroy();
 }
 
 /* PROXY SERVER PINGING FUNCTIONALITY */
@@ -310,36 +316,17 @@ function cancelRequest(details) {
   if (details.tabId < 0) { return { cancel: false }; }
   if (!tabs[details.tabId]) { return { cancel: false }; }
 
-  // find tab that request originated from
-  var originUrl = tabs[details.tabId].url;
-  let match = originUrl.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/);
-  originUrl = match ? match[1] : null;
-
-  // booleans that indicate whether which lists to lookup
-  var checkAds = false;
-  var checkMalware = false;
-
-  // check if originUrl is part of whitelist
-  var localPrivacySettings = siteOverrides[originUrl];
-  if (localPrivacySettings) {
-    checkAds = localPrivacySettings.blockAds;
-    checkMalware = localPrivacySettings.blockMalware;
-  }
-  else {
-    checkAds = globalBlockAds;
-    checkMalware = globalBlockMalware;
-  }
-
+  // Check list based on global boolean values
   var outgoingUrl = details.url;
   var adListFound = false;
-  if (checkAds) {
+  if (globalBlockAds) {
     adListFound = !!adList.find(function(adUrl) {
       return outgoingUrl.indexOf(adUrl) !==1;
     });
   }
 
   var malwareListFound = false;
-  if (checkMalware) {
+  if (globalBlockMalware) {
     malwareListFound = !!malwareList.find(function(malwareUrl) {
       return outgoingUrl.indexOf(malwareUrl) !==1;
     });
@@ -366,14 +353,12 @@ function enablePrivacyFilter() {
 
 
 // Event Listener Triggers
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+chrome.runtime.onMessage.addListener(function(request){
   if (request.action === 'CypherpunkEnabled'){
     console.log('cypher enabled');
     cypherpunkEnabled = localStorage.getItem(ENABLED) === 'true';
-    // Cypherpunk is turned on, enable features based on settings
     if (cypherpunkEnabled) { init(); }
-    // Cypherpunk is turned off, disable all features
-    else { destroy(); }
+    else { disableProxy(); }
   }
   else if (request.action === 'UserAgentSpoofing') {
     userAgentString = localStorage.getItem(USER_AGENT_STRING);
@@ -381,17 +366,21 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     else { disableUserAgentSpoofing(); }
   }
   else if (request.action === "UpdateWebRTCPolicy") {
-    if (!cypherpunkEnabled) { return; }
     webRTCLeakProtectionType = JSON.parse(localStorage.getItem(WEB_RTC_LEAK_PROTECTION));
     updateWebRTCLeakProtection(webRTCLeakProtectionType);
   }
   else if (request.action === 'updatePrivacyFilter') {
-    cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
-    if (!cypherpunkEnabled) { return; }
-    siteOverrides = JSON.parse(localStorage.getItem(SITE_OVERRIDES));
     globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
     globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
+    if (globalBlockAds || globalBlockMalware) { enablePrivacyFilter(); }
+    else { disablePrivacyFilter(); }
   }
+  else if (request.action === 'updateMicrophoneProtection') {
+    microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
+    if (microphoneProtection) { enableMicrophoneProtection(); }
+    else { disableMicrophoneProtection(); }
+  }
+
   // else if (request.action === "ForceHTTPS"){
   //   forceHttps = localStorage.getItem('cypherpunk.settings.forceHttps') === "true"
   //   if (forceHttps) { enableForceHttps(); }
@@ -434,3 +423,17 @@ chrome.management.onUninstalled.addListener((extId) => {
 //     ['blocking']
 //   );
 // }
+
+function enableMicrophoneProtection() {
+  chrome.contentSettings.microphone.set({
+    primaryPattern: '<all_urls>',
+    setting: 'block'
+  });
+}
+
+function disableMicrophoneProtection() {
+  chrome.contentSettings.microphone.set({
+    primaryPattern: '<all_urls>',
+    setting: 'ask'
+  });
+}

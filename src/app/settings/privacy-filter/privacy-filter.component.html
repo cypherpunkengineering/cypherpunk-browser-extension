@@ -18,7 +18,7 @@
       <div class="label">Block Ads</div>
       <div class="switch">
         <label class="label-switch">
-          <input #forceHttps type="checkbox" [(ngModel)]="blockAds" (ngModelChange)="toggleBlockAds($event)" />
+          <input type="checkbox" [(ngModel)]="blockAds" (ngModelChange)="toggleBlockAds($event)" />
           <div class="checkbox"></div>
         </label>
       </div>
@@ -29,7 +29,18 @@
       <div class="label">Block Malware</div>
       <div class="switch">
         <label class="label-switch">
-          <input #forceHttps type="checkbox" [(ngModel)]="blockMalware" (ngModelChange)="toggleBlockMalware($event)" />
+          <input type="checkbox" [(ngModel)]="blockMalware" (ngModelChange)="toggleBlockMalware($event)" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Microphone Protection -->
+    <div class="option" [ngClass]="{'active': microphoneProtection}">
+      <div class="label">Block Microphone</div>
+      <div class="switch">
+        <label class="label-switch">
+          <input type="checkbox" [(ngModel)]="microphoneProtection" (ngModelChange)="toggleMicrophoneProtection($event)" />
           <div class="checkbox"></div>
         </label>
       </div>

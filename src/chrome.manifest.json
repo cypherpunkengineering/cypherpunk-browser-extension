@@ -32,7 +32,8 @@
     "webRequestBlocking",
     "background",
     "storage",
-    "<all_urls>"
+    "<all_urls>",
+    "contentSettings"
   ],
 
   "background": {

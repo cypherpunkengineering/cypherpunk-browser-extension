@@ -41,6 +41,7 @@ class Keys {
   public static PRIVACY_MODE = 'privacyMode';
   public static PRIVACY_FILTER_ADS = 'settings.privacyFilter.blockAds';
   public static PRIVACY_FILTER_MALWARE = 'settings.privacyFilter.blockMalware';
+  public static MICROPHONE_PROTECTION = 'microphoneProtection';
 }
 
 class Defaults {
@@ -59,6 +60,7 @@ class Defaults {
     serverName: '',
     serverFlag: '',
     serverLevel: '',
+    microphoneProtection: false,
     settings: {
       forceHttps: true,
       siteOverrides: {},
@@ -109,6 +111,7 @@ export class SettingsService {
   serverName: string;
   serverFlag: string;
   serverLevel: string;
+  microphoneProtection: boolean;
 
   constructor (private localStorageService: LocalStorageService) {
     // Settings haven't been initialized yet, set defaults
@@ -133,6 +136,7 @@ export class SettingsService {
     this.serverName = this.defaultSetting(Keys.SERVER_NAME);
     this.serverFlag = this.defaultSetting(Keys.SERVER_FLAG);
     this.serverLevel = this.defaultSetting(Keys.SERVER_LEVEL);
+    this.microphoneProtection = this.defaultSetting(Keys.MICROPHONE_PROTECTION);
     if (this.isFirefox()) {
       this.ffWebRtcLeakProtection = this.defaultSetting(Keys.FF_WEB_RTC_LEAK_PROTECTION);
     }
@@ -267,6 +271,11 @@ export class SettingsService {
   savePrivacyFilterMalware(enabled: boolean) {
     this.privacyFilterMalware = enabled;
     this.localStorageService.set(Keys.PRIVACY_FILTER_MALWARE, enabled);
+  }
+
+  saveMicrophoneProtection(enabled: boolean) {
+    this.microphoneProtection = enabled;
+    this.localStorageService.set(Keys.MICROPHONE_PROTECTION, enabled);
   }
 
 

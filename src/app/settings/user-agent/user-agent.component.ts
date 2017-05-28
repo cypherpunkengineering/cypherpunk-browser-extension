@@ -5,9 +5,6 @@ import { SettingsService } from '../../settings.service';
   selector: 'app-user-agent',
   templateUrl: './user-agent.component.html',
   styleUrls: ['./user-agent.component.scss']
-  // styles: [':host { z-index: 2; width: 100%; height: 100%; display: block; position: absolute; }'],
-  // host: { '[@routeAnimation]': 'true' },
-  // animations: Animations.slideFromLeft
 })
 export class UserAgentComponent {
   @Output() changeView = new EventEmitter<string>();

@@ -1,29 +1,10 @@
-import { Component, style, animate, transition, trigger, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-settings-controller',
   templateUrl: './settings-controller.component.html',
-  animations: [
-    trigger('slideIn', [
-      transition('void => static', [
-        style({transform: 'translateX(0)' }),
-        animate('0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000)', style({transform: 'translateX(0)'}))
-      ]),
-      transition('static => void',
-        animate('0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000)', style({transform: 'translateX(0)'}))
-      ),
-      transition('void => dynamic', [
-        style({transform: 'translateX(100%)' }),
-        animate('0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000)')
-      ]),
-      transition('dynamic => void',
-        animate('0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000)', style({
-          transform: 'translateX(100%)'
-        }))
-      )
-    ])
-  ]
+  styleUrls: ['./settings-controller.component.scss']
 })
 export class SettingsControllerComponent {
   @Output() viewConnect = new EventEmitter();

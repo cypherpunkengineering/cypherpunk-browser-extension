@@ -302,12 +302,8 @@ a {
 .view-container {
   width:100%;
   height: 100%;
-  display: block;
   position:absolute;
   box-shadow: 1px 0px 5px 1px rgba(0,0,0,0.5);
-  .parent { z-index: 2; }
-  .child { z-index: 3; }
-  .grandchild { z-index: 4; }
 }
 
 .country-select {

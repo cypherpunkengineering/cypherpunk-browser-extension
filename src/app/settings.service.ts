@@ -44,6 +44,7 @@ class Keys {
   public static MICROPHONE_PROTECTION = 'microphoneProtection';
   public static CAMERA_PROTECTION = 'cameraProtection';
   public static LOCATION_PROTECTION = 'locationProtection';
+  public static FLASH_PROTECTION = 'flashProtection';
 }
 
 class Defaults {
@@ -65,6 +66,7 @@ class Defaults {
     microphoneProtection: false,
     cameraProtection: false,
     locationProtection: false,
+    flashProtection: false,
     settings: {
       forceHttps: true,
       siteOverrides: {},
@@ -118,6 +120,7 @@ export class SettingsService {
   microphoneProtection: boolean;
   cameraProtection: boolean;
   locationProtection: boolean;
+  flashProtection: boolean;
 
   constructor (private localStorageService: LocalStorageService) {
     // Settings haven't been initialized yet, set defaults
@@ -145,6 +148,7 @@ export class SettingsService {
     this.microphoneProtection = this.defaultSetting(Keys.MICROPHONE_PROTECTION);
     this.cameraProtection = this.defaultSetting(Keys.CAMERA_PROTECTION);
     this.locationProtection = this.defaultSetting(Keys.LOCATION_PROTECTION);
+    this.flashProtection = this.defaultSetting(Keys.FLASH_PROTECTION);
     if (this.isFirefox()) {
       this.ffWebRtcLeakProtection = this.defaultSetting(Keys.FF_WEB_RTC_LEAK_PROTECTION);
     }
@@ -294,6 +298,11 @@ export class SettingsService {
   saveLocationProtection(enabled: boolean) {
     this.locationProtection = enabled;
     this.localStorageService.set(Keys.LOCATION_PROTECTION, enabled);
+  }
+
+  saveFlashProtection(enabled: boolean) {
+    this.flashProtection = enabled;
+    this.localStorageService.set(Keys.FLASH_PROTECTION, enabled);
   }
 
 

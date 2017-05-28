@@ -15,6 +15,7 @@ export class PrivacyFilterComponent {
   microphoneProtection = this.settingsService.microphoneProtection;
   cameraProtection = this.settingsService.cameraProtection;
   locationProtection = this.settingsService.locationProtection;
+  flashProtection = this.settingsService.flashProtection;
 
   constructor(
     private settingsService: SettingsService,
@@ -46,6 +47,11 @@ export class PrivacyFilterComponent {
   toggleLocationProtection(enabled: boolean) {
     this.settingsService.saveLocationProtection(enabled);
     chrome.runtime.sendMessage({ action: 'updateLocationProtection' });
+  }
+
+  toggleFlashProtection(enabled: boolean) {
+    this.settingsService.saveFlashProtection(enabled);
+    chrome.runtime.sendMessage({ action: 'updateFlashProtection' });
   }
 
   goToView(name: string) {

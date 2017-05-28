@@ -67,5 +67,16 @@
         </label>
       </div>
     </div>
+
+    <!-- Plugin Protection -->
+    <div class="option" [ngClass]="{'active': flashProtection}">
+      <div class="label">Block Flash</div>
+      <div class="switch">
+        <label class="label-switch">
+          <input type="checkbox" [(ngModel)]="flashProtection" (ngModelChange)="toggleFlashProtection($event)" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
+    </div>
   </div>
 </div>

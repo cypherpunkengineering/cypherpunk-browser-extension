@@ -20,6 +20,7 @@ var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
 var MICROPHONE_PROTECTION = 'cypherpunk.microphoneProtection';
 var CAMERA_PROTECTION = 'cypherpunk.cameraProtection';
 var LOCATION_PROTECTION = 'cypherpunk.locationProtection';
+var FLASH_PROTECTION = 'cypherpunk.flashProtection';
 
 // variables from localStorage
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
@@ -30,6 +31,7 @@ var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE)
 var microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
 var cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
 var locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
+var flashProtection = JSON.parse(localStorage.getItem(FLASH_PROTECTION));
 
 
 /** Start up code **/
@@ -58,10 +60,15 @@ cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
 if (cameraProtection) { enableCameraProtection(); }
 else { disableCameraProtection(); }
 
-// Enable/Disable Camera Protection depending on saved setting
+// Enable/Disable Location Protection depending on saved setting
 locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
 if (locationProtection) { enableLocationProtection(); }
 else { disableLocationProtection(); }
+
+// Enable/Disable Plugin Protection depending on saved setting
+flashProtection = JSON.parse(localStorage.getItem(FLASH_PROTECTION));
+if (flashProtection) { enableFlashProtection(); }
+else { disableFlashProtection(); }
 
 
 // save all the open tabs
@@ -97,6 +104,7 @@ function destroy() {
   disableMicrophoneProtection();
   disableCameraProtection();
   disableLocationProtection();
+  disableFlashProtection();
 
   // Set icon to grey Cypherpunk
   chrome.browserAction.setIcon({
@@ -388,6 +396,37 @@ function disableLocationProtection() {
   });
 }
 
+
+/** Plugin Protection **/
+
+function enableFlashProtection() {
+  chrome.contentSettings.plugins.getResourceIdentifiers((idents) => {
+    idents.map((id) => {
+      if (id.id === 'adobe-flash-player') {
+        chrome.contentSettings.plugins.set({
+          primaryPattern: '<all_urls>',
+          resourceIdentifier: id,
+          setting: 'block'
+        });
+      }
+    });
+  });
+}
+
+function disableFlashProtection() {
+  chrome.contentSettings.plugins.getResourceIdentifiers((idents) => {
+    idents.map((id) => {
+      if (id.id === 'adobe-flash-player') {
+        chrome.contentSettings.plugins.set({
+          primaryPattern: '<all_urls>',
+          resourceIdentifier: id,
+          setting: 'ask'
+        });
+      }
+    });
+  });
+}
+
 /* Event Listener Triggers */
 chrome.runtime.onMessage.addListener(function(request) {
   if (request.action === 'CypherpunkEnabled') {
@@ -424,7 +463,11 @@ chrome.runtime.onMessage.addListener(function(request) {
     if (locationProtection) { enableLocationProtection(); }
     else { disableLocationProtection(); }
   }
-
+  else if (request.action === 'updateFlashProtection') {
+    flashProtection = JSON.parse(localStorage.getItem(FLASH_PROTECTION));
+    if (flashProtection) { enableFlashProtection(); }
+    else { disableFlashProtection(); }
+  }
 });
 
 /* Clear cache on url change so ip doesn't leak from previous site */

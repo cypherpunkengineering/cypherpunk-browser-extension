@@ -56,5 +56,16 @@
         </label>
       </div>
     </div>
+
+    <!-- Location Protection -->
+    <div class="option" [ngClass]="{'active': locationProtection}">
+      <div class="label">Block Location</div>
+      <div class="switch">
+        <label class="label-switch">
+          <input type="checkbox" [(ngModel)]="locationProtection" (ngModelChange)="toggleLocationProtection($event)" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
+    </div>
   </div>
 </div>

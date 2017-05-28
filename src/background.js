@@ -20,6 +20,7 @@ var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
 var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
 var MICROPHONE_PROTECTION = 'cypherpunk.microphoneProtection';
 var CAMERA_PROTECTION = 'cypherpunk.cameraProtection';
+var LOCATION_PROTECTION = 'cypherpunk.locationProtection';
 
 // variables from localStorage
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
@@ -30,6 +31,7 @@ var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
 var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
 var microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
 var cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
+var locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
 
 
 /** Start up code **/
@@ -57,10 +59,15 @@ microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
 if (microphoneProtection) { enableMicrophoneProtection(); }
 else { disableMicrophoneProtection(); }
 
-// Microphone protection
+// Camera protection
 cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
 if (cameraProtection) { enableCameraProtection(); }
 else { disableCameraProtection(); }
+
+// Location protection
+locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
+if (locationProtection) { enableLocationProtection(); }
+else { disableLocationProtection(); }
 
 // save all the open tabs
 chrome.tabs.query({}, function(results) {
@@ -100,6 +107,7 @@ function destroy() {
   updateWebRTCLeakProtection('DEFAULT');
   disableMicrophoneProtection();
   disableCameraProtection();
+  disableLocationProtection();
 
   chrome.browserAction.setIcon({
     path : {
@@ -377,7 +385,7 @@ function disableMicrophoneProtection() {
 }
 
 
-/** Microphone Protection **/
+/** Camera Protection **/
 
 function enableCameraProtection() {
   chrome.contentSettings.camera.set({
@@ -388,6 +396,23 @@ function enableCameraProtection() {
 
 function disableCameraProtection() {
   chrome.contentSettings.camera.set({
+    primaryPattern: '<all_urls>',
+    setting: 'ask'
+  });
+}
+
+
+/** Location Protection **/
+
+function enableLocationProtection() {
+  chrome.contentSettings.location.set({
+    primaryPattern: '<all_urls>',
+    setting: 'block'
+  });
+}
+
+function disableLocationProtection() {
+  chrome.contentSettings.location.set({
     primaryPattern: '<all_urls>',
     setting: 'ask'
   });
@@ -426,6 +451,11 @@ chrome.runtime.onMessage.addListener(function(request){
     cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
     if (cameraProtection) { enableCameraProtection(); }
     else { disableCameraProtection(); }
+  }
+  else if (request.action === 'updateLocationProtection') {
+    locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
+    if (locationProtection) { enableLocationProtection(); }
+    else { disableLocationProtection(); }
   }
 
   // else if (request.action === "ForceHTTPS"){

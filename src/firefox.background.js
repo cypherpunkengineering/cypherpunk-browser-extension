@@ -19,6 +19,7 @@ var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
 var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
 var MICROPHONE_PROTECTION = 'cypherpunk.microphoneProtection';
 var CAMERA_PROTECTION = 'cypherpunk.cameraProtection';
+var LOCATION_PROTECTION = 'cypherpunk.locationProtection';
 
 // variables from localStorage
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
@@ -28,6 +29,7 @@ var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
 var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
 var microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
 var cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
+var locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
 
 
 /** Start up code **/
@@ -55,6 +57,11 @@ else { disableMicrophoneProtection(); }
 cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
 if (cameraProtection) { enableCameraProtection(); }
 else { disableCameraProtection(); }
+
+// Enable/Disable Camera Protection depending on saved setting
+locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
+if (locationProtection) { enableLocationProtection(); }
+else { disableLocationProtection(); }
 
 
 // save all the open tabs
@@ -89,6 +96,7 @@ function destroy() {
   disablePrivacyFilter(); // Disable proxy filter onWebRequest
   disableMicrophoneProtection();
   disableCameraProtection();
+  disableLocationProtection();
 
   // Set icon to grey Cypherpunk
   chrome.browserAction.setIcon({
@@ -363,6 +371,23 @@ function disableCameraProtection() {
   });
 }
 
+
+/** Location Protection **/
+
+function enableLocationProtection() {
+  chrome.contentSettings.location.set({
+    primaryPattern: '<all_urls>',
+    setting: 'block'
+  });
+}
+
+function disableLocationProtection() {
+  chrome.contentSettings.location.set({
+    primaryPattern: '<all_urls>',
+    setting: 'ask'
+  });
+}
+
 /* Event Listener Triggers */
 chrome.runtime.onMessage.addListener(function(request) {
   if (request.action === 'CypherpunkEnabled') {
@@ -393,6 +418,11 @@ chrome.runtime.onMessage.addListener(function(request) {
     cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
     if (cameraProtection) { enableCameraProtection(); }
     else { disableCameraProtection(); }
+  }
+  else if (request.action === 'updateLocationProtection') {
+    locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
+    if (locationProtection) { enableLocationProtection(); }
+    else { disableLocationProtection(); }
   }
 
 });

@@ -19,6 +19,7 @@ var WEB_RTC_LEAK_PROTECTION = 'cypherpunk.settings.webRTCLeakProtection';
 var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
 var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
 var MICROPHONE_PROTECTION = 'cypherpunk.microphoneProtection';
+var CAMERA_PROTECTION = 'cypherpunk.cameraProtection';
 
 // variables from localStorage
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
@@ -28,6 +29,7 @@ var webRTCLeakProtectionType = JSON.parse(localStorage.getItem(WEB_RTC_LEAK_PROT
 var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
 var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
 var microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
+var cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
 
 
 /** Start up code **/
@@ -54,6 +56,11 @@ else { updateWebRTCLeakProtection('DEFAULT'); }
 microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
 if (microphoneProtection) { enableMicrophoneProtection(); }
 else { disableMicrophoneProtection(); }
+
+// Microphone protection
+cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
+if (cameraProtection) { enableCameraProtection(); }
+else { disableCameraProtection(); }
 
 // save all the open tabs
 chrome.tabs.query({}, function(results) {
@@ -92,6 +99,7 @@ function destroy() {
   disablePrivacyFilter();
   updateWebRTCLeakProtection('DEFAULT');
   disableMicrophoneProtection();
+  disableCameraProtection();
 
   chrome.browserAction.setIcon({
     path : {
@@ -352,6 +360,40 @@ function enablePrivacyFilter() {
 }
 
 
+/** Microphone Protection **/
+
+function enableMicrophoneProtection() {
+  chrome.contentSettings.microphone.set({
+    primaryPattern: '<all_urls>',
+    setting: 'block'
+  });
+}
+
+function disableMicrophoneProtection() {
+  chrome.contentSettings.microphone.set({
+    primaryPattern: '<all_urls>',
+    setting: 'ask'
+  });
+}
+
+
+/** Microphone Protection **/
+
+function enableCameraProtection() {
+  chrome.contentSettings.camera.set({
+    primaryPattern: '<all_urls>',
+    setting: 'block'
+  });
+}
+
+function disableCameraProtection() {
+  chrome.contentSettings.camera.set({
+    primaryPattern: '<all_urls>',
+    setting: 'ask'
+  });
+}
+
+
 // Event Listener Triggers
 chrome.runtime.onMessage.addListener(function(request){
   if (request.action === 'CypherpunkEnabled'){
@@ -379,6 +421,11 @@ chrome.runtime.onMessage.addListener(function(request){
     microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
     if (microphoneProtection) { enableMicrophoneProtection(); }
     else { disableMicrophoneProtection(); }
+  }
+  else if (request.action === 'updateCameraProtection') {
+    cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
+    if (cameraProtection) { enableCameraProtection(); }
+    else { disableCameraProtection(); }
   }
 
   // else if (request.action === "ForceHTTPS"){
@@ -423,17 +470,3 @@ chrome.management.onUninstalled.addListener((extId) => {
 //     ['blocking']
 //   );
 // }
-
-function enableMicrophoneProtection() {
-  chrome.contentSettings.microphone.set({
-    primaryPattern: '<all_urls>',
-    setting: 'block'
-  });
-}
-
-function disableMicrophoneProtection() {
-  chrome.contentSettings.microphone.set({
-    primaryPattern: '<all_urls>',
-    setting: 'ask'
-  });
-}

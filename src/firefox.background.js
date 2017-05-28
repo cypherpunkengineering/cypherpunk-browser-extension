@@ -18,6 +18,7 @@ var WEB_RTC_LEAK_PROTECTION = 'cypherpunk.settings.ffWebRTCLeakProtection';
 var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
 var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
 var MICROPHONE_PROTECTION = 'cypherpunk.microphoneProtection';
+var CAMERA_PROTECTION = 'cypherpunk.cameraProtection';
 
 // variables from localStorage
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
@@ -26,6 +27,7 @@ var serverArr = JSON.parse(localStorage.getItem(PROXY_SERVERS_ARR));
 var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
 var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
 var microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
+var cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
 
 
 /** Start up code **/
@@ -44,9 +46,16 @@ var webRTCLeakProtectionEnabled = localStorage.getItem(WEB_RTC_LEAK_PROTECTION) 
 if (webRTCLeakProtectionEnabled) { enableWebRTCLeakProtection(); }
 else { disableWebRTCLeakProtection(); }
 
+// Enable/Disable Microphone Protection depending on saved setting
 microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
 if (microphoneProtection) { enableMicrophoneProtection(); }
 else { disableMicrophoneProtection(); }
+
+// Enable/Disable Camera Protection depending on saved setting
+cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
+if (cameraProtection) { enableCameraProtection(); }
+else { disableCameraProtection(); }
+
 
 // save all the open tabs
 if (cypherpunkEnabled) { init(); }
@@ -79,6 +88,7 @@ function destroy() {
   disableWebRTCLeakProtection(); // Disable webRTC leak protection
   disablePrivacyFilter(); // Disable proxy filter onWebRequest
   disableMicrophoneProtection();
+  disableCameraProtection();
 
   // Set icon to grey Cypherpunk
   chrome.browserAction.setIcon({
@@ -320,6 +330,39 @@ function enablePrivacyFilter() {
 }
 
 
+/** Microphone Protection **/
+
+function enableMicrophoneProtection() {
+  chrome.contentSettings.microphone.set({
+    primaryPattern: '<all_urls>',
+    setting: 'block'
+  });
+}
+
+function disableMicrophoneProtection() {
+  chrome.contentSettings.microphone.set({
+    primaryPattern: '<all_urls>',
+    setting: 'ask'
+  });
+}
+
+
+/** Camera Protection **/
+
+function enableCameraProtection() {
+  chrome.contentSettings.camera.set({
+    primaryPattern: '<all_urls>',
+    setting: 'block'
+  });
+}
+
+function disableCameraProtection() {
+  chrome.contentSettings.camera.set({
+    primaryPattern: '<all_urls>',
+    setting: 'ask'
+  });
+}
+
 /* Event Listener Triggers */
 chrome.runtime.onMessage.addListener(function(request) {
   if (request.action === 'CypherpunkEnabled') {
@@ -346,6 +389,12 @@ chrome.runtime.onMessage.addListener(function(request) {
     if (microphoneProtection) { enableMicrophoneProtection(); }
     else { disableMicrophoneProtection(); }
   }
+  else if (request.action === 'updateCameraProtection') {
+    cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
+    if (cameraProtection) { enableCameraProtection(); }
+    else { disableCameraProtection(); }
+  }
+
 });
 
 /* Clear cache on url change so ip doesn't leak from previous site */
@@ -359,17 +408,3 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
 chrome.management.onUninstalled.addListener((extId) => {
   if (extId === chrome.runtime.id) { destroy(); }
 });
-
-function enableMicrophoneProtection() {
-  chrome.contentSettings.microphone.set({
-    primaryPattern: '<all_urls>',
-    setting: 'block'
-  });
-}
-
-function disableMicrophoneProtection() {
-  chrome.contentSettings.microphone.set({
-    primaryPattern: '<all_urls>',
-    setting: 'ask'
-  });
-}

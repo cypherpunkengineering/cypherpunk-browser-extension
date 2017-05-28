@@ -45,5 +45,16 @@
         </label>
       </div>
     </div>
+
+    <!-- Camera Protection -->
+    <div class="option" [ngClass]="{'active': cameraProtection}">
+      <div class="label">Block Camera</div>
+      <div class="switch">
+        <label class="label-switch">
+          <input type="checkbox" [(ngModel)]="cameraProtection" (ngModelChange)="toggleCameraProtection($event)" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
+    </div>
   </div>
 </div>

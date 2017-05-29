@@ -223,9 +223,9 @@
       position: absolute;
       left: 50%;
       top: 38px;
-      transform: translate(-50%,-50%);
+      transform: translate(-50%,-50%) scale(1, 0.1);
       width: 500px;
-      height: 4px;
+      height: 40px;
       transition: transform 1s ease;
       background: linear-gradient(to right, cyan, rgba(0, 255, 255, 0.25) 74px, cyan 182px, transparent 182px, transparent 318px, cyan 318px, rgba(0, 255, 255, 0.25) 426px, cyan);
     }
@@ -404,7 +404,7 @@
     }
     &.on.connected {
       .pipe {
-        transform: translate(-50%,-50%) scale(0.9, 10);
+        transform: translate(-50%,-50%) scale(0.9, 1);
         transition-delay: 0.5s;
         animation: connect-pipe-connected 0.8s linear;
       }
@@ -426,7 +426,7 @@
         transition: opacity 0.5s, visibility 0.5 step-end;
       }
       .pipe {
-        transform: translate(-50%,-50%) scale(1, 4);
+        transform: translate(-50%,-50%) scale(1, 0.25);
         animation: connect-pipe-disconnecting 2s linear both;
       }
     }

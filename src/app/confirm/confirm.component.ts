@@ -11,7 +11,7 @@ import { Component, style, animate, transition, state, trigger } from '@angular/
       state('*', style({transform: 'translateX(0)'})),
       transition('void => *', [
         style({transform: 'translateX(-100%)' }),
-        animate('0.5s ease-in')
+        animate('350ms ease-out')
       ])
     ])
   ]

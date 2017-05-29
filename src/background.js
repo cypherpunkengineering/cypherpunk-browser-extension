@@ -91,18 +91,6 @@ else {
 function init() {
   applyProxy();  // Attempt to load PAC Script
   loadProxies(); // Attempt to fetch Proxy Servers
-
-  chrome.browserAction.setIcon({
-   path : {
-     "128": "assets/cypherpunk_shaded_128.png",
-     "96": "assets/cypherpunk_shaded_96.png",
-     "64": "assets/cypherpunk_shaded_64.png",
-     "48": "assets/cypherpunk_shaded_48.png",
-     "32": "assets/cypherpunk_shaded_32.png",
-     "24": "assets/cypherpunk_shaded_24.png",
-     "16": "assets/cypherpunk_shaded_16.png"
-    }
-  });
 }
 
 function destroy() {
@@ -116,18 +104,6 @@ function destroy() {
   disableCameraProtection();
   disableLocationProtection();
   disableFlashProtection();
-
-  chrome.browserAction.setIcon({
-    path : {
-      "128": "assets/cypherpunk_grey_128.png",
-      "96": "assets/cypherpunk_grey_96.png",
-      "64": "assets/cypherpunk_grey_64.png",
-      "48": "assets/cypherpunk_grey_48.png",
-      "32": "assets/cypherpunk_grey_32.png",
-      "24": "assets/cypherpunk_grey_24.png",
-      "16": "assets/cypherpunk_grey_16.png"
-     }
-  });
 }
 
 /* PROXY SERVER PINGING FUNCTIONALITY */
@@ -205,11 +181,35 @@ function applyProxy() {
   config = JSON.parse(config);
   console.log('Applying PacScript in BG', config);
   chrome.proxy.settings.set({ value: config, scope: 'regular' });
+
+  chrome.browserAction.setIcon({
+   path : {
+     "128": "assets/cypherpunk_shaded_128.png",
+     "96": "assets/cypherpunk_shaded_96.png",
+     "64": "assets/cypherpunk_shaded_64.png",
+     "48": "assets/cypherpunk_shaded_48.png",
+     "32": "assets/cypherpunk_shaded_32.png",
+     "24": "assets/cypherpunk_shaded_24.png",
+     "16": "assets/cypherpunk_shaded_16.png"
+    }
+  });
 }
 
 function disableProxy() {
   console.log('Disabling Proxy');
   chrome.proxy.settings.set({value: { mode: "system" }, scope: 'regular'});
+
+  chrome.browserAction.setIcon({
+    path : {
+      "128": "assets/cypherpunk_grey_128.png",
+      "96": "assets/cypherpunk_grey_96.png",
+      "64": "assets/cypherpunk_grey_64.png",
+      "48": "assets/cypherpunk_grey_48.png",
+      "32": "assets/cypherpunk_grey_32.png",
+      "24": "assets/cypherpunk_grey_24.png",
+      "16": "assets/cypherpunk_grey_16.png"
+     }
+  });
 }
 
 function httpGetAsync(theUrl, callback) {

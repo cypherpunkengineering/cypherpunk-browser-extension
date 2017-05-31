@@ -52,7 +52,7 @@
         </div>
       </div>
 
-      <i class="marker icon"></i>
+      <i class="marker icon" [ngClass]="{'hidden': showMarker()}"></i>
     </div>
 
     <!-- Server Listing -->
@@ -79,7 +79,7 @@
       <!-- Server Listing -->
       <div class="list">
         <!-- CypherPlay -->
-        <div class="cypherplay" [ngClass]="{'selected': (serverName === 'CypherPlay™') && cypherpunkEnabled}" (click)="setServerDetails({ name: 'cypherplay'})" (mouseenter)="setHoverServer(cypherplayMarker)">
+        <div class="cypherplay" [ngClass]="{'selected': (serverName === 'CypherPlay™') && cypherpunkEnabled}" (click)="setServerDetails({ name: 'cypherplay'})" (mouseenter)="setHoverServer(cypherplayMarker, true)" (mouseleave)="unsetHoverServer({name: 'cypherplay'})">
           <img src="/assets/icon_cypherplay@2x.png">
           CypherPlay&trade;
           <span>AUTO</span>

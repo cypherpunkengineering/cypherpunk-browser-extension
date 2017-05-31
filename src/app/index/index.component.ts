@@ -41,6 +41,8 @@ export class IndexComponent implements AfterViewChecked {
     mapX: 939.232,
     mapY: 530.757
   };
+  cypherplaySelected: boolean;
+  cypherplayHovered: boolean;
 
   constructor(
     private router: Router,
@@ -63,6 +65,7 @@ export class IndexComponent implements AfterViewChecked {
     if (!this.serverId) {
       this.serverName = 'CypherPlay™';
       this.serverFlag = '/assets/icon_cypherplay@2x.png';
+      this.cypherplaySelected = true;
     }
 
     // Double check connection status display
@@ -183,7 +186,18 @@ export class IndexComponent implements AfterViewChecked {
     }
   }
 
-  setHoverServer(server) { this.hoverServer = server; }
+  setHoverServer(server, cypherplay?) {
+    this.hoverServer = server;
+    if (cypherplay) { this.cypherplayHovered = true; }
+    else { this.cypherplayHovered = false; }
+  }
+
+  unsetHoverServer(server) { this.cypherplayHovered = false; }
+
+  showMarker() {
+    if (this.showLocationList) { return this.cypherplayHovered; }
+    else { return this.cypherplaySelected; }
+  }
 
   tutorialVisible(visible: boolean) { this.showTutorial = visible; }
 
@@ -246,6 +260,7 @@ export class IndexComponent implements AfterViewChecked {
       this.serverFlag = '/assets/icon_cypherplay@2x.png';
       this.currentServer = this.cypherplayMarker;
       this.hoverServer = this.cypherplayMarker;
+      this.cypherplaySelected = true;
     }
     else {
       this.serverId = server.id;
@@ -254,6 +269,7 @@ export class IndexComponent implements AfterViewChecked {
       this.serverFlag = `/assets/flags/24/${server.country}.png`;
       this.currentServer = server;
       this.hoverServer = server;
+      this.cypherplaySelected = false;
     }
 
     // proxy related variables

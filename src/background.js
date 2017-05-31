@@ -345,14 +345,14 @@ function cancelRequest(details) {
   var adListFound = false;
   if (globalBlockAds) {
     adListFound = !!adList.find(function(adUrl) {
-      return outgoingUrl.indexOf(adUrl) !==1;
+      return outgoingUrl.indexOf(adUrl) !== 1;
     });
   }
 
   var malwareListFound = false;
   if (globalBlockMalware) {
     malwareListFound = !!malwareList.find(function(malwareUrl) {
-      return outgoingUrl.indexOf(malwareUrl) !==1;
+      return outgoingUrl.indexOf(malwareUrl) !== 1;
     });
   }
 

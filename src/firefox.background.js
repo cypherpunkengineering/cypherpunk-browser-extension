@@ -17,10 +17,6 @@ var USER_AGENT_STRING = 'cypherpunk.settings.userAgent.string';
 var WEB_RTC_LEAK_PROTECTION = 'cypherpunk.settings.ffWebRTCLeakProtection';
 var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
 var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
-var MICROPHONE_PROTECTION = 'cypherpunk.microphoneProtection';
-var CAMERA_PROTECTION = 'cypherpunk.cameraProtection';
-var LOCATION_PROTECTION = 'cypherpunk.locationProtection';
-var FLASH_PROTECTION = 'cypherpunk.flashProtection';
 
 // variables from localStorage
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
@@ -28,10 +24,6 @@ var cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
 var serverArr = JSON.parse(localStorage.getItem(PROXY_SERVERS_ARR));
 var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
 var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
-var microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
-var cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
-var locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
-var flashProtection = JSON.parse(localStorage.getItem(FLASH_PROTECTION));
 
 
 /** Start up code **/
@@ -49,26 +41,6 @@ else { disableUserAgentSpoofing(); }
 var webRTCLeakProtectionEnabled = localStorage.getItem(WEB_RTC_LEAK_PROTECTION) === 'true';
 if (webRTCLeakProtectionEnabled) { enableWebRTCLeakProtection(); }
 else { disableWebRTCLeakProtection(); }
-
-// Enable/Disable Microphone Protection depending on saved setting
-microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
-if (microphoneProtection) { enableMicrophoneProtection(); }
-else { disableMicrophoneProtection(); }
-
-// Enable/Disable Camera Protection depending on saved setting
-cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
-if (cameraProtection) { enableCameraProtection(); }
-else { disableCameraProtection(); }
-
-// Enable/Disable Location Protection depending on saved setting
-locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
-if (locationProtection) { enableLocationProtection(); }
-else { disableLocationProtection(); }
-
-// Enable/Disable Plugin Protection depending on saved setting
-flashProtection = JSON.parse(localStorage.getItem(FLASH_PROTECTION));
-if (flashProtection) { enableFlashProtection(); }
-else { disableFlashProtection(); }
 
 
 // save all the open tabs
@@ -89,10 +61,6 @@ function destroy() {
   disableUserAgentSpoofing(); // Disable user agent spoofing
   disableWebRTCLeakProtection(); // Disable webRTC leak protection
   disablePrivacyFilter(); // Disable proxy filter onWebRequest
-  disableMicrophoneProtection();
-  disableCameraProtection();
-  disableLocationProtection();
-  disableFlashProtection();
 }
 
 /* PROXY SERVER PINGING FUNCTIONALITY */
@@ -174,14 +142,14 @@ function applyProxy() {
 
   // Set icon to blue Cypherpunk
   chrome.browserAction.setIcon({
-   path : {
-     "128": "assets/cypherpunk_shaded_128.png",
-     "96": "assets/cypherpunk_shaded_96.png",
-     "64": "assets/cypherpunk_shaded_64.png",
-     "48": "assets/cypherpunk_shaded_48.png",
-     "32": "assets/cypherpunk_shaded_32.png",
-     "24": "assets/cypherpunk_shaded_24.png",
-     "16": "assets/cypherpunk_shaded_16.png"
+    path : {
+      "128": "assets/cypherpunk_shaded_128.png",
+      "96": "assets/cypherpunk_shaded_96.png",
+      "64": "assets/cypherpunk_shaded_64.png",
+      "48": "assets/cypherpunk_shaded_48.png",
+      "32": "assets/cypherpunk_shaded_32.png",
+      "24": "assets/cypherpunk_shaded_24.png",
+      "16": "assets/cypherpunk_shaded_16.png"
     }
   });
 }
@@ -200,7 +168,7 @@ function disableProxy() {
       "32": "assets/cypherpunk_grey_32.png",
       "24": "assets/cypherpunk_grey_24.png",
       "16": "assets/cypherpunk_grey_16.png"
-     }
+    }
   });
 }
 
@@ -347,87 +315,6 @@ function enablePrivacyFilter() {
 }
 
 
-/** Microphone Protection **/
-
-function enableMicrophoneProtection() {
-  chrome.contentSettings.microphone.set({
-    primaryPattern: '<all_urls>',
-    setting: 'block'
-  });
-}
-
-function disableMicrophoneProtection() {
-  chrome.contentSettings.microphone.set({
-    primaryPattern: '<all_urls>',
-    setting: 'ask'
-  });
-}
-
-
-/** Camera Protection **/
-
-function enableCameraProtection() {
-  chrome.contentSettings.camera.set({
-    primaryPattern: '<all_urls>',
-    setting: 'block'
-  });
-}
-
-function disableCameraProtection() {
-  chrome.contentSettings.camera.set({
-    primaryPattern: '<all_urls>',
-    setting: 'ask'
-  });
-}
-
-
-/** Location Protection **/
-
-function enableLocationProtection() {
-  chrome.contentSettings.location.set({
-    primaryPattern: '<all_urls>',
-    setting: 'block'
-  });
-}
-
-function disableLocationProtection() {
-  chrome.contentSettings.location.set({
-    primaryPattern: '<all_urls>',
-    setting: 'ask'
-  });
-}
-
-
-/** Plugin Protection **/
-
-function enableFlashProtection() {
-  chrome.contentSettings.plugins.getResourceIdentifiers((idents) => {
-    idents.map((id) => {
-      if (id.id === 'adobe-flash-player') {
-        chrome.contentSettings.plugins.set({
-          primaryPattern: '<all_urls>',
-          resourceIdentifier: id,
-          setting: 'block'
-        });
-      }
-    });
-  });
-}
-
-function disableFlashProtection() {
-  chrome.contentSettings.plugins.getResourceIdentifiers((idents) => {
-    idents.map((id) => {
-      if (id.id === 'adobe-flash-player') {
-        chrome.contentSettings.plugins.set({
-          primaryPattern: '<all_urls>',
-          resourceIdentifier: id,
-          setting: 'ask'
-        });
-      }
-    });
-  });
-}
-
 /* Event Listener Triggers */
 chrome.runtime.onMessage.addListener(function(request) {
   if (request.action === 'CypherpunkEnabled') {
@@ -448,26 +335,6 @@ chrome.runtime.onMessage.addListener(function(request) {
     globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
     if (globalBlockAds || globalBlockMalware) { enablePrivacyFilter(); }
     else { disablePrivacyFilter(); }
-  }
-  else if (request.action === 'updateMicrophoneProtection') {
-    microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
-    if (microphoneProtection) { enableMicrophoneProtection(); }
-    else { disableMicrophoneProtection(); }
-  }
-  else if (request.action === 'updateCameraProtection') {
-    cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
-    if (cameraProtection) { enableCameraProtection(); }
-    else { disableCameraProtection(); }
-  }
-  else if (request.action === 'updateLocationProtection') {
-    locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
-    if (locationProtection) { enableLocationProtection(); }
-    else { disableLocationProtection(); }
-  }
-  else if (request.action === 'updateFlashProtection') {
-    flashProtection = JSON.parse(localStorage.getItem(FLASH_PROTECTION));
-    if (flashProtection) { enableFlashProtection(); }
-    else { disableFlashProtection(); }
   }
 });
 

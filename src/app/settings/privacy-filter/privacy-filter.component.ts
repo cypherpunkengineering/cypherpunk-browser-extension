@@ -10,6 +10,7 @@ import { ProxySettingsService } from '../../proxy-settings.service';
 export class PrivacyFilterComponent {
   @Output() changeView = new EventEmitter<string>();
 
+  isFirefox: boolean;
   blockAds = this.settingsService.privacyFilterAds;
   blockMalware = this.settingsService.privacyFilterMalware;
   microphoneProtection = this.settingsService.microphoneProtection;
@@ -20,7 +21,9 @@ export class PrivacyFilterComponent {
   constructor(
     private settingsService: SettingsService,
     private proxySettingsService: ProxySettingsService
-  ) {}
+  ) {
+    this.isFirefox = settingsService.isFirefox();
+  }
 
   toggleBlockAds(enabled: boolean) {
     this.settingsService.savePrivacyFilterAds(enabled);

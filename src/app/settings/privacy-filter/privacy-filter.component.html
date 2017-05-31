@@ -36,7 +36,7 @@
     </div>
 
     <!-- Microphone Protection -->
-    <div class="option" [ngClass]="{'active': microphoneProtection}">
+    <div *ngIf="!isFirefox" class="option" [ngClass]="{'active': microphoneProtection}">
       <div class="label">Block Microphone</div>
       <div class="switch">
         <label class="label-switch">
@@ -47,7 +47,7 @@
     </div>
 
     <!-- Camera Protection -->
-    <div class="option" [ngClass]="{'active': cameraProtection}">
+    <div *ngIf="!isFirefox" class="option" [ngClass]="{'active': cameraProtection}">
       <div class="label">Block Camera</div>
       <div class="switch">
         <label class="label-switch">
@@ -58,7 +58,7 @@
     </div>
 
     <!-- Location Protection -->
-    <div class="option" [ngClass]="{'active': locationProtection}">
+    <div *ngIf="!isFirefox" class="option" [ngClass]="{'active': locationProtection}">
       <div class="label">Block Location</div>
       <div class="switch">
         <label class="label-switch">
@@ -69,7 +69,7 @@
     </div>
 
     <!-- Plugin Protection -->
-    <div class="option" [ngClass]="{'active': flashProtection}">
+    <div *ngIf="!isFirefox" class="option" [ngClass]="{'active': flashProtection}">
       <div class="label">Block Flash</div>
       <div class="switch">
         <label class="label-switch">

@@ -157,7 +157,7 @@ export class IndexComponent implements AfterViewChecked {
   }
 
   transformToXY(lat, long) {
-    let coords = this.vanDerGrinten3Raw((long - 11) * this.pi / 180, lat * this.pi / 180);
+    let coords = this.vanDerGrinten3Raw((long - 11) * this.pi / 180, -1 * lat * this.pi / 180);
     coords[0] = (coords[0] * 150 + (920 / 2)) * (2000 / 920);
     coords[1] = (coords[1] * 150 + (500 / 2 + 500 * 0.15)) * (2000 / 920);
     return coords;

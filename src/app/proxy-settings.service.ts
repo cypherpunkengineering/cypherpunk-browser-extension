@@ -165,7 +165,7 @@ export class ProxySettingsService {
       '  /* Don\'t proxy local hostnames */\n' +
       '  if (isPlainHostName(host)) return \'DIRECT\';\n\n' +
       '  /* Don\'t proxy connection to cypherpunk domains */\n' +
-      '  if (shExpMatch(host, "cypherpunk.privacy.network")) return \'DIRECT\';\n' +
+      '  if (shExpMatch(host, "api.cypherpunk.com")) return \'DIRECT\';\n' +
       '  if (shExpMatch(host, "cypherpunk.com")) return \'DIRECT\';\n';
 
     // 1. Generate direct pinging rules for proxy addresses

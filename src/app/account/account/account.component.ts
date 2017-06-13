@@ -42,7 +42,7 @@ export class AccountComponent {
 
   logout() {
     this.proxySettingsService.disableProxy();
-    let config = { 'url': 'https://cypherpunk.privacy.network', 'name': 'cypherpunk.session' };
+    let config = { 'url': 'https://api.cypherpunk.com', 'name': 'cypherpunk.session' };
     chrome.cookies.remove(config, (deleted_cookie) => {
       console.log('DELETED COOKIE', deleted_cookie);
       this.router.navigate(['/login']);

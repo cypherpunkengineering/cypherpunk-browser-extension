@@ -13,13 +13,12 @@
   width: 100%;
   height: 100%;
   color: #fff;
-  background: #133;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(-39deg, #033, #255);
 
   .settings-banner {
     height: 85px;
-    background-color: #091518;
     flex: 0 0 auto;
     text-align: center;
     width: 100%;
@@ -29,7 +28,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid #255;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.1)) !important;
 
     span { flex: 0 1 100%; }
   }
@@ -38,11 +38,20 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    background: #133;
   }
 
   .pane {
+    position: relative;
     background: rgba(255, 255, 255, 0.16);
+    & + .pane { margin-top: 10px; }
+    &:before {
+      font-size: 14px;
+      content: attr(data-title);
+      display: block;
+      width: 100%;
+      padding: 10px 15px 2px;
+      color: #f8cf1c;
+    }
 
     .setting {
       width: 100%;
@@ -54,57 +63,49 @@
       position: relative;
       color: rgba(255, 255, 255, 0.75);
       cursor: pointer;
+      & ~ .setting {
+        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+      }
       &:hover {
-        background-image: linear-gradient(to left, rgba(255, 255, 255, 0.1), transparent);
+        background: linear-gradient(to left, rgba(255, 255, 255, 0.1), transparent);
+        a:after { color: #fff; }
+      }
+      & ~ .setting:hover {
+        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 1px, transparent 1px), linear-gradient(to left, rgba(255, 255, 255, 0.1), transparent);
         color: white !important;
       }
 
-      &.bottom-separator { border-bottom: 1px solid rgba(255, 255, 255, 0.25); }
-
-      .icon {
+      a {
         display: flex;
         align-self: stretch;
         align-items: center;
         justify-content: space-between;
         flex-grow: 1;
         padding: 8px 15px 9px 15px;
-        &.external:after { content: '\F08E'; }
-        &.page:after { content: '\F105'; font-size: 25px; }
-        &.logout:after { content: '\F08B'; }
-        &:after {
-          font-family: FontAwesome;
-          font-weight: 400;
-          font-size: 16px;
-        }
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 16px;
       }
 
-      .data {
-        display: flex;
-        align-self: stretch;
-        align-items: center;
-        justify-content: space-between;
+      .next:before {
+        content: attr(data-value);
         flex-grow: 1;
-        padding: 8px 15px 9px 15px;
-        &:before {
-          content: attr(data-value);
-          flex-grow: 1;
-          order: 1;
-          color: rgba(255, 255, 255, 0.6);
-          text-align: right;
-          text-transform: uppercase;
-          font-size: 90%;
-          margin-right: 5px;
-        }
-        &:after {
-          content: '\F105';
-          font-family: FontAwesome;
-          font-weight: 400;
-          font-size: 25px;
-          flex-grow: 0;
-          order: 2;
-          color: rgba(255, 255, 255, 0.75);
-          margin-left: 10px;
-        }
+        order: 1;
+        color: rgba(255, 255, 255, 0.6);
+        text-align: right;
+        text-transform: uppercase;
+        font-size: 90%;
+        margin-right: 5px;
+      }
+      .next:after {
+        font-family: FontAwesome;
+        content: '\F105';
+        font-size: 16px;
+        flex-grow: 0;
+        order: 2;
+        font-size: 25px;
+        color: rgba(255, 255, 255, 0.75);
+        margin-left: 10px;
       }
     }
   }

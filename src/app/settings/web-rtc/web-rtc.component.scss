@@ -13,18 +13,12 @@
   width: 100%;
   height: 100%;
   color: #fff;
-  background: #133;
   display: flex;
   flex-direction: column;
-  &:before {
-    left: auto;
-    right: 0;
-    background: linear-gradient(to left, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.25) 7px, transparent);
-  }
+  background: linear-gradient(-39deg, #033, #255);
 
   .page-banner {
     height: 85px;
-    background-color: #091518;
     flex: 0 0 auto;
     text-align: center;
     width: 100%;
@@ -34,7 +28,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid #255;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.1)) !important;
 
     .back {
       align-self: stretch;

@@ -8,27 +8,37 @@
   <div class="content">
     <div class="pane">
       <!-- Crypto Profile -->
-      <div (click)="goToView('app-proxy-mode')" class="setting bottom-separator">
-        <div class="icon page">Proxy Mode</div>
+      <div class="setting">
+        <a class="next" (click)="goToView('app-proxy-mode')">
+          Proxy Mode
+        </a>
       </div>
 
       <!-- Privacy Filter -->
-      <div (click)="goToView('app-privacy-filter')" class="setting bottom-separator">
-        <div class="icon page">Privacy Filter</div>
+      <div class="setting">
+        <a class="next" (click)="goToView('app-privacy-filter')">
+          Privacy Filter
+        </a>
       </div>
 
       <!-- WebRTC Leak Protection - Chrome -->
-      <div (click)="goToView('app-web-rtc')" class="setting bottom-separator" *ngIf="!isFirefox">
-        <div class="data" [attr.data-value]="webRTCType">WebRTC Leak Prevention</div>
+      <div class="setting" *ngIf="!isFirefox">
+        <a class="next" [attr.data-value]="webRTCType" (click)="goToView('app-web-rtc')">
+          WebRTC Leak Prevention
+        </a>
       </div>
 
-      <div (click)="goToView('app-web-rtc')" class="setting bottom-separator" *ngIf="isFirefox">
-        <div class="data" [attr.data-value]="ffWebRTCType">WebRTC Leak Prevention</div>
+      <div class="setting" *ngIf="isFirefox">
+        <a class="next" [attr.data-value]="ffWebRTCType" (click)="goToView('app-web-rtc')">
+          WebRTC Leak Prevention
+        </a>
       </div>
 
       <!-- User Agent -->
-      <div (click)="goToView('app-user-agent')" class="setting">
-        <div class="data" [attr.data-value]="userAgentType">User Agent</div>
+      <div class="setting">
+        <a class="next" [attr.data-value]="userAgentType" (click)="goToView('app-user-agent')">
+          User Agent
+        </a>
       </div>
     </div>
   </div>

@@ -31,6 +31,10 @@
     pointer-events: none;
     opacity: 0;
     transition: all 350ms ease-out;
+    &:hover:after, &:hover:before {
+      color: rgba(200, 255, 255, 0.8);
+      text-shadow: 0 0 40px rgba(140, 255, 255, 0.5);
+    }
     &:before, &:after {
       font-family: FontAwesome;
       position: absolute;
@@ -60,6 +64,7 @@
       opacity: 0.35;
       pointer-events: auto;
     }
+
   }
 }
 

@@ -1,51 +1,49 @@
 <div class="overlay"></div>
 
 <div class="account">
-  <div class="account-banner">
-    My Account
-  </div>
+  <div class="account-banner">My Account</div>
 
   <div class="scrollable">
-    <div class="account-info">
-      <div>{{ printEmail() }}</div>
-      <div class="type">{{ printType() }}</div>
-      <div class="small">{{ printRenewal() }}</div>
-    </div>
+    <div class="account-info"></div>
 
-    <section class="account-menu">
-      <div class="header">Account Settings</div>
-
-      <div class="setting bottom-separator" (click)="goToPage('/account/upgrade')">
-        <div class="icon external">Manage Account</div>
+    <section class="user pane">
+      <div class="user row">
+        <i class="fa fa-user"></i>
+        <span>{{ printEmail() }}</span>
       </div>
 
-      <div class="setting bottom-separator" (click)="goToPage('/account')">
-        <div class="icon external">
-          <div>
-            Email
-            <div class="small">{{ printEmail() }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="setting" (click)="goToPage('/account')">
-        <div class="icon external">Password</div>
+      <div class="plan row">
+        <i class="fa fa-key"></i>
+        {{ printType() }}
+        <small>{{ printRenewal() }}</small>
       </div>
     </section>
 
-    <section class="account-menu">
-      <div class="header">More</div>
+    <section class="pane" data-title="Account Settings">
+      <div class="setting">
+        <a class="external" (click)="goToPage('/account/upgrade')">
+          Manage Account
+        </a>
+      </div>
+    </section>
 
-      <div class="setting bottom-separator" (click)="open('https://cypherpunk.com/account/refer-a-friend')">
-        <div class="icon external">Refer a Friend</div>
+    <section class="pane" data-title="More">
+      <div class="setting">
+        <a class="external" (click)="open('https://cypherpunk.com/account/refer')">
+          Refer a Friend
+        </a>
       </div>
 
-      <div class="setting bottom-separator" (click)="open('https://cypherpunk.com/support')">
-        <div class="icon external">Go to Help Center</div>
+      <div class="setting">
+        <a class="external" (click)="open('https://cypherpunk.com/support')">
+          Go to Help Center
+        </a>
       </div>
 
-      <div class="setting" (click)="logout()">
-        <div class="icon logout">Sign Out</div>
+      <div class="setting">
+        <a class="logout" (click)="logout()">
+          Sign Out
+        </a>
       </div>
     </section>
 

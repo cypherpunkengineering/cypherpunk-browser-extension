@@ -18,20 +18,14 @@ export class MainComponent {
     private hqService: HqService,
     private settingsService: SettingsService,
     private proxySettingsService: ProxySettingsService
-  ) {
+  ) { }
 
-  }
-
-  openAccount() {
-    this.showAccount = true;
-  }
+  openAccount() { this.showAccount = true; }
 
   viewConnect() {
     this.showAccount = false;
     this.showSettings = false;
   }
 
-  openSettings() {
-    this.showSettings = true;
-  }
+  openSettings() { this.showSettings = true; }
 }

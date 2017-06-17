@@ -31,6 +31,30 @@
     pointer-events: none;
     opacity: 0;
     transition: all 350ms ease-out;
+    &:before, &:after {
+      font-family: FontAwesome;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 60px;
+      color: rgba(140, 255, 255, 0.3);
+      font-size: 80px;
+      line-height: 100vh;
+      transition: opacity 0.3s, color 0.2s, text-shadow 0.3s;
+      opacity: 0;
+      text-align: center;
+    }
+    &:before {
+      left: 0;
+      content: '\F105';
+      transition: opacity 1s, color 0.2s, text-shadow 0.3s;
+    }
+    &:after {
+      right: 0;
+      content: '\F104';
+      transition: opacity 1s, color 0.2s, text-shadow 0.3s;
+    }
+    &.show:before, &.show:after { opacity: 1; }
     &.show {
       visibility: visible;
       opacity: 0.35;

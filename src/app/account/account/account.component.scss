@@ -16,7 +16,7 @@
   width: 100%;
   height: 100%;
   color: #fff;
-  background: #133;
+  background: linear-gradient(-39deg, #033, #255);
   display: flex;
   flex-direction: column;
 
@@ -25,9 +25,9 @@
     color: #fff;
     font-size: 20px;
     font-weight: 500;
-    background-color: #091518;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.1)) !important;
     padding: 36px 0 20px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid #255;
     display: flex;
     flex: 0 0 auto;
     align-items: center;
@@ -44,31 +44,22 @@
   }
 
   .account-info {
-    background-color: rgba(255, 255, 255, 0.16);
     font-size: 16px;
     text-align: center;
     padding: 15px 0;
-    min-height: 94px;
-    .type {
-      margin: 10px 0 0;
-      text-transform: capitalize;
-      color: #f8cf1c;
-    }
-    .small {
-      font-size: 13px;
-      line-height: 20px;
-      color: rgba(255, 255, 255, 0.6);
-    }
+    min-height: 100px;
+    background: linear-gradient(135deg, rgba(150, 255, 200, 0.2), transparent 50%), linear-gradient(to bottom, rgba(0, 0, 0, 0.25), transparent 10px);
   }
 
-  section.account-menu {
-    margin-top: 10px;
+  .pane {
+    position: relative;
     background: rgba(255, 255, 255, 0.16);
-
-    .header {
-      height: 35px;
-      line-height: 2.5;
+    & + .pane { margin-top: 10px; }
+    &:before {
       font-size: 14px;
+      content: attr(data-title);
+      display: block;
+      width: 100%;
       padding: 10px 15px 2px;
       color: #f8cf1c;
     }
@@ -83,38 +74,122 @@
       position: relative;
       color: rgba(255, 255, 255, 0.75);
       cursor: pointer;
+      & ~ .setting {
+        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+      }
       &:hover {
-        background-image: linear-gradient(to left, rgba(255, 255, 255, 0.1), transparent);
+        background: linear-gradient(to left, rgba(255, 255, 255, 0.1), transparent);
+        a:after { color: #fff; }
+      }
+      & ~ .setting:hover {
+        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 1px, transparent 1px), linear-gradient(to left, rgba(255, 255, 255, 0.1), transparent);
         color: white !important;
       }
 
-      .small {
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 14px;
-        line-height: 1;
-        padding-top: 2px;
-      }
-
-      .icon {
+      a {
         display: flex;
         align-self: stretch;
         align-items: center;
         justify-content: space-between;
         flex-grow: 1;
         padding: 8px 15px 9px 15px;
-        &.external:after { content: '\F08E'; }
-        &.page:after { content: '\F105'; font-size: 25px; }
-        &.logout:after { content: '\F08B'; }
-        &:after {
-          font-family: FontAwesome;
-          font-weight: 400;
-          font-size: 16px;
-        }
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 16px;
+      }
+
+      .external:after {
+        font-family: FontAwesome;
+        content: '\F08E';
+        font-size: 16px;
+        flex-grow: 0;
+        order: 2;
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.75);
+        margin-left: 10px;
+      }
+
+      .logout:after {
+        font-family: FontAwesome;
+        content: '\F08B';
+        font-size: 16px;
+        flex-grow: 0;
+        order: 2;
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.75);
+        margin-left: 10px;
       }
     }
+  }
 
-    .bottom-separator {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  .user.pane {
+    .row {
+      position: relative;
+      padding-left: 55px;
+      min-height: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      font-size: 17px;
+      padding-right: 20px;
+    }
+
+    .user {
+      margin-top: 10px;
+
+      &:before {
+        content: "Username";
+        position: absolute;
+        margin-top: -16px;
+        font-size: 10px;
+        text-transform: uppercase;
+        color: rgba(200,255, 255, 0.5);
+      }
+
+      i {
+        position: absolute;
+        top: 0;
+        font-size: 22px;
+        margin: 0 0 0 -55px;
+        width: 55px;
+        line-height: 40px;
+        height: 40px;
+        color: rgba(50, 255, 250, 0.25);
+        display: inline-block;
+        text-align: center;
+      }
+
+      span { white-space: nowrap; overflow-x: hidden; text-overflow: ellipsis; }
+    }
+
+    .plan {
+      margin-bottom: 5px;
+      color: #f8cf1c;
+      text-transform: capitalize;
+
+      i {
+        position: absolute;
+        top: 0;
+        font-size: 22px;
+        margin: 0 0 0 -55px;
+        width: 55px;
+        line-height: 40px;
+        height: 40px;
+        color: rgba(50, 255, 250, 0.25);
+        display: inline-block;
+        text-align: center;
+      }
+
+      small {
+        display: block;
+        font-size: 13px;
+        color: rgba(200, 255, 255, 0.5);
+        padding-bottom: 6px;
+        line-height: 1;
+        padding-top: 2px;
+        text-transform: capitalize;
+      }
     }
   }
 
@@ -141,6 +216,7 @@
         font-weight: 400;
         margin: 0 5px;
       }
+      &:hover { color: #7ffffc; }
     }
   }
 }

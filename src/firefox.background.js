@@ -1,12 +1,12 @@
 // background script variables
-var authUsername;
-var authPassword;
 var chrome = chrome ? chrome : null;
 var regionOrder = ['DEV', 'NA', 'SA', 'CR', 'EU', 'ME', 'AF', 'AS', 'OP'];
 var adList = window.adList;
 var malwareList = window.malwareList;
 
 var ENABLED = 'cypherpunk.enabled';
+var AUTH_USERNAME = 'cypherpunk.proxy.username';
+var AUTH_PASSWORD = 'cypherpunk.proxy.password';
 var LATENCY_LIST = 'cypherpunk.latencyList';
 var ACCOUNT_TYPE = 'cypherpunk.account.type';
 var PROXY_SERVERS = 'cypherpunk.proxyServers';
@@ -213,11 +213,11 @@ function loadProxies() {
   // Block auth popup dialog when connected to proxy
   httpGetAsync('https://api.cypherpunk.com/api/v0/account/status', (res) => {
     res = JSON.parse(res);
-    authUsername = res.privacy.username;
-    authPassword = res.privacy.password;
-    chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: authUsername, authPassword: authPassword });
-    localStorage.setItem(PREMIUM_ACCOUNT, JSON.stringify(res.account.type === 'premium'));
+    chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: res.privacy.username, authPassword: res.privacy.password });
     localStorage.setItem(ACCOUNT_TYPE, res.account.type);
+    localStorage.setItem(AUTH_USERNAME, JSON.stringify(res.privacy.username));
+    localStorage.setItem(AUTH_PASSWORD, JSON.stringify(res.privacy.password));
+    localStorage.setItem(PREMIUM_ACCOUNT, JSON.stringify(res.account.type === 'premium'));
 
     httpGetAsync('https://api.cypherpunk.com/api/v0/location/list/' + res.account.type, (servers) => {
       console.log('servers: ' + servers);

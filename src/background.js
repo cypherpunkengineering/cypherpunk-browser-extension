@@ -1,13 +1,13 @@
 // background script variables
 var tabs = {};
-var authUsername;
-var authPassword;
 var chrome = chrome ? chrome : null;
 var regionOrder = ['DEV', 'NA', 'SA', 'CR', 'EU', 'ME', 'AF', 'AS', 'OP'];
 var adList = window.adList;
 var malwareList = window.malwareList;
 
 var ENABLED = 'cypherpunk.enabled';
+var AUTH_USERNAME = 'cypherpunk.proxy.username';
+var AUTH_PASSWORD = 'cypherpunk.proxy.password';
 var LATENCY_LIST = 'cypherpunk.latencyList';
 var ACCOUNT_TYPE = 'cypherpunk.account.type';
 var PROXY_SERVERS = 'cypherpunk.proxyServers';
@@ -24,6 +24,8 @@ var LOCATION_PROTECTION = 'cypherpunk.locationProtection';
 var FLASH_PROTECTION = 'cypherpunk.flashProtection';
 
 // variables from localStorage
+var authUsername = JSON.parse(localStorage.getItem(AUTH_USERNAME));
+var authPassword = JSON.parse(localStorage.getItem(AUTH_PASSWORD));
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
 var cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
 var serverArr = JSON.parse(localStorage.getItem(PROXY_SERVERS_ARR));
@@ -35,8 +37,10 @@ var cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
 var locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
 var flashProtection = JSON.parse(localStorage.getItem(FLASH_PROTECTION));
 
-
 /** Start up code **/
+
+// Proxy Auth Credentials
+enableProxyAuthCredentials();
 
 // Enable Privacy Filter
 if (globalBlockAds || globalBlockMalware) { enablePrivacyFilter(); }
@@ -255,9 +259,10 @@ function loadProxies() {
     res = JSON.parse(res);
     authUsername = res.privacy.username;
     authPassword = res.privacy.password;
-    enableProxyAuthCredentials();
-    localStorage.setItem(PREMIUM_ACCOUNT, JSON.stringify(res.account.type === 'premium'));
     localStorage.setItem(ACCOUNT_TYPE, res.account.type);
+    localStorage.setItem(AUTH_USERNAME, JSON.stringify(res.privacy.username));
+    localStorage.setItem(AUTH_PASSWORD, JSON.stringify(res.privacy.password));
+    localStorage.setItem(PREMIUM_ACCOUNT, JSON.stringify(res.account.type === 'premium'));
 
     httpGetAsync('https://api.cypherpunk.com/api/v0/location/list/' + res.account.type, (servers) => {
       console.log('servers: ', servers);
@@ -271,7 +276,13 @@ function loadProxies() {
 
 /** Block Proxy Auth Dialog **/
 function supplyProxyCredentials(details, callbackFn) {
-  callbackFn({ authCredentials: {username: authUsername, password: authPassword} });
+  let host = details.challenger.host;
+  let response = {};
+  if (host.endsWith('cypherpunk.privacy.network')) {
+    response.authCredentials = { username: authUsername, password: authPassword };
+  }
+  else { response = undefined; }
+  return callbackFn(response);
 }
 
 function disableProxyAuthCredentials() {
@@ -450,7 +461,7 @@ function disableFlashProtection() {
         chrome.contentSettings.plugins.set({
           primaryPattern: '<all_urls>',
           resourceIdentifier: id,
-          setting: 'ask'
+          setting: 'detect_important_content'
         });
       }
     });
@@ -500,6 +511,10 @@ chrome.runtime.onMessage.addListener(function(request){
     flashProtection = JSON.parse(localStorage.getItem(FLASH_PROTECTION));
     if (flashProtection) { enableFlashProtection(); }
     else { disableFlashProtection(); }
+  }
+  else if (request.action === 'ProxyAuth') {
+    authUsername = JSON.parse(localStorage.getItem(AUTH_USERNAME));
+    authPassword = JSON.parse(localStorage.getItem(AUTH_PASSWORD));
   }
 
   // else if (request.action === "ForceHTTPS"){

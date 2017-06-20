@@ -6,28 +6,35 @@ var ref = require('chrome'), Cc = ref.Cc, Ci = ref.Ci;
 var observerSvc = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
 var cacheStorageSvc = Cc['@mozilla.org/network/cache-storage-service;1'].getService(Ci.nsICacheStorageService);
 var preferences = require('sdk/preferences/service');
-var authUsername, authPassword;
+var AUTH_USERNAME = 'cypherpunk.proxy.username';
+var AUTH_PASSWORD = 'cypherpunk.proxy.password';
+var authUsername = JSON.parse(localStorage.getItem(AUTH_USERNAME));
+var authPassword = JSON.parse(localStorage.getItem(AUTH_PASSWORD));
 
 exports.onUnload = function (reason) {
   console.log('Tear down', reason);
   resetPACScript();
+  removeRequestObserver();
   disableWebRTCLeakProtection();
 };
 
 /** Block Proxy Auth Dialog **/
-var headers = null;
+var headers = [];
 
 var authObs = {
-  observe: function(subject, topic, data) {
+  observe: function(subject, topic) {
     if (topic !== 'http-on-modify-request') { return; }
     var httpChannel = subject.QueryInterface(Ci.nsIHttpChannel);
     return httpChannel.setRequestHeader.apply(null, headers[0]);
   }
 };
 
+addRequestObserver();
+
 function createProxyAuthHeader() {
   var credentials = base64.encode(authUsername + ":" + authPassword);
-  return headers = [['Proxy-Authorization', "Basic " + credentials, false]];
+  headers[0] = ['Proxy-Authorization', "Basic " + credentials, false];
+  return;
 }
 
 function addRequestObserver() {
@@ -61,26 +68,21 @@ webExtension.startup().then(api => {
 
   console.log('In FireFox SDK Script');
 
-  browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  browser.runtime.onMessage.addListener(function(request) {
     if (request.action === "ProxyAuth") {
       authUsername = request.authUsername;
       authPassword = request.authPassword;
       createProxyAuthHeader();
     }
-    else if (request.action === "ClearCache") {
-      cacheStorageSvc.clear();
-    }
+    else if (request.action === "ClearCache") { cacheStorageSvc.clear(); }
     else if (request.action === "SetPACScript") {
       console.log('Applying Proxy Settings');
       var pac = request.pacScript;
       var pacUri = 'data:text/javascript,' + encodeURIComponent(pac);
-      addRequestObserver();
       preferences.set('network.proxy.type', 2);
       preferences.set('network.proxy.autoconfig_url', pacUri);
     }
-    else if (request.action === "ResetPACScript") {
-      resetPACScript();
-    }
+    else if (request.action === "ResetPACScript") { resetPACScript(); }
     else if (request.action === "EnableWebRTCLeakProtection") {
       console.log('Enabling WebRTC Leak Protection');
       preferences.set("media.peerconnection.enabled", false);

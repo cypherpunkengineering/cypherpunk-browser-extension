@@ -228,6 +228,11 @@ export class SettingsService {
   }
 
   saveProxyCredentials(username: string, password: string) {
+    chrome.runtime.sendMessage({
+      action: 'ProxyAuth',
+      authUsername: username,
+      authPassword: password
+    });
     this.localStorageService.set(Keys.PROXY_USERNAME, username);
     this.localStorageService.set(Keys.PROXY_PASSWORD, password);
   }

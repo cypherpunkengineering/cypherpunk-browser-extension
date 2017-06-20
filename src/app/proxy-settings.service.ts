@@ -76,7 +76,6 @@ export class ProxySettingsService {
       this.hqService.fetchUserStatus()
       .flatMap(data => {
         this.accountType = data.account.type;
-        chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: data.privacy.username, authPassword: data.privacy.password });
         this.settingsService.saveProxyCredentials(data.privacy.username, data.privacy.password);
         return this.hqService.findServers(this.accountType); // fetch proxy server list
       })

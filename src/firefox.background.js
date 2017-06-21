@@ -17,6 +17,7 @@ var USER_AGENT_STRING = 'cypherpunk.settings.userAgent.string';
 var WEB_RTC_LEAK_PROTECTION = 'cypherpunk.settings.ffWebRTCLeakProtection';
 var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
 var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
+var FORCE_HTTPS = 'cypherpunk.settings.forceHttps';
 
 // variables from localStorage
 var userAgentString = localStorage.getItem(USER_AGENT_STRING);
@@ -24,6 +25,8 @@ var cypherpunkEnabled = localStorage.getItem(ENABLED) === "true";
 var serverArr = JSON.parse(localStorage.getItem(PROXY_SERVERS_ARR));
 var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
 var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
+var webRTCLeakProtectionEnabled = localStorage.getItem(WEB_RTC_LEAK_PROTECTION) === 'true';
+var forceHttps = JSON.parse(localStorage.getItem(FORCE_HTTPS));
 
 
 /** Start up code **/
@@ -33,14 +36,16 @@ if (globalBlockAds || globalBlockMalware) { enablePrivacyFilter(); }
 else { disablePrivacyFilter(); }
 
 // Enable user agent spoofing if user agent string supplied
-userAgentString = localStorage.getItem(USER_AGENT_STRING);
 if (userAgentString) { enableUserAgentSpoofing(); }
 else { disableUserAgentSpoofing(); }
 
 // Enable/Disable WebRTC leak protection depending on saved setting
-var webRTCLeakProtectionEnabled = localStorage.getItem(WEB_RTC_LEAK_PROTECTION) === 'true';
 if (webRTCLeakProtectionEnabled) { enableWebRTCLeakProtection(); }
 else { disableWebRTCLeakProtection(); }
+
+// Enable force http if it's enabled
+if (forceHttps) { enableForceHttps(); }
+else { disableForceHttps(); }
 
 
 // save all the open tabs
@@ -57,6 +62,7 @@ function init() {
 }
 
 function destroy() {
+  disableForceHttps();
   disableProxy(); // Disable PAC Script
   disableUserAgentSpoofing(); // Disable user agent spoofing
   disableWebRTCLeakProtection(); // Disable webRTC leak protection
@@ -315,6 +321,27 @@ function enablePrivacyFilter() {
 }
 
 
+/** Force HTTPS */
+function redirectRequest(requestDetails) {
+  return { redirectUrl: requestDetails.url.replace(/^http:\/\//i, 'https://') };
+}
+
+function enableForceHttps() {
+  disableForceHttps();
+  console.log('Enabling Force HTTPS');
+  chrome.webRequest.onBeforeRequest.addListener(
+    redirectRequest,
+    { urls:['<all_urls>'] },
+    ['blocking']
+  );
+}
+
+function disableForceHttps() {
+  console.log('Disabling Force HTTPS');
+  chrome.webRequest.onBeforeRequest.removeListener(redirectRequest);
+}
+
+
 /* Event Listener Triggers */
 chrome.runtime.onMessage.addListener(function(request) {
   if (request.action === 'CypherpunkEnabled') {
@@ -335,6 +362,11 @@ chrome.runtime.onMessage.addListener(function(request) {
     globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
     if (globalBlockAds || globalBlockMalware) { enablePrivacyFilter(); }
     else { disablePrivacyFilter(); }
+  }
+  else if (request.action === "updateForceHTTPS"){
+    forceHttps = JSON.parse(localStorage.getItem(FORCE_HTTPS));
+    if (forceHttps) { enableForceHttps(); }
+    else { disableForceHttps(); }
   }
 });
 

@@ -17,44 +17,41 @@ export class PrivacyFilterComponent {
   cameraProtection = this.settingsService.cameraProtection;
   locationProtection = this.settingsService.locationProtection;
   flashProtection = this.settingsService.flashProtection;
+  forceHttps = this.settingsService.forceHttps;
 
   constructor(
     private settingsService: SettingsService,
     private proxySettingsService: ProxySettingsService
-  ) {
-    this.isFirefox = settingsService.isFirefox();
-  }
+  ) { this.isFirefox = settingsService.isFirefox(); }
 
   toggleBlockAds(enabled: boolean) {
     this.settingsService.savePrivacyFilterAds(enabled);
     this.proxySettingsService.enableProxy();
-    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
   }
 
   toggleBlockMalware(enabled: boolean) {
     this.settingsService.savePrivacyFilterMalware(enabled);
     this.proxySettingsService.enableProxy();
-    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
   }
 
   toggleMicrophoneProtection(enabled: boolean) {
     this.settingsService.saveMicrophoneProtection(enabled);
-    chrome.runtime.sendMessage({ action: 'updateMicrophoneProtection' });
   }
 
   toggleCameraProtection(enabled: boolean) {
     this.settingsService.saveCameraProtection(enabled);
-    chrome.runtime.sendMessage({ action: 'updateCameraProtection' });
   }
 
   toggleLocationProtection(enabled: boolean) {
     this.settingsService.saveLocationProtection(enabled);
-    chrome.runtime.sendMessage({ action: 'updateLocationProtection' });
   }
 
   toggleFlashProtection(enabled: boolean) {
     this.settingsService.saveFlashProtection(enabled);
-    chrome.runtime.sendMessage({ action: 'updateFlashProtection' });
+  }
+
+  toggleForceHTTPS(enabled: boolean) {
+    this.settingsService.saveForceHttps(enabled);
   }
 
   goToView(name: string) {

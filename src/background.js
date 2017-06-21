@@ -4,6 +4,7 @@ var chrome = chrome ? chrome : null;
 var regionOrder = ['DEV', 'NA', 'SA', 'CR', 'EU', 'ME', 'AF', 'AS', 'OP'];
 var adList = window.adList;
 var malwareList = window.malwareList;
+var forceHttpsList = window.forcehttps;
 
 var ENABLED = 'cypherpunk.enabled';
 var AUTH_USERNAME = 'cypherpunk.proxy.username';
@@ -22,6 +23,7 @@ var MICROPHONE_PROTECTION = 'cypherpunk.microphoneProtection';
 var CAMERA_PROTECTION = 'cypherpunk.cameraProtection';
 var LOCATION_PROTECTION = 'cypherpunk.locationProtection';
 var FLASH_PROTECTION = 'cypherpunk.flashProtection';
+var FORCE_HTTPS = 'cypherpunk.settings.forceHttps';
 
 // variables from localStorage
 var authUsername = JSON.parse(localStorage.getItem(AUTH_USERNAME));
@@ -36,6 +38,7 @@ var microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION
 var cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
 var locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
 var flashProtection = JSON.parse(localStorage.getItem(FLASH_PROTECTION));
+var forceHttps = JSON.parse(localStorage.getItem(FORCE_HTTPS));
 
 /** Start up code **/
 
@@ -47,36 +50,30 @@ if (globalBlockAds || globalBlockMalware) { enablePrivacyFilter(); }
 else { disablePrivacyFilter(); }
 
 // Enable user agent spoofing if user agent string supplied
-userAgentString = localStorage.getItem(USER_AGENT_STRING);
 if (userAgentString) { enableUserAgentSpoofing(); }
 else { disableUserAgentSpoofing(); }
 
 // Enable Web RTC Leak Protection
-webRTCLeakProtectionType = JSON.parse(localStorage.getItem(WEB_RTC_LEAK_PROTECTION));
 if (webRTCLeakProtectionType) { updateWebRTCLeakProtection(webRTCLeakProtectionType); }
 else { updateWebRTCLeakProtection('DEFAULT'); }
 
 // Enable force http if it's enabled
-// if (forceHttps) { enableForceHttps(); }
-// else { disableForceHttps(); }
+if (forceHttps) { enableForceHttps(); }
+else { disableForceHttps(); }
 
 // Microphone protection
-microphoneProtection = JSON.parse(localStorage.getItem(MICROPHONE_PROTECTION));
 if (microphoneProtection) { enableMicrophoneProtection(); }
 else { disableMicrophoneProtection(); }
 
 // Camera protection
-cameraProtection = JSON.parse(localStorage.getItem(CAMERA_PROTECTION));
 if (cameraProtection) { enableCameraProtection(); }
 else { disableCameraProtection(); }
 
 // Location protection
-locationProtection = JSON.parse(localStorage.getItem(LOCATION_PROTECTION));
 if (locationProtection) { enableLocationProtection(); }
 else { disableLocationProtection(); }
 
 // Plugin protection
-flashProtection = JSON.parse(localStorage.getItem(FLASH_PROTECTION));
 if (flashProtection) { enableFlashProtection(); }
 else { disableFlashProtection(); }
 
@@ -100,7 +97,7 @@ function init() {
 function destroy() {
   disableProxyAuthCredentials();
   disableUserAgentSpoofing();
-  // disableForceHttps();
+  disableForceHttps();
   disableProxy();
   disablePrivacyFilter();
   updateWebRTCLeakProtection('DEFAULT');
@@ -469,6 +466,44 @@ function disableFlashProtection() {
 }
 
 
+/** Force HTTPS */
+function redirectRequest(details) {
+  // allow request from other extensions and if tab is not recognized
+  if (details.tabId < 0) { return { cancel: false }; }
+  if (!tabs[details.tabId]) { return { cancel: false }; }
+  if (details.url.startsWith('https')) { return { cancel: false }; }
+
+  // Check list based on global boolean values
+  var outgoingUrl = details.url;
+  var forceHttpsListFound = false;
+  if (forceHttps) {
+    forceHttpsListFound = !!forceHttpsList.find(function(url) {
+      return outgoingUrl.indexOf(url) !== 1;
+    });
+  }
+
+  if (forceHttpsListFound) {
+    return { redirectUrl: details.url.replace(/^http:\/\//i, 'https://') };
+  }
+  else { return { cancel: false }; }
+}
+
+function enableForceHttps() {
+  disableForceHttps();
+  console.log('Enabling Force HTTPS');
+  chrome.webRequest.onBeforeRequest.addListener(
+    redirectRequest,
+    { urls:['<all_urls>'] },
+    ['blocking']
+  );
+}
+
+function disableForceHttps() {
+  console.log('Disabling Force HTTPS');
+  chrome.webRequest.onBeforeRequest.removeListener(redirectRequest);
+}
+
+
 // Event Listener Triggers
 chrome.runtime.onMessage.addListener(function(request){
   if (request.action === 'CypherpunkEnabled'){
@@ -512,17 +547,15 @@ chrome.runtime.onMessage.addListener(function(request){
     if (flashProtection) { enableFlashProtection(); }
     else { disableFlashProtection(); }
   }
+  else if (request.action === "updateForceHTTPS"){
+    forceHttps = JSON.parse(localStorage.getItem(FORCE_HTTPS));
+    if (forceHttps) { enableForceHttps(); }
+    else { disableForceHttps(); }
+  }
   else if (request.action === 'ProxyAuth') {
     authUsername = JSON.parse(localStorage.getItem(AUTH_USERNAME));
     authPassword = JSON.parse(localStorage.getItem(AUTH_PASSWORD));
   }
-
-  // else if (request.action === "ForceHTTPS"){
-  //   forceHttps = localStorage.getItem('cypherpunk.settings.forceHttps') === "true"
-  //   if (forceHttps) { enableForceHttps(); }
-  //   else { disableForceHttps(); }
-  //   sendResponse({ forceHttps: forceHttps });
-  // }
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
@@ -539,23 +572,3 @@ chrome.tabs.onRemoved.addListener(function(tabId) { delete tabs[tabId]; });
 chrome.management.onUninstalled.addListener((extId) => {
   if (extId === chrome.runtime.id) { destroy(); }
 });
-
-/** Force HTTPS */
-// function redirectRequest(requestDetails) {
-//   return { redirectUrl: requestDetails.url.replace(/^http:\/\//i, 'https://') };
-// }
-
-// function disableForceHttps() {
-//   console.log('Disabling Force HTTPS');
-//   chrome.webRequest.onBeforeRequest.removeListener(redirectRequest);
-// }
-
-// function enableForceHttps() {
-//   disableForceHttps();
-//   console.log('Enabling Force HTTPS');
-//   chrome.webRequest.onBeforeRequest.addListener(
-//     redirectRequest,
-//     { urls:['http://*/*'] },
-//     ['blocking']
-//   );
-// }

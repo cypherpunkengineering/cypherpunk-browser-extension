@@ -95,7 +95,7 @@ class Defaults {
 @Injectable()
 export class SettingsService {
   enabled: boolean;
-  forceHttp: boolean;
+  forceHttps: boolean;
   accountType: string;
   initialized: boolean;
   premiumAccount: boolean;
@@ -134,7 +134,7 @@ export class SettingsService {
     this.premiumAccount = this.defaultSetting(Keys.PREMIUM_ACCOUNT);
     this.defaultRoutingType = this.defaultSetting(Keys.ROUTING_TYPE);
     this.defaultRoutingServer = this.defaultSetting(Keys.ROUTING_SELECTED_SERVER);
-    this.forceHttp = this.defaultSetting(Keys.FORCE_HTTPS);
+    this.forceHttps = this.defaultSetting(Keys.FORCE_HTTPS);
     this.siteOverrides = this.defaultSetting(Keys.SITE_OVERRIDES);
     this.privacyMode = this.defaultSetting(Keys.PRIVACY_MODE);
     this.privacyFilterAds = this.defaultSetting(Keys.PRIVACY_FILTER_ADS);
@@ -228,11 +228,7 @@ export class SettingsService {
   }
 
   saveProxyCredentials(username: string, password: string) {
-    chrome.runtime.sendMessage({
-      action: 'ProxyAuth',
-      authUsername: username,
-      authPassword: password
-    });
+    chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: username, authPassword: password });
     this.localStorageService.set(Keys.PROXY_USERNAME, username);
     this.localStorageService.set(Keys.PROXY_PASSWORD, password);
   }
@@ -257,8 +253,9 @@ export class SettingsService {
   /** Advanced Settings **/
 
   saveForceHttps(enabled: boolean) {
-    this.forceHttp = enabled;
+    this.forceHttps = enabled;
     this.localStorageService.set(Keys.FORCE_HTTPS, enabled);
+    chrome.runtime.sendMessage({ action: 'updateForceHTTPS' });
   }
 
   /** Advanced Settings > WebRTC Leak Prevention **/
@@ -283,33 +280,38 @@ export class SettingsService {
   savePrivacyFilterAds(enabled: boolean) {
     this.privacyFilterAds = enabled;
     this.localStorageService.set(Keys.PRIVACY_FILTER_ADS, enabled);
+    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
   }
 
   savePrivacyFilterMalware(enabled: boolean) {
     this.privacyFilterMalware = enabled;
     this.localStorageService.set(Keys.PRIVACY_FILTER_MALWARE, enabled);
+    chrome.runtime.sendMessage({ action: 'updatePrivacyFilter' });
   }
 
   saveMicrophoneProtection(enabled: boolean) {
     this.microphoneProtection = enabled;
     this.localStorageService.set(Keys.MICROPHONE_PROTECTION, enabled);
+    chrome.runtime.sendMessage({ action: 'updateMicrophoneProtection' });
   }
 
   saveCameraProtection(enabled: boolean) {
     this.cameraProtection = enabled;
     this.localStorageService.set(Keys.CAMERA_PROTECTION, enabled);
+    chrome.runtime.sendMessage({ action: 'updateCameraProtection' });
   }
 
   saveLocationProtection(enabled: boolean) {
     this.locationProtection = enabled;
     this.localStorageService.set(Keys.LOCATION_PROTECTION, enabled);
+    chrome.runtime.sendMessage({ action: 'updateLocationProtection' });
   }
 
   saveFlashProtection(enabled: boolean) {
     this.flashProtection = enabled;
     this.localStorageService.set(Keys.FLASH_PROTECTION, enabled);
+    chrome.runtime.sendMessage({ action: 'updateFlashProtection' });
   }
-
 
   /** Advanced Settings > User Agent **/
 

@@ -10,3 +10,4 @@ ng build --prod --aot
 # copy ad and malware lists over
 cp src/ad-list.js dist/
 cp src/malware-list.js dist/
+cp src/force-https.js dist/

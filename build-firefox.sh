@@ -44,6 +44,7 @@ cp -R firefox-entrypoint/* dist-firefox
 # copy ad and malware list to dist-firefox/webextension
 cp src/ad-list.js dist-firefox/webextension/
 cp src/malware-list.js dist-firefox/webextension/
+cp src/force-https.js dist-firefox/webextension/
 
 # package as xpi
 npm run compress-ff

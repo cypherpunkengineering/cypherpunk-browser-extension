@@ -36,6 +36,7 @@
     "scripts": [
       "ad-list.js",
       "malware-list.js",
+      "force-https.js",
       "firefox.background.js"
     ]
   }

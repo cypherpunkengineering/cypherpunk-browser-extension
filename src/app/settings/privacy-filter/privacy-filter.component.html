@@ -14,7 +14,7 @@
 
   <div class="pane">
     <!-- Block Ads -->
-    <div class="option bottom-separator" [ngClass]="{'active': blockAds}">
+    <div class="option" [ngClass]="{'active': blockAds}">
       <div class="label">Block Ads</div>
       <div class="switch">
         <label class="label-switch">
@@ -74,6 +74,17 @@
       <div class="switch">
         <label class="label-switch">
           <input type="checkbox" [(ngModel)]="flashProtection" (ngModelChange)="toggleFlashProtection($event)" />
+          <div class="checkbox"></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Force HTTPS -->
+    <div class="option" [ngClass]="{'active': forceHttps}">
+      <div class="label">Force HTTPS</div>
+      <div class="switch">
+        <label class="label-switch">
+          <input type="checkbox" [(ngModel)]="forceHttps" (ngModelChange)="toggleForceHTTPS($event)" />
           <div class="checkbox"></div>
         </label>
       </div>

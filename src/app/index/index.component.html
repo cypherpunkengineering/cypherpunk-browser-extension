@@ -2,17 +2,17 @@
   <!-- Top Header Banner -->
   <div id="header__main">
     <!-- Account link -->
-    <div class="account">
+    <div class="account no-select">
       <a (click)="accountEmit()">
         <img class="logo" src="/assets/account.png">
       </a>
     </div>
 
     <!-- Center Logo -->
-    <img class="title" src="/assets/logo.png">
+    <img class="title no-select" src="/assets/logo.png">
 
     <!-- Settings link -->
-    <div class="settings">
+    <div class="settings no-select">
       <a (click)="settingsEmit()">
         <img class="gear" src="/assets/gear.png" alt="">
       </a>
@@ -47,7 +47,7 @@
     <!-- World Map -->
     <div class="worldmap" [ngClass]="{'side': showLocationList}">
       <div class="world" [ngStyle]="generateMapStyle()">
-        <img src="/assets/worldmap_2000.png" width="2000">
+        <img class="no-select" src="/assets/worldmap_2000.png" width="2000">
         <div class="point" [style.left.px]="server.mapX" [style.top.px]="server.mapY" *ngFor="let server of servers">
         </div>
       </div>

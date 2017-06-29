@@ -4,19 +4,41 @@
   <div class="account-banner">My Account</div>
 
   <div class="scrollable">
-    <div class="account-info"></div>
-
     <section class="user pane">
+      <div class="background">
+        <div class="before"></div>
+        <img src="/assets/banners/account_banner_free.png" *ngIf="getType() === 'free'">
+        <img src="/assets/banners/account_banner_premium.png" *ngIf="getType() === 'premium'">
+        <div class="after"></div>
+      </div>
+
       <div class="user row">
         <i class="fa fa-user"></i>
         <span>{{ printEmail() }}</span>
       </div>
 
-      <div class="plan row">
+      <div class="plan row" *ngIf="getAccountType() === 'NORMAL'">
         <i class="fa fa-key"></i>
-        {{ printType() }}
+        <span>{{ printType() }}</span>
         <small>{{ printRenewal() }}</small>
       </div>
+
+      <div class="plan row" *ngIf="getAccountType() === 'EXPIRES'">
+        <i class="fa fa-key"></i>
+        <span>{{ printType() }}</span>
+        <small>{{ 'Expires in ' + printRenewal() + ' days' }}</small>
+      </div>
+
+      <div class="plan row" *ngIf="getAccountType() === 'EXPIRED'">
+        <i class="fa fa-key"></i>
+        <span class="expired">{{ printType() }}</span>
+        <small class="expired">{{ 'Expired on ' + (printRenewal() | date:'mediumDate') }}</small>
+      </div>
+
+      <a class="renews" *ngIf="showRenews()" (click)="renew()">
+        Renew Now
+        <i class="fa fa-chevron-right"></i>
+      </a>
     </section>
 
     <section class="pane" data-title="Account Settings">

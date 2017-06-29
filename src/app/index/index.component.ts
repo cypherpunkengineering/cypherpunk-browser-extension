@@ -61,15 +61,25 @@ export class IndexComponent implements AfterViewChecked {
     this.serverLevel = this.settingsService.serverLevel;
     this.accountType = this.settingsService.accountType;
 
+    // check for expired accounts
+    if (this.accountType === 'expired') {
+      this.connectionStatus = 'Account Expired';
+      this.cypherpunkEnabled = false;
+      this.settingsService.saveCypherpunkEnabled(false);
+      chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
+    }
+    else {
+      // Double check connection status display
+      if (this.cypherpunkEnabled) { this.connectionStatus = 'Connected'; }
+      else { this.connectionStatus = 'Disconnected'; }
+    }
+
     // Check for CypherPlay set as default
     if (!this.serverId) {
       this.serverName = 'CypherPlay™';
       this.serverFlag = '/assets/icon_cypherplay@2x.png';
       this.cypherplaySelected = true;
     }
-
-    // Double check connection status display
-    if (this.cypherpunkEnabled) { this.connectionStatus = 'Connected'; }
 
     // generate XY points for all servers
     this.translateLocations(this.servers);
@@ -100,7 +110,19 @@ export class IndexComponent implements AfterViewChecked {
         res => {
           this.accountType = res.account.type;
           this.settingsService.saveAccountType(res.account.type);
-          this.init();
+
+          if (this.accountType === 'expired') {
+            this.connectionStatus = 'Account Expired';
+            this.cypherpunkEnabled = false;
+            this.settingsService.saveCypherpunkEnabled(false);
+            chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
+          }
+          else {
+            // Double check connection status display
+            if (this.cypherpunkEnabled) { this.connectionStatus = 'Connected'; }
+            else { this.connectionStatus = 'Disconnected'; }
+            this.init();
+          }
          },
         err => { this.toggleCypherpunk(false); }
       );
@@ -109,7 +131,12 @@ export class IndexComponent implements AfterViewChecked {
       console.log('Server data being manually loaded');
       this.proxySettingsService.loadServers()
       .then(res => {
-        this.init();
+        if (this.accountType !== 'expired') {
+          // Double check connection status display
+          if (this.cypherpunkEnabled) { this.connectionStatus = 'Connected'; }
+          else { this.connectionStatus = 'Disconnected'; }
+          this.init();
+        }
         this.appendLatency(this.servers);
       })
       .catch(err => { this.toggleCypherpunk(false); });

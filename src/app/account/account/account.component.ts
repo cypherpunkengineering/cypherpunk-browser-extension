@@ -12,6 +12,9 @@ export class AccountComponent {
   @Input() user;
   @Output() changeView = new EventEmitter<string>();
 
+  expired: boolean;
+  accountType: string;
+
   constructor(
     private router: Router,
     private settingsService: SettingsService,
@@ -20,19 +23,71 @@ export class AccountComponent {
 
   open(url: string) { chrome.tabs.create({ url: url }); }
 
+  renew() {
+    if (this.user.account) {
+      let renewUrl = 'https://cypherpunk.com/account/upgrade?user=';
+      renewUrl += `${this.user.account.email}&secret=${this.user.secret}`;
+      chrome.tabs.create({ url: renewUrl });
+    }
+  }
+
+  getType () {
+    let type = this.user.account.type;
+    if (type && type === 'free') { return 'free'; }
+    else if (type && type !== 'free') { return 'premium'; }
+  }
+
+  getAccountType() {
+    /// if account type === premium and subscription.renews === false
+    /// or if account type === expired
+    let type = this.user.account.type;
+    let renews = this.user.subscription.renews;
+    if (type === 'premium' && !renews) { this.accountType = 'EXPIRES'; }
+    else if (type === 'expired') { this.accountType = 'EXPIRED'; }
+    else { this.accountType = 'NORMAL'; }
+    return this.accountType;
+  }
+
   printEmail() {
-    if (this.user && this.user.account) { return this.user.account.email; }
-    else { return ''; }
+    let email = '';
+    if (this.user.account) { email = this.user.account.email; }
+    return email;
   }
 
   printType() {
-    if (this.user && this.user.account) { return this.user.account.type; }
-    else { return ''; }
+    let accountType = this.user.account.type;
+    if (accountType === 'Expired') { this.expired = true; }
+    else { this.expired = false; }
+    return accountType + ' Account';
   }
 
   printRenewal() {
-    if (this.user && this.user.subscription) { return this.user.subscription.renewal; }
+    let subscriptionType = this.user.subscription.type;
+
+    if (this.accountType === 'NORMAL') {
+      if (subscriptionType === 'monthly') { return '1 Month Plan'; }
+      else if (subscriptionType === 'semiannually') { return '6 Month Plan'; }
+      else if (subscriptionType === 'annually') { return '12 Month Plan'; }
+      else if (subscriptionType === 'forever') { return 'Lifetime'; }
+      else { return ''; }
+    }
+    else if (this.accountType === 'EXPIRES' && this.user.subscription.expiration) {
+      let expiration = new Date(this.user.subscription.expiration);
+      let now = new Date();
+      let oneDay = 24 * 60 * 60 * 1000;
+      let days = Math.ceil(Math.abs((expiration.getTime() - now.getTime()) / (oneDay)));
+      return days;
+    }
+    else if (this.accountType === 'EXPIRED') {
+      return this.user.subscription.expiration;
+    }
     else { return ''; }
+  }
+
+  showRenews() {
+    let sub = this.user.subscription;
+    if (sub && sub.renews === false) { return true; }
+    else { return false; }
   }
 
   goToPage(url: string) {

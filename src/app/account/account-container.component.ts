@@ -12,7 +12,7 @@ export class AccountContainerComponent {
 
   private changeDetectorRef: ChangeDetectorRef;
   currentView = 'app-account';
-  user = { account: {} };
+  user = { account: {}, subscription: {} };
   type = 'dynamic';
 
   constructor( changeDetectorRef: ChangeDetectorRef, hqService: HqService ) {

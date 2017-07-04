@@ -1,21 +1,11 @@
 import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
-import { Component, NgZone, style, animate, transition, state, trigger, ViewChild, ElementRef, Renderer } from '@angular/core';
+import { Component, NgZone, ViewChild, ElementRef, Renderer } from '@angular/core';
 
 @Component({
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
-  host: { '[@routeAnimation]': 'true' },
-  animations: [
-    trigger('routeAnimation', [
-      state('*', style({transform: 'translateX(0)'})),
-      transition('void => *', [
-        style({transform: 'translateX(-100%)' }),
-        animate('350ms ease-out')
-      ])
-    ])
-  ]
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   @ViewChild('emailInput') emailInput: ElementRef;
@@ -25,11 +15,11 @@ export class LoginComponent {
   emailClassList = ['middle'];
   loginClassList = ['right'];
   registerClassList = ['right'];
-  error: string;
-  user = {
-    email: '',
-    password: ''
-  };
+  errors = { login: false, register: false };
+  disableEmail = false;
+  disableLogin = false;
+  disableRegister = false;
+  user = { email: '', password: '' };
 
   constructor(
     private zone: NgZone,
@@ -41,11 +31,13 @@ export class LoginComponent {
 
   checkEmail() {
     if (!this.user.email) { return; }
+    this.disableEmail = true;
 
     let body = { email: this.user.email };
     this.hqService.identifyEmail(body, {})
     .subscribe(
       (data) => {
+        this.disableEmail = false;
         this.currentView = 'login';
         this.emailClassList = ['left'];
         this.loginClassList = ['middle'];
@@ -55,6 +47,7 @@ export class LoginComponent {
         }, 500);
       },
       (error) => {
+        this.disableEmail = false;
         if (error.status === 401) {
           this.currentView = 'register';
           this.emailClassList = ['left'];
@@ -70,23 +63,44 @@ export class LoginComponent {
   }
 
   login() {
+    this.disableLogin = true;
     let body = { login: this.user.email, password: this.user.password };
     this.hqService.login(body, {})
     .subscribe(
       (user) => {
+        this.disableLogin = false;
         if (user.account.confirmed) { this.router.navigate(['/']); }
         else { this.router.navigate(['/confirm']); }
       },
-      (error) => { console.log(error); }
+      (error) => {
+        console.log(error);
+        this.disableLogin = false;
+        setTimeout(() => {
+          this.renderer.invokeElementMethod(this.passwordInput.nativeElement, 'select');
+        });
+
+        this.errors.login = true;
+        setTimeout(() => {
+          this.errors.login = false;
+        }, 3000);
+      }
     );
   }
 
   register() {
+    this.disableRegister = true;
     let body = { email: this.user.email, password: this.user.password };
     this.hqService.register(body, {})
     .subscribe(
-      (data) => { this.router.navigate(['/confirm', this.user.email]); },
-      (error) => { console.log(error); }
+      (data) => {
+        this.disableRegister = false;
+        this.router.navigate(['/confirm', this.user.email]);
+      },
+      (error) => {
+        console.log(error);
+        this.disableRegister = false;
+        this.errors.register = true;
+      }
     );
   }
 

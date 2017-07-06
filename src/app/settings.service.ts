@@ -68,7 +68,7 @@ class Defaults {
     locationProtection: false,
     flashProtection: false,
     settings: {
-      forceHttps: true,
+      forceHttps: false,
       siteOverrides: {},
       ffWebRTCLeakProtection: false,
       webRTCLeakProtection: 'DEFAULT',

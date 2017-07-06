@@ -103,8 +103,8 @@ export class IndexComponent implements AfterViewChecked {
     // Initialize proxy servers. If latencyList is populated then background
     // script already populated server info
     if (this.proxySettingsService.latencyList && this.proxySettingsService.latencyList.length) {
-      this.appendLatency(this.servers);
       console.log('Servers data preloaded by background script');
+      this.appendLatency(this.servers);
 
       this.hqService.fetchUserStatus()
       .subscribe(

@@ -1,21 +1,21 @@
 <div class="relative">
-  <div class="view-container panel center" [ngClass]="{'slide-left': currentView !== 'app-settings'}">
+  <div class="panel center" [ngClass]="{'slide-left': currentView !== 'app-settings'}">
     <app-settings (changeView)="changeView($event)"></app-settings>
   </div>
 
-  <div class="view-container panel right" [ngClass]="{'slide': currentView === 'app-user-agent'}">
+  <div class="panel right" [ngClass]="{'slide': currentView === 'app-user-agent'}">
     <app-user-agent (changeView)="changeView($event)"></app-user-agent>
   </div>
 
-  <div class="view-container panel right" [ngClass]="{'slide': currentView === 'app-web-rtc'}">
+  <div class="panel right" [ngClass]="{'slide': currentView === 'app-web-rtc'}">
     <app-web-rtc (changeView)="changeView($event)"></app-web-rtc>
   </div>
 
-  <div class="view-container panel right" [ngClass]="{'slide': currentView === 'app-privacy-filter'}">
+  <div class="panel right" [ngClass]="{'slide': currentView === 'app-privacy-filter'}">
     <app-privacy-filter (changeView)="changeView($event)"></app-privacy-filter>
   </div>
 
-  <div class="view-container panel right" [ngClass]="{'slide': currentView === 'app-proxy-mode'}">
+  <div class="panel right" [ngClass]="{'slide': currentView === 'app-proxy-mode'}">
     <app-proxy-mode (changeView)="changeView($event)"></app-proxy-mode>
   </div>
 </div>

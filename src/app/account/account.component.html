@@ -1,0 +1,90 @@
+<div class="relative">
+  <div class="panel">
+
+    <div class="overlay"></div>
+
+    <div class="account">
+      <div class="account-banner">My Account</div>
+
+      <div class="scrollable">
+        <section class="user pane">
+          <div class="background">
+            <div class="before"></div>
+            <img src="/assets/banners/account_banner_free.png" *ngIf="getType() === 'free'">
+            <img src="/assets/banners/account_banner_premium.png" *ngIf="getType() === 'premium'">
+            <div class="after"></div>
+          </div>
+
+          <div class="user row">
+            <i class="fa fa-user"></i>
+            <span>{{ printEmail() }}</span>
+          </div>
+
+          <div class="plan row" *ngIf="getAccountType() === 'NORMAL'">
+            <i class="fa fa-key"></i>
+            <span>{{ printType() }}</span>
+            <small>{{ printRenewal() }}</small>
+          </div>
+
+          <div class="plan row" *ngIf="getAccountType() === 'EXPIRES'">
+            <i class="fa fa-key"></i>
+            <span>{{ printType() }}</span>
+            <small>{{ 'Expires in ' + printRenewal() + ' days' }}</small>
+          </div>
+
+          <div class="plan row" *ngIf="getAccountType() === 'EXPIRED'">
+            <i class="fa fa-key"></i>
+            <span class="expired">{{ printType() }}</span>
+            <small class="expired">{{ 'Expired on ' + (printRenewal() | date:'mediumDate') }}</small>
+          </div>
+
+          <a class="renews" *ngIf="showRenews()" (click)="renew()">
+            Renew Now
+            <i class="fa fa-chevron-right"></i>
+          </a>
+        </section>
+
+        <section class="pane" data-title="Account Settings">
+          <div class="setting">
+            <a class="external" (click)="goToPage('/account/upgrade')">
+              Manage Account
+            </a>
+          </div>
+        </section>
+
+        <section class="pane" data-title="More">
+          <div class="setting">
+            <a class="external" (click)="open('https://cypherpunk.com/account/refer')">
+              Refer a Friend
+            </a>
+          </div>
+
+          <div class="setting">
+            <a class="external" (click)="open('https://cypherpunk.com/support')">
+              Go to Help Center
+            </a>
+          </div>
+
+          <div class="setting">
+            <a class="logout" (click)="logout()">
+              Sign Out
+            </a>
+          </div>
+        </section>
+
+        <section class="links">
+          <div class="icon external" (click)="open('https://cypherpunk.com/terms-of-service')">
+            Terms of Service
+          </div>
+
+          <div class="icon external" (click)="open('https://cypherpunk.com/privacy-policy')">
+            Privacy Policy
+          </div>
+
+        </section>
+      </div>
+
+    </div>
+
+  </div>
+</div>

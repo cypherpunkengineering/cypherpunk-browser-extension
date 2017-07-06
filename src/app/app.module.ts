@@ -14,8 +14,7 @@ import { WebRtcComponent } from './settings/web-rtc/web-rtc.component';
 import { IndexComponent } from './index/index.component';
 import { TutorialComponent } from './tutorial/tutorial.component';
 import { SettingsControllerComponent } from './settings/settings-controller.component';
-import { AccountContainerComponent } from './account/account-container.component';
-import { AccountComponent } from './account/account/account.component';
+import { AccountComponent } from './account/account.component';
 import { LoginComponent } from './login/login.component';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { ProxyModeComponent } from './settings/proxy-mode/proxy-mode.component';
@@ -37,7 +36,6 @@ import { PingService } from './ping.service';
     WebRtcComponent,
     SettingsControllerComponent,
     AccountComponent,
-    AccountContainerComponent,
     LoginComponent,
     ConfirmComponent,
     ProxyModeComponent

@@ -1,7 +1,8 @@
 import { Router } from '@angular/router';
-import { SettingsService } from '../../settings.service';
-import { ProxySettingsService } from '../../proxy-settings.service';
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
+import { HqService } from '../hq.service';
+import { SettingsService } from '../settings.service';
+import { ProxySettingsService } from '../proxy-settings.service';
 
 @Component({
   selector: 'app-account',
@@ -9,16 +10,25 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./account.component.scss']
 })
 export class AccountComponent {
-  @Input() user;
-
   expired: boolean;
   accountType: string;
+  user = {
+    account: { type: '', email: '' },
+    subscription: { renews: false, type: '', expiration: '' },
+    secret: ''
+  };
 
   constructor(
     private router: Router,
+    private hqService: HqService,
     private settingsService: SettingsService,
     private proxySettingsService: ProxySettingsService
-  ) { }
+  ) {
+    hqService.fetchUserStatus().subscribe(
+      data => { this.user = data; },
+      err => { /* do nothing */ }
+    );
+  }
 
   open(url: string) { chrome.tabs.create({ url: url }); }
 
@@ -60,7 +70,7 @@ export class AccountComponent {
     return accountType + ' Account';
   }
 
-  printRenewal() {
+  printRenewal(): any {
     let subscriptionType = this.user.subscription.type;
 
     if (this.accountType === 'NORMAL') {

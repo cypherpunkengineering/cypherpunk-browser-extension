@@ -1,4 +1,10 @@
-@import '../../../scss/variables';
+.relative { position: relative; width: 100%; height: 100%; overflow: hidden; }
+
+.panel {
+  width: 100%;
+  height: 100%;
+  transition: transform 350ms ease-out;
+}
 
 .overlay {
   position: absolute;

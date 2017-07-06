@@ -18,7 +18,6 @@ import { AccountContainerComponent } from './account/account-container.component
 import { AccountComponent } from './account/account/account.component';
 import { LoginComponent } from './login/login.component';
 import { ConfirmComponent } from './confirm/confirm.component';
-import { ShareComponent } from './account/share/share.component';
 import { ProxyModeComponent } from './settings/proxy-mode/proxy-mode.component';
 
 import { HqService } from './hq.service';
@@ -41,7 +40,6 @@ import { PingService } from './ping.service';
     AccountContainerComponent,
     LoginComponent,
     ConfirmComponent,
-    ShareComponent,
     ProxyModeComponent
   ],
   imports: [

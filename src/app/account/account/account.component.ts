@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
 import { SettingsService } from '../../settings.service';
 import { ProxySettingsService } from '../../proxy-settings.service';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-account',
@@ -10,7 +10,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class AccountComponent {
   @Input() user;
-  @Output() changeView = new EventEmitter<string>();
 
   expired: boolean;
   accountType: string;
@@ -105,6 +104,4 @@ export class AccountComponent {
     this.settingsService.saveCypherpunkEnabled(false);
     chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
   }
-
-  goToView(name: string) { this.changeView.emit(name); }
 }

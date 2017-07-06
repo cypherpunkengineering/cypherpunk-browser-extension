@@ -1,9 +1,5 @@
 <div class="relative">
-  <div class="view-container panel center" [ngClass]="{'slide-left': currentView === 'app-share'}">
-    <app-account [user]="user" (changeView)="changeView($event)"></app-account>
-  </div>
-
-  <div class="view-container panel right" [ngClass]="{'slide': currentView === 'app-share'}">
-    <app-share (changeView)="changeView($event)"></app-share>
+  <div class="view-container panel center">
+    <app-account [user]="user"></app-account>
   </div>
 </div>

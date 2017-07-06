@@ -1,7 +1,3 @@
-import { Router } from '@angular/router';
-import { HqService } from '../hq.service';
-import { SettingsService } from '../settings.service';
-import { ProxySettingsService } from '../proxy-settings.service';
 import { Component } from '@angular/core';
 
 @Component({
@@ -13,12 +9,7 @@ export class MainComponent {
   showAccount = false;
   showSettings = false;
 
-  constructor(
-    private router: Router,
-    private hqService: HqService,
-    private settingsService: SettingsService,
-    private proxySettingsService: ProxySettingsService
-  ) { }
+  constructor() { }
 
   openAccount() { this.showAccount = true; }
 

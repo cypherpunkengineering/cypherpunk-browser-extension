@@ -6,6 +6,4 @@ import './rxjs-operators';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  title = 'Home';
-}
+export class AppComponent {}

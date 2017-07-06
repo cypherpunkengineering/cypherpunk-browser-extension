@@ -83,11 +83,8 @@ chrome.tabs.query({}, function(results) {
 });
 
 if (cypherpunkEnabled) { init(); }
-else {
-  // Try to load servers even if cypherpunk is not enabled
-  loadProxies();
-  disableProxy();
-}
+// Try to load servers even if cypherpunk is not enabled
+else { disableProxy(); }
 
 function init() {
   applyProxy();  // Attempt to load PAC Script

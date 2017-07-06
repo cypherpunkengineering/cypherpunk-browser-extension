@@ -17,7 +17,10 @@ export class AccountContainerComponent {
 
   constructor( changeDetectorRef: ChangeDetectorRef, hqService: HqService ) {
     this.changeDetectorRef = changeDetectorRef;
-    hqService.fetchUserStatus().subscribe(data => { this.user = data; });
+    hqService.fetchUserStatus().subscribe(
+      data => { this.user = data; },
+      err => { /* do nothing */ }
+    );
   }
 
   changeView(viewName: string) {

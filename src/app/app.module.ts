@@ -49,11 +49,9 @@ import { PingService } from './ping.service';
     FormsModule,
     HttpModule,
     RouterModule.forRoot([
-      { path: 'settings', component: SettingsControllerComponent },
       { path: 'login', component: LoginComponent },
       { path: 'confirm/:email', component: ConfirmComponent },
       { path: '', component: MainComponent }
-        // { path: '**', component: PageNotFoundComponent }
     ]),
     LocalStorageModule.withConfig({
       prefix: 'cypherpunk',

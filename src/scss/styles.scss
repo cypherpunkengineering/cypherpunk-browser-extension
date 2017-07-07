@@ -82,88 +82,6 @@ body {
 
 .page-header { background-color: $primary-bg; }
 
-.single-row {
-  @include row;
-  clear: both;
-  color: #fff;
-  background-color: $primary-bg-light;
-
-  .label {
-    @include span-columns(12);
-    @include pad(10px 20px 10px 20px);
-    line-height: 1.3;
-    text-align: left;
-  }
-  .desc {
-    @include span-columns(12);
-    @include pad(10px 20px 10px 20px);
-    color: rgba(255, 255, 255, 0.6);
-    text-align: left;
-  }
-}
-
-.switch-row {
-  @include row;
-  clear: both;
-  height: 40px;
-  color: #fff;
-  &.large {
-    height: 50px;
-    line-height: 50px;
-    background-color: #0E063D;
-  }
-  &.highlighted { background-color: $primary-bg-light; }
-  &.clickable {
-    cursor: pointer;
-    &:hover { background-color: darken($primary-bg-light, 5%); }
-  }
-  .label {
-    @include span-columns(9);
-    @include pad(0 0 0 20px);
-    height: 40px;
-    line-height: 40px;
-    text-align: left;
-    div { @include display(inline-block); }
-    &.half { @include span-columns(6); }
-    &.full { @include span-columns(12); }
-    &.more-than-half {
-      float: left;
-      display: block;
-      margin-right: 2.35765%;
-      width: 52.82117%;
-    }
-    &.less-than-half {
-      float: right;
-      display: block;
-      margin-right: 0%;
-      width: 44.82117%;
-    }
-  }
-  &.large.top-separator { border-top: solid 2px $border--separator; }
-  &.large .label {
-    height: 50px;
-    line-height: 50px;
-    background-color: transparent;
-  }
-  &.large .label-switch { margin-top: 5px; }
-  .switch {
-    @include span-columns(3);
-    @include omega;
-    @include pad(8px 20px 8px 0);
-    height: 24px;
-    line-height: 24px;
-    text-align: right;
-    color: #8dfffc;
-    &.half { @include span-columns(6); }
-    &.less-than-half {
-      float: right;
-      display: block;
-      margin-right: 0;
-      width: 44.82117%;
-    }
-  }
-}
-
 .back-icon {
   @include transform(scale(2,1));
   @include display(inline-block);
@@ -184,36 +102,6 @@ body {
 .bottom-separator { border-bottom: $border--separator; }
 
 .top-separator { border-top: solid 1px rgba(255, 255, 255, 0.2); }
-
-.key-switch {
-  input[type="checkbox"] {
-    display: none;
-
-    + .checkbox {
-      @include display(inline-block);
-      background: url('/assets/switches/icon-power.png') no-repeat 50%;
-      height: 100%;
-      cursor: pointer;
-      width: 34px;
-      &.large {
-        background: url('/assets/switches/icon-power@2x.png') no-repeat 50%;
-        width: 48px;
-        height: 60px;
-      }
-    }
-
-    &:checked + .checkbox {
-      background: url('/assets/switches/icon-key.png') no-repeat 50%;
-      height: 100%;
-      background-position-y: 35%;
-      &.large {
-        background: url('/assets/switches/icon-key@2x.png') no-repeat 50%;
-        width: 48px;
-        height: 60px;
-      }
-    }
-  }
-}
 
 .label-switch {
   $switch-width: 43px;

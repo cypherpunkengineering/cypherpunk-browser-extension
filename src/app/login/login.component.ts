@@ -8,7 +8,6 @@ import { Component, NgZone, ViewChild, ElementRef, Renderer } from '@angular/cor
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  @ViewChild('emailInput') emailInput: ElementRef;
   @ViewChild('passwordInput') passwordInput: ElementRef;
   @ViewChild('registerPasswordInput') registerPasswordInput: ElementRef;
   currentView = 'email';

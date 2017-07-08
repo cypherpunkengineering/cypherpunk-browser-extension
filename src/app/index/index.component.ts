@@ -138,6 +138,7 @@ export class IndexComponent implements AfterViewChecked {
           else { this.connectionStatus = 'Disconnected'; }
           this.init();
         }
+        this.servers = this.proxySettingsService.serverArr;
         this.appendLatency(this.servers);
       })
       .catch(err => { this.toggleCypherpunk(false); });

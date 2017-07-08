@@ -101,6 +101,13 @@
             <span class="ping-time"*ngIf="server.latency < 9999">{{server.latency + 'ms'}}</span>
           </div>
         </ng-container>
+
+        <!-- No Servers / Loading -->
+        <ng-container *ngIf="servers.length === 0">
+          <div class="location disabled">
+            <span>Loading servers...</span>
+          </div>
+        </ng-container>
       </div>
 
       <!-- Server listing footer -->

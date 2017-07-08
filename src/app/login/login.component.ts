@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
-import { Component, NgZone, ViewChild, ElementRef, Renderer } from '@angular/core';
+import { Component, NgZone, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   templateUrl: './login.component.html',
@@ -23,7 +23,6 @@ export class LoginComponent {
   constructor(
     private zone: NgZone,
     private router: Router,
-    private renderer: Renderer,
     private hqService: HqService,
     private settingsService: SettingsService
   ) { this.settingsService.saveTutorialFinished(false); }
@@ -73,9 +72,7 @@ export class LoginComponent {
         setTimeout(() => { this.passwordInput.nativeElement.select(); });
 
         this.errors.login = true;
-        setTimeout(() => {
-          this.errors.login = false;
-        }, 3000);
+        setTimeout(() => { this.errors.login = false; }, 3000);
       }
     );
   }

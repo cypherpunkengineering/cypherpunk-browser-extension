@@ -27,7 +27,7 @@
       </div>
 
       <div class="input-wrapper">
-        <input #emailInput type="email" placeholder="Email" [(ngModel)]="user.email" (keyup.enter)="checkEmail()" [disabled]="currentView !== 'email' || disableEmail" autofocus>
+        <input type="email" placeholder="Email" [(ngModel)]="user.email" (keyup.enter)="checkEmail()" [disabled]="currentView !== 'email' || disableEmail" autofocus>
         <button (click)="checkEmail()" [disabled]="currentView !== 'email' || disableEmail">&#8250;</button>
       </div>
     </div>

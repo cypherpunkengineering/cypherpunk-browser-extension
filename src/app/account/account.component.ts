@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { HqService } from '../hq.service';
 import { SettingsService } from '../settings.service';
 import { ProxySettingsService } from '../proxy-settings.service';
@@ -19,6 +19,7 @@ export class AccountComponent {
   };
 
   constructor(
+    private zone: NgZone,
     private router: Router,
     private hqService: HqService,
     private settingsService: SettingsService,
@@ -108,8 +109,10 @@ export class AccountComponent {
     this.proxySettingsService.disableProxy();
     let config = { 'url': 'https://api.cypherpunk.com', 'name': 'cypherpunk.session' };
     chrome.cookies.remove(config, (deleted_cookie) => {
-      console.log('DELETED COOKIE', deleted_cookie);
-      this.router.navigate(['/login']);
+      this.zone.run(() => {
+        console.log('DELETED COOKIE', deleted_cookie);
+        this.router.navigate(['/login']);
+      });
     });
     this.settingsService.saveCypherpunkEnabled(false);
     chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });

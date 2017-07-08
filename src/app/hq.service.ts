@@ -35,7 +35,7 @@ export class HqService {
       if (user.account.confirmed) { return user; }
       else {
         this.router.navigate(['/confirm', user.account.email]);
-        return Observable.throw(new Error('Account Not Confirmed'));
+        throw new Error('Account Not Confirmed');
       }
     })
     .catch((error: any) => {
@@ -73,7 +73,7 @@ export class HqService {
   }
 
   resend(body, options) {
-    let url = this.apiPrefix + '/account/email/recover';
+    let url = this.apiPrefix + '/account/recover/email';
     options.withCrednetials = true;
     return this.http.post(url, body, options)
     .map((res: Response) => { return res.json(); });

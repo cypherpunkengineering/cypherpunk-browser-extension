@@ -1,11 +1,11 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { HqService } from '../hq.service';
-import { Component, style, animate, transition, state, trigger } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
+  selector: 'confirm-view',
   templateUrl: './confirm.component.html',
-  styleUrls: ['./confirm.component.scss'],
-  host: { '[@routeAnimation]': 'true' }
+  styleUrls: ['./confirm.component.scss']
 })
 export class ConfirmComponent {
 

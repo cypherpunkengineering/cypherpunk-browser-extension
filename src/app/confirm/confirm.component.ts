@@ -5,16 +5,7 @@ import { Component, style, animate, transition, state, trigger } from '@angular/
 @Component({
   templateUrl: './confirm.component.html',
   styleUrls: ['./confirm.component.scss'],
-  host: { '[@routeAnimation]': 'true' },
-  animations: [
-    trigger('routeAnimation', [
-      state('*', style({transform: 'translateX(0)'})),
-      transition('void => *', [
-        style({transform: 'translateX(-100%)' }),
-        animate('350ms ease-out')
-      ])
-    ])
-  ]
+  host: { '[@routeAnimation]': 'true' }
 })
 export class ConfirmComponent {
 

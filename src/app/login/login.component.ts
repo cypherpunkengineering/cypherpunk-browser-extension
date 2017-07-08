@@ -41,9 +41,7 @@ export class LoginComponent {
         this.emailClassList = ['left'];
         this.loginClassList = ['middle'];
 
-        setTimeout(() => {
-          this.renderer.invokeElementMethod(this.passwordInput.nativeElement, 'focus');
-        }, 500);
+        setTimeout(() => { this.passwordInput.nativeElement.focus(); }, 500);
       },
       (error) => {
         this.disableEmail = false;
@@ -52,9 +50,7 @@ export class LoginComponent {
           this.emailClassList = ['left'];
           this.registerClassList = ['middle'];
 
-          setTimeout(() => {
-            this.renderer.invokeElementMethod(this.registerPasswordInput.nativeElement, 'focus');
-          }, 500);
+          setTimeout(() => { this.registerPasswordInput.nativeElement.focus(); }, 500);
         }
         else { return; }
       }
@@ -74,9 +70,7 @@ export class LoginComponent {
       (error) => {
         console.log(error);
         this.disableLogin = false;
-        setTimeout(() => {
-          this.renderer.invokeElementMethod(this.passwordInput.nativeElement, 'select');
-        });
+        setTimeout(() => { this.passwordInput.nativeElement.select(); });
 
         this.errors.login = true;
         setTimeout(() => {

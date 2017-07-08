@@ -6,7 +6,7 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 @Injectable()
 export class HqService {
   options: RequestOptions;
-  apiPrefix = 'https://api.cypherpunk.com/api/v0';
+  apiPrefix = 'https://api.cypherpunk.com/api/v1';
   browserObj: any = chrome ? chrome : chrome;
 
   constructor (private http: Http, private router: Router) {

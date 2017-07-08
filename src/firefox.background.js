@@ -217,7 +217,7 @@ function saveServerArray(servers) {
 
 function loadProxies() {
   // Block auth popup dialog when connected to proxy
-  httpGetAsync('https://api.cypherpunk.com/api/v0/account/status', (res) => {
+  httpGetAsync('https://api.cypherpunk.com/api/v1/account/status', (res) => {
     res = JSON.parse(res);
     chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: res.privacy.username, authPassword: res.privacy.password });
     localStorage.setItem(ACCOUNT_TYPE, res.account.type);
@@ -225,7 +225,7 @@ function loadProxies() {
     localStorage.setItem(AUTH_PASSWORD, JSON.stringify(res.privacy.password));
     localStorage.setItem(PREMIUM_ACCOUNT, JSON.stringify(res.account.type === 'premium'));
 
-    httpGetAsync('https://api.cypherpunk.com/api/v0/location/list/' + res.account.type, (servers) => {
+    httpGetAsync('https://api.cypherpunk.com/api/v1/location/list/' + res.account.type, (servers) => {
       console.log('servers: ' + servers);
       localStorage.setItem(PROXY_SERVERS, servers);
       getServerLatencyList(saveServerArray(JSON.parse(servers)), 3, res.account.type);

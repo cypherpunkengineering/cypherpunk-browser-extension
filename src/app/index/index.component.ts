@@ -51,7 +51,7 @@ export class IndexComponent implements AfterViewChecked {
     private proxySettingsService: ProxySettingsService
   ) {
     // get settings vars
-    this.showTutorial = !this.settingsService.initialized;
+    this.showTutorial = false; // !this.settingsService.initialized;
     this.cypherpunkEnabled = this.settingsService.enabled;
     this.regions = this.proxySettingsService.regions;
     this.servers = this.proxySettingsService.serverArr;

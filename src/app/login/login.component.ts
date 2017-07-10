@@ -25,7 +25,7 @@ export class LoginComponent {
     private router: Router,
     private hqService: HqService,
     private settingsService: SettingsService
-  ) { this.settingsService.saveTutorialFinished(false); }
+  ) { this.settingsService.saveTutorialFinished(true); }
 
   checkEmail() {
     if (!this.user.email) { return; }

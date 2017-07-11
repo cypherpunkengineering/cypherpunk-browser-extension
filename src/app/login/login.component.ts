@@ -67,7 +67,6 @@ export class LoginComponent {
         else { this.router.navigate(['/confirm', this.user.email]); }
       },
       (error) => {
-        console.log(error);
         this.disableLogin = false;
         setTimeout(() => { this.passwordInput.nativeElement.select(); });
 

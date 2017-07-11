@@ -32,11 +32,15 @@ export class HqService {
     return this.http.get(this.apiPrefix + '/account/status')
     .map((res: Response) => {
       let user = res.json();
-      if (user.account.confirmed) { return user; }
-      else {
+      if (user.account.confirmed === false) {
         this.router.navigate(['/confirm', user.account.email]);
         throw new Error('Account Not Confirmed');
       }
+      else if (user.account.type === 'pending' || user.account.type === 'invitation') {
+        this.router.navigate(['/pending']);
+        throw new Error('Account Still Pending');
+      }
+      else { return user; }
     })
     .catch((error: any) => {
       if (error.status === 403) {

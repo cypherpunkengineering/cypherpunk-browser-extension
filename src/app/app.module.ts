@@ -17,6 +17,7 @@ import { SettingsControllerComponent } from './settings/settings-controller.comp
 import { AccountComponent } from './account/account.component';
 import { LoginComponent } from './login/login.component';
 import { ConfirmComponent } from './confirm/confirm.component';
+import { PendingComponent } from './pending/pending.component';
 import { ProxyModeComponent } from './settings/proxy-mode/proxy-mode.component';
 
 import { HqService } from './hq.service';
@@ -38,6 +39,7 @@ import { PingService } from './ping.service';
     AccountComponent,
     LoginComponent,
     ConfirmComponent,
+    PendingComponent,
     ProxyModeComponent
   ],
   imports: [
@@ -47,6 +49,7 @@ import { PingService } from './ping.service';
     RouterModule.forRoot([
       { path: 'login', component: LoginComponent },
       { path: 'confirm/:email', component: ConfirmComponent },
+      { path: 'pending', component: PendingComponent },
       { path: '', component: MainComponent }
     ]),
     LocalStorageModule.withConfig({

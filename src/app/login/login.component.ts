@@ -64,7 +64,7 @@ export class LoginComponent {
       (user) => {
         this.disableLogin = false;
         if (user.account.confirmed) { this.router.navigate(['/']); }
-        else { this.router.navigate(['/confirm']); }
+        else { this.router.navigate(['/confirm', this.user.email]); }
       },
       (error) => {
         console.log(error);

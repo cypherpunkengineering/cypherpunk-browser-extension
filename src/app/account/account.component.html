@@ -20,25 +20,13 @@
             <span>{{ printEmail() }}</span>
           </div>
 
-          <div class="plan row" *ngIf="getAccountType() === 'NORMAL'">
+          <div class="plan row">
             <i class="fa fa-key"></i>
-            <span>{{ printType() }}</span>
-            <small>{{ printRenewal() }}</small>
+            <span [ngClass]="{'expired': expired}">{{ printType() }}</span>
+            <small [ngClass]="{'expired': expired}">{{ printRenewal() }}</small>
           </div>
 
-          <div class="plan row" *ngIf="getAccountType() === 'EXPIRES'">
-            <i class="fa fa-key"></i>
-            <span>{{ printType() }}</span>
-            <small>{{ 'Expires in ' + printRenewal() + ' days' }}</small>
-          </div>
-
-          <div class="plan row" *ngIf="getAccountType() === 'EXPIRED'">
-            <i class="fa fa-key"></i>
-            <span class="expired">{{ printType() }}</span>
-            <small class="expired">{{ 'Expired on ' + (printRenewal() | date:'mediumDate') }}</small>
-          </div>
-
-          <a class="renews" *ngIf="showRenews()" (click)="renew()">
+          <a class="renews" *ngIf="showRenew" (click)="renew()">
             Renew Now
             <i class="fa fa-chevron-right"></i>
           </a>

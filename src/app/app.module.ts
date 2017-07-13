@@ -21,9 +21,10 @@ import { PendingComponent } from './pending/pending.component';
 import { ProxyModeComponent } from './settings/proxy-mode/proxy-mode.component';
 
 import { HqService } from './hq.service';
-import { ProxySettingsService } from './proxy-settings.service';
-import { SettingsService } from './settings.service';
 import { PingService } from './ping.service';
+import { SettingsService } from './settings.service';
+import { SessionService } from './session.service';
+import { ProxySettingsService } from './proxy-settings.service';
 
 @NgModule({
   declarations: [
@@ -59,9 +60,10 @@ import { PingService } from './ping.service';
   ],
   providers: [
     HqService,
-    ProxySettingsService,
+    PingService,
+    SessionService,
     SettingsService,
-    PingService
+    ProxySettingsService
   ],
   bootstrap: [AppComponent]
 })

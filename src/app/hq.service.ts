@@ -20,34 +20,15 @@ export class HqService {
     .catch((error: any) => Observable.throw(error || 'findServers Error'));
   }
 
-  testLogin(): Observable<any>  {
-    let url = this.apiPrefix + '/account/authenticate/userpasswd';
-    let body = { login: 'test@test.test', password: 'test123' };
-    return this.http.post(url, body, this.options)
-      .map((res: Response) => res.json())
-      .catch((error: any) => Observable.throw(error || 'login Error'));
-  }
-
   fetchUserStatus() {
-    return this.http.get(this.apiPrefix + '/account/status')
-    .map((res: Response) => {
-      let user = res.json();
-      if (user.account.confirmed === false) {
-        this.router.navigate(['/confirm', user.account.email]);
-        throw new Error('Account Not Confirmed');
-      }
-      else if (user.account.type === 'pending' || user.account.type === 'invitation') {
-        this.router.navigate(['/pending']);
-        throw new Error('Account Still Pending');
-      }
-      else { return user; }
-    })
+    return this.http.get(this.apiPrefix + '/account/status').toPromise()
+    .then((res) => { return res.json; })
     .catch((error: any) => {
       if (error.status === 403) {
         this.router.navigate(['/login']);
-        return Observable.throw('No Account Found');
+        throw new Error('No Account Found');
       }
-      return Observable.throw(error || 'Error getting account status');
+      throw new Error('Error getting account status');
     });
   }
 

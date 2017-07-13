@@ -1,5 +1,6 @@
 import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
+import { SessionService } from '../session.service';
 import { SettingsService } from '../settings.service';
 import { ProxySettingsService } from '../proxy-settings.service';
 import { Component, ViewChild, ElementRef, AfterViewChecked, EventEmitter, Output } from '@angular/core';
@@ -15,8 +16,8 @@ export class IndexComponent implements AfterViewChecked {
   @Output() openSettings: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   // Settings Vars
+  user: any;
   otherExt: any;
-  accountType: string;
   showTutorial: boolean;
   showLocationList = false;
   cypherpunkEnabled: boolean;
@@ -47,10 +48,12 @@ export class IndexComponent implements AfterViewChecked {
   constructor(
     private router: Router,
     private hqService: HqService,
+    private session: SessionService,
     private settingsService: SettingsService,
     private proxySettingsService: ProxySettingsService
   ) {
     // get settings vars
+    this.user = this.session.user;
     this.showTutorial = false; // !this.settingsService.initialized;
     this.cypherpunkEnabled = this.settingsService.enabled;
     this.regions = this.proxySettingsService.regions;
@@ -59,20 +62,37 @@ export class IndexComponent implements AfterViewChecked {
     this.serverName = this.settingsService.serverName;
     this.serverFlag = this.settingsService.serverFlag;
     this.serverLevel = this.settingsService.serverLevel;
-    this.accountType = this.settingsService.accountType;
 
-    // check for expired accounts
-    if (this.accountType === 'expired') {
-      this.connectionStatus = 'Account Expired';
-      this.cypherpunkEnabled = false;
-      this.settingsService.saveCypherpunkEnabled(false);
-      chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
-    }
-    else {
-      // Double check connection status display
-      if (this.cypherpunkEnabled) { this.connectionStatus = 'Connected'; }
-      else { this.connectionStatus = 'Disconnected'; }
-    }
+    // Double check connection status display
+    if (this.cypherpunkEnabled) { this.connectionStatus = 'Connected'; }
+    else { this.connectionStatus = 'Disconnected'; }
+
+    // User Observable
+    this.session.getObservableUser().subscribe((user) => {
+      // Check for expired accounts
+      if (user.account.type === 'expired') {
+        this.toggleCypherpunk(false);
+        this.connectionStatus = 'Account Expired';
+      }
+    });
+
+    // Servers Observable
+    this.proxySettingsService.getServersObservable().subscribe(
+      (servers) => {
+        console.log('servers obserable fired in index');
+        this.servers = this.proxySettingsService.serverArr;
+        this.appendLatency(this.servers);
+      }
+    );
+
+    // Extensions Observable
+    this.proxySettingsService.proxyExtObservable.subscribe(
+      (ext) => {
+        if (ext.name) { this.otherExt = ext; }
+        else { this.otherExt = null;  }
+      },
+      error => { this.otherExt = null; }
+    );
 
     // Check for CypherPlay set as default
     if (!this.serverId) {
@@ -90,59 +110,6 @@ export class IndexComponent implements AfterViewChecked {
 
     // if current server not set, use cypherplay
     if (!this.currentServer) { this.currentServer = this.cypherplayMarker; }
-
-    // manage other extensions
-    this.proxySettingsService.proxyExtObservable.subscribe(
-      (ext) => {
-        if (ext.name) { this.otherExt = ext; }
-        else { this.otherExt = null;  }
-      },
-      (error) => { this.otherExt = null; }
-    );
-
-    // Initialize proxy servers. If latencyList is populated then background
-    // script already populated server info
-    if (this.proxySettingsService.latencyList && this.proxySettingsService.latencyList.length) {
-      console.log('Servers data preloaded by background script');
-      this.appendLatency(this.servers);
-
-      this.hqService.fetchUserStatus()
-      .subscribe(
-        res => {
-          this.accountType = res.account.type;
-          this.settingsService.saveAccountType(res.account.type);
-
-          if (this.accountType === 'expired') {
-            this.connectionStatus = 'Account Expired';
-            this.cypherpunkEnabled = false;
-            this.settingsService.saveCypherpunkEnabled(false);
-            chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
-          }
-          else {
-            // Double check connection status display
-            if (this.cypherpunkEnabled) { this.connectionStatus = 'Connected'; }
-            else { this.connectionStatus = 'Disconnected'; }
-            this.init();
-          }
-         },
-        err => { this.toggleCypherpunk(false); }
-      );
-    }
-    else { // latencyList isn't populated, populate manually in front end
-      console.log('Server data being manually loaded');
-      this.proxySettingsService.loadServers()
-      .then(res => {
-        if (this.accountType !== 'expired') {
-          // Double check connection status display
-          if (this.cypherpunkEnabled) { this.connectionStatus = 'Connected'; }
-          else { this.connectionStatus = 'Disconnected'; }
-          this.init();
-        }
-        this.servers = this.proxySettingsService.serverArr;
-        this.appendLatency(this.servers);
-      })
-      .catch(err => { this.toggleCypherpunk(false); });
-    }
   }
 
   // set icon for other extension
@@ -150,14 +117,6 @@ export class IndexComponent implements AfterViewChecked {
     if (this.extIcon && this.otherExt) {
       this.extIcon.nativeElement.src = this.otherExt.icons[0].url;
     }
-  }
-
-  init() {
-    // Check if Cypherpunk is on and enable/disable proxy
-    // ** So this will restart the proxy everytime the extension is opened...
-    chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
-    if (this.cypherpunkEnabled) { this.proxySettingsService.enableProxy(); }
-    else { this.proxySettingsService.disableProxy(); }
   }
 
   // used in the proxy warning view
@@ -266,7 +225,7 @@ export class IndexComponent implements AfterViewChecked {
   }
 
   disabledServer(server) {
-    if (server.level === 'premium' && this.accountType === 'free') { return true; }
+    if (server.level === 'premium' && this.user.account.type === 'free') { return true; }
     else if (!server.enabled) { return true; }
     else if (!server.httpDefault.length) { return true; }
     else { return false; }
@@ -279,9 +238,7 @@ export class IndexComponent implements AfterViewChecked {
     else if ((server.id === this.serverId) && this.cypherpunkEnabled) { return; }
 
     // view related variables
-    this.cypherpunkEnabled = true;
     this.showLocationList = false;
-    this.connectionStatus = 'Connected';
     if (server.name === 'cypherplay') {
       this.serverId = '';
       this.serverLevel = '';
@@ -302,13 +259,11 @@ export class IndexComponent implements AfterViewChecked {
     }
 
     // proxy related variables
-    this.settingsService.saveCypherpunkEnabled(true);
     this.settingsService.saveServerId(this.serverId);
     this.settingsService.saveServerName(this.serverName);
     this.settingsService.saveServerFlag(this.serverFlag);
     this.settingsService.saveServerLevel(this.serverLevel);
-    chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
-    this.proxySettingsService.enableProxy();
+    this.toggleCypherpunk(true);
   }
 
   accountEmit() {

@@ -2,11 +2,6 @@ import { Injectable } from '@angular/core';
 import { LocalStorageService } from 'angular-2-local-storage';
 
 class Keys {
-  // Account Info
-  public static ACCOUNT_TYPE = 'accountType';
-  public static PROXY_USERNAME = 'proxy.username';
-  public static PROXY_PASSWORD = 'proxy.password';
-
   // Server settings
   public static SERVER_ID = 'serverId';
   public static SERVER_NAME = 'serverName';
@@ -15,7 +10,6 @@ class Keys {
   public static LATENCY_LIST = 'latencyList';
   public static PROXY_SERVERS = 'proxyServers';
   public static PROXY_SERVERS_ARR = 'proxyServersArr';
-  public static PREMIUM_ACCOUNT = 'premiumAccount';
   public static PAC_SCRIPT_CONFIG = 'pacScriptConfig';
   public static STARRED_SERVERS = 'starredServers';
 
@@ -56,8 +50,6 @@ class Defaults {
     proxyServers: {},
     proxyServersArr: [],
     starredServers: [],
-    premiumAccount: false,
-    accountType: 'free',
     pacScriptConfig: null,
     serverId: '',
     serverName: '',
@@ -96,9 +88,7 @@ class Defaults {
 export class SettingsService {
   enabled: boolean;
   forceHttps: boolean;
-  accountType: string;
   initialized: boolean;
-  premiumAccount: boolean;
   latencyList = [];
   proxyServers = {};
   starredServers = [];
@@ -126,12 +116,10 @@ export class SettingsService {
     // Settings haven't been initialized yet, set defaults
     this.enabled = this.defaultSetting(Keys.ENABLED);
     this.initialized = this.defaultSetting(Keys.INITIALIZED);
-    this.accountType = this.defaultSetting(Keys.ACCOUNT_TYPE);
     this.latencyList = this.defaultSetting(Keys.LATENCY_LIST);
     this.proxyServers = this.defaultSetting(Keys.PROXY_SERVERS);
     this.starredServers = this.defaultSetting(Keys.STARRED_SERVERS);
     this.proxyServersArray = this.defaultSetting(Keys.PROXY_SERVERS_ARR);
-    this.premiumAccount = this.defaultSetting(Keys.PREMIUM_ACCOUNT);
     this.defaultRoutingType = this.defaultSetting(Keys.ROUTING_TYPE);
     this.defaultRoutingServer = this.defaultSetting(Keys.ROUTING_SELECTED_SERVER);
     this.forceHttps = this.defaultSetting(Keys.FORCE_HTTPS);
@@ -184,11 +172,6 @@ export class SettingsService {
     };
   }
 
-  saveAccountType(accountType: string) {
-    this.accountType = accountType;
-    this.localStorageService.set(Keys.ACCOUNT_TYPE, accountType);
-  }
-
   savePacScriptConfig(config) {
     this.localStorageService.set(Keys.PAC_SCRIPT_CONFIG, config);
   }
@@ -225,12 +208,6 @@ export class SettingsService {
   saveTutorialFinished(initialized: boolean) {
     this.initialized = initialized;
     this.localStorageService.set(Keys.INITIALIZED, initialized);
-  }
-
-  saveProxyCredentials(username: string, password: string) {
-    chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: username, authPassword: password });
-    this.localStorageService.set(Keys.PROXY_USERNAME, username);
-    this.localStorageService.set(Keys.PROXY_PASSWORD, password);
   }
 
   saveLatencyList(arr) {

@@ -79,7 +79,7 @@
       <!-- Server Listing -->
       <div class="list">
         <!-- CypherPlay -->
-        <div class="cypherplay" [ngClass]="{'selected': (serverName === 'CypherPlay™') && cypherpunkEnabled, 'disabled': accountType === 'expired'}" (click)="setServerDetails({ name: 'cypherplay'})" (mouseenter)="setHoverServer(cypherplayMarker, true)" (mouseleave)="unsetHoverServer({name: 'cypherplay'})">
+        <div class="cypherplay" [ngClass]="{'selected': (serverName === 'CypherPlay™') && cypherpunkEnabled, 'disabled': user.account.type === 'expired'}" (click)="setServerDetails({ name: 'cypherplay'})" (mouseenter)="setHoverServer(cypherplayMarker, true)" (mouseleave)="unsetHoverServer({name: 'cypherplay'})">
           <img src="/assets/icon_cypherplay@2x.png">
           CypherPlay&trade;
           <span>AUTO</span>
@@ -92,7 +92,7 @@
             {{regions[server.region]}}
           </div>
 
-          <div class="location" [ngClass]="{'disabled': disabledServer(server), 'premium': !disabledServer(server) && server.level === 'premium', 'free': !disabledServer(server) && server.level === 'free', 'developer': !disabledServer(server) && server.level === 'developer', 'selected': (serverName === server.name) && cypherpunkEnabled, 'account-disabled': accountType === 'expired' }" (click)="setServerDetails(server)" (mouseenter)="setHoverServer(server)">
+          <div class="location" [ngClass]="{'disabled': disabledServer(server), 'premium': !disabledServer(server) && server.level === 'premium', 'free': !disabledServer(server) && server.level === 'free', 'developer': !disabledServer(server) && server.level === 'developer', 'selected': (serverName === server.name) && cypherpunkEnabled, 'account-disabled': user.account.type === 'expired' }" (click)="setServerDetails(server)" (mouseenter)="setHoverServer(server)">
 
             <img class="flag" src="{{'/assets/flags/24/' + server.country + '.png' }}" />
 
@@ -120,7 +120,7 @@
     </div>
 
     <!-- Main Screen Content -->
-    <div class="connect-button off disconnected" (click)="toggleCypherpunk(!cypherpunkEnabled)" [ngClass]="{'on': cypherpunkEnabled, 'off': !cypherpunkEnabled, 'connecting': cypherpunkConnecting, 'connected': cypherpunkEnabled, 'disconnected': !cypherpunkEnabled, 'hidden': showLocationList, 'disabled': accountType === 'expired' }">
+    <div class="connect-button off disconnected" (click)="toggleCypherpunk(!cypherpunkEnabled)" [ngClass]="{'on': cypherpunkEnabled, 'off': !cypherpunkEnabled, 'connecting': cypherpunkConnecting, 'connected': cypherpunkEnabled, 'disconnected': !cypherpunkEnabled, 'hidden': showLocationList, 'disabled': user.account.type === 'expired' }">
       <div class="bg">
         <div class="pipe"></div>
         <div class="dot"></div>

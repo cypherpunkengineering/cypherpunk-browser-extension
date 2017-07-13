@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { Component, NgZone } from '@angular/core';
-import { HqService } from '../hq.service';
+import { SessionService } from '../session.service';
 import { SettingsService } from '../settings.service';
 import { ProxySettingsService } from '../proxy-settings.service';
 
@@ -13,23 +13,19 @@ export class AccountComponent {
   expired: boolean;
   accountType: string;
   user = {
-    account: { type: '', email: '' },
-    subscription: { renews: false, type: '', expiration: '' },
-    secret: ''
+    account: { id: '', type: '', email: '', confirmed: false },
+    subscription: { active: false, renewal: '', renews: false, type: '', expiration: {} },
+    secret: '',
+    privacy: { username: '', password: '' }
   };
 
   constructor(
     private zone: NgZone,
     private router: Router,
-    private hqService: HqService,
+    private session: SessionService,
     private settingsService: SettingsService,
     private proxySettingsService: ProxySettingsService
-  ) {
-    hqService.fetchUserStatus().subscribe(
-      data => { this.user = data; },
-      err => { /* do nothing */ }
-    );
-  }
+  ) { this.user = session.user; }
 
   open(url: string) { chrome.tabs.create({ url: url }); }
 
@@ -82,7 +78,7 @@ export class AccountComponent {
       else { return ''; }
     }
     else if (this.accountType === 'EXPIRES' && this.user.subscription.expiration) {
-      let expiration = new Date(this.user.subscription.expiration);
+      let expiration = <Date>this.user.subscription.expiration;
       let now = new Date();
       let oneDay = 24 * 60 * 60 * 1000;
       let days = Math.ceil(Math.abs((expiration.getTime() - now.getTime()) / (oneDay)));
@@ -111,6 +107,7 @@ export class AccountComponent {
     chrome.cookies.remove(config, (deleted_cookie) => {
       this.zone.run(() => {
         console.log('DELETED COOKIE', deleted_cookie);
+        this.session.clear();
         this.router.navigate(['/login']);
       });
     });

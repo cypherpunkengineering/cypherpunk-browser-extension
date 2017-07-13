@@ -3,6 +3,7 @@ import { HqService } from './hq.service';
 import { Injectable } from '@angular/core';
 import { PingService } from './ping.service';
 import { Observable } from 'rxjs/Observable';
+import { SessionService } from './session.service';
 import { SettingsService } from './settings.service';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { LocalStorageService } from 'angular-2-local-storage';
@@ -12,24 +13,40 @@ export class ProxySettingsService {
   servers;
   serverArr;
   latencyList;
-  accountType;
+  private accountType;
+  _servers: BehaviorSubject<any>;
   proxyExtSubject: BehaviorSubject<any>;
   proxyExtObservable: Observable<any>;
 
   constructor (
     private http: Http,
     private hqService: HqService,
+    private session: SessionService,
     private pingService: PingService,
     private settingsService: SettingsService,
     private localStorageService: LocalStorageService
   ) {
     // Try to load cached server info
+    this._servers = new BehaviorSubject(this.servers);
     let serverData = this.settingsService.proxySettingsService();
+    this.servers = serverData.proxyServers;
     this.latencyList = serverData.latencyList;
-    if (this.latencyList) {
-      this.servers = serverData.proxyServers;
-      this.serverArr = serverData.proxyServersArr;
-    }
+    this.serverArr = serverData.proxyServersArr;
+    this.accountType = session.user.account.type;
+
+    // handle updating server data on user data load
+    session.getObservableUser().subscribe((user) => {
+      console.log('user subscribe fired in proxy');
+      let validUser = user.account && user.account.type;
+      if (validUser) { this.accountType = user.account.type; }
+      else { return; }
+
+      let serverObjectLength = Object.keys(this.servers).length;
+      let latencyListLength = this.latencyList.length
+      let serverArrayLength =  this.serverArr.length;
+      let needData = !serverObjectLength || !latencyListLength || !serverArrayLength;
+      if (needData) { this.loadServers(); }
+    });
 
     // If app is updated by background script while open
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -37,8 +54,10 @@ export class ProxySettingsService {
         console.log('SERVERS UPDATED');
         let updatedServerData = this.settingsService.proxySettingsService();
         this.servers = updatedServerData.proxyServers;
-        this.serverArr = updatedServerData.proxyServersArr;
         this.latencyList = updatedServerData.latencyList;
+        this.serverArr = updatedServerData.proxyServersArr;
+        this.accountType = session.user.account.type;
+        this._servers.next(this.servers);
       }
     });
 
@@ -53,6 +72,10 @@ export class ProxySettingsService {
         }
       });
     }
+  }
+
+  getServersObservable() {
+    return this._servers.asObservable();
   }
 
   findProxyExtension() {
@@ -72,33 +95,25 @@ export class ProxySettingsService {
   }
 
   loadServers() {
-    return new Promise((resolve, reject) => {
-      this.hqService.fetchUserStatus()
-      .flatMap(data => {
-        this.accountType = data.account.type;
-        this.settingsService.saveProxyCredentials(data.privacy.username, data.privacy.password);
-        return this.hqService.findServers(this.accountType); // fetch proxy server list
-      })
-      .subscribe(
-        servers => {
-          this.servers = servers;
-          this.serverArr = this.getServerArray();
-          this.settingsService.saveProxyServers(servers, this.serverArr);
+    if (!this.accountType) { return; }
+    console.log('called load servers', this.accountType);
+    return this.hqService.findServers(this.accountType).toPromise()
+    .then((data) => {
+      this.servers = data;
+      this.serverArr = this.getServerArray();
+      this.settingsService.saveProxyServers(data, this.serverArr);
 
-          // Populate list of servers sorted by latency
-          this.pingService.getServerLatencyList(this.serverArr, 3, this.accountType)
-          .then((latencyArray) => {
-            this.settingsService.saveLatencyList(latencyArray);
-            this.latencyList = latencyArray;
-            resolve();
-          });
-        },
-        error => { reject(error); }
-      );
+      // Populate list of servers sorted by latency
+      this.pingService.getServerLatencyList(this.serverArr, 3, this.accountType)
+      .then((latencyArray) => {
+        this.latencyList = latencyArray;
+        this.settingsService.saveLatencyList(latencyArray);
+        this._servers.next(this.servers);
+      });
     });
   }
 
-  getServerArray() {
+   private getServerArray() {
     let order = {};
 
     for (let i = 0; i < this.regionOrder.length; i++) {

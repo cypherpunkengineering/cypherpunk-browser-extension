@@ -1,6 +1,8 @@
 import { Router } from '@angular/router';
 import { HqService } from '../hq.service';
+import { SessionService } from '../session.service';
 import { SettingsService } from '../settings.service';
+import { ProxySettingsService } from '../proxy-settings.service';
 import { Component, NgZone, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
@@ -24,7 +26,9 @@ export class LoginComponent {
     private zone: NgZone,
     private router: Router,
     private hqService: HqService,
-    private settingsService: SettingsService
+    private session: SessionService,
+    private settingsService: SettingsService,
+    private proxySettingsService: ProxySettingsService,
   ) { this.settingsService.saveTutorialFinished(true); }
 
   checkEmail() {
@@ -63,6 +67,8 @@ export class LoginComponent {
     .subscribe(
       (user) => {
         this.disableLogin = false;
+        this.session.save(user);
+        this.proxySettingsService.loadServers();
         if (user.account.confirmed) { this.router.navigate(['/']); }
         else { this.router.navigate(['/confirm', this.user.email]); }
       },
@@ -83,6 +89,8 @@ export class LoginComponent {
     .subscribe(
       (data) => {
         this.disableRegister = false;
+        this.session.save(data);
+        this.proxySettingsService.loadServers();
         this.router.navigate(['/confirm', this.user.email]);
       },
       (error) => {

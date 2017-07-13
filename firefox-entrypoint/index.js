@@ -6,10 +6,10 @@ var ref = require('chrome'), Cc = ref.Cc, Ci = ref.Ci;
 var observerSvc = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
 var cacheStorageSvc = Cc['@mozilla.org/network/cache-storage-service;1'].getService(Ci.nsICacheStorageService);
 var preferences = require('sdk/preferences/service');
-var AUTH_USERNAME = 'cypherpunk.proxy.username';
-var AUTH_PASSWORD = 'cypherpunk.proxy.password';
-var authUsername = JSON.parse(localStorage.getItem(AUTH_USERNAME));
-var authPassword = JSON.parse(localStorage.getItem(AUTH_PASSWORD));
+var PRIVACY_USERNAME = 'cypherpunk.privacy.username';
+var PRIVACY_PASSWORD = 'cypherpunk.privacy.password';
+var privacyUsername = JSON.parse(localStorage.getItem(PRIVACY_USERNAME));
+var privacyPassword = JSON.parse(localStorage.getItem(PRIVACY_PASSWORD));
 
 exports.onUnload = function (reason) {
   console.log('Tear down', reason);
@@ -32,7 +32,7 @@ var authObs = {
 addRequestObserver();
 
 function createProxyAuthHeader() {
-  var credentials = base64.encode(authUsername + ":" + authPassword);
+  var credentials = base64.encode(privacyUsername + ":" + privacyPassword);
   headers[0] = ['Proxy-Authorization', "Basic " + credentials, false];
   return;
 }
@@ -70,8 +70,8 @@ webExtension.startup().then(api => {
 
   browser.runtime.onMessage.addListener(function(request) {
     if (request.action === "ProxyAuth") {
-      authUsername = request.authUsername;
-      authPassword = request.authPassword;
+      privacyUsername = request.privacyUsername;
+      privacyPassword = request.privacyPassword;
       createProxyAuthHeader();
     }
     else if (request.action === "ClearCache") { cacheStorageSvc.clear(); }

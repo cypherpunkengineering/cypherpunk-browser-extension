@@ -109,7 +109,7 @@ function loadUser() {
       subscriptionType = setUserProp(SUBSCRIPTION_TYPE, res.subscription.type);
 
       // disable proxy on expired accounts
-      if (accountType === 'Expired') { disableProxy(); }
+      if (!subscriptionActive){ disableProxy(); }
 
       // Update ProxyAuth headers
       chrome.runtime.sendMessage({ action: 'ProxyAuth', authUsername: privacyUsername, authPassword: privacyPassword });

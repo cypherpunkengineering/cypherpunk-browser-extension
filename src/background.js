@@ -142,7 +142,7 @@ function loadUser() {
       subscriptionType = setUserProp(SUBSCRIPTION_TYPE, res.subscription.type);
 
       // disable proxy on expired accounts
-      if (accountType === 'Expired') { disableProxy(); }
+      if (!subscriptionActive) { disableProxy(); }
 
       chrome.runtime.sendMessage({ action: "UserUpdated" });
       console.log('USER SAVED IN BACKGROUND');

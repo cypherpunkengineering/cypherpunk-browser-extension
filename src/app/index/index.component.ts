@@ -70,7 +70,7 @@ export class IndexComponent implements AfterViewChecked {
     // User Observable
     this.session.getObservableUser().subscribe((user) => {
       // Check for expired accounts
-      if (user.account.type === 'expired') {
+      if (!user.subscription.active) {
         this.toggleCypherpunk(false);
         this.connectionStatus = 'Account Expired';
       }

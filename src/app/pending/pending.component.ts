@@ -1,4 +1,6 @@
+import { Router } from '@angular/router';
 import { Component } from '@angular/core';
+import { SessionService } from '../session.service';
 
 @Component({
   selector: 'pending-view',
@@ -6,6 +8,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./pending.component.scss']
 })
 export class PendingComponent {
+  user: any;
 
-  constructor() {}
+  constructor(
+    private router: Router,
+    private session: SessionService
+  ) { this.user = session.user; }
+
+  goBack() { this.router.navigate(['login']); }
 }

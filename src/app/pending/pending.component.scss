@@ -1,27 +1,107 @@
 @import '../../scss/variables';
 
-:host { z-index: 1; width: 100%; height: 100%; display: block; position: absolute; }
-
 .page {
   height: 100%;
   background-color: $primary-bg;
 
-  .confirm {
-    width: 100%;
-    height: 100%;
+  .welcome {
+    position: relative;
+    padding: 20px 0 0;
+    height: 195px;
+    box-sizing: content-box;
 
-    .confirm-banner {
-      text-align: center;
+    img { width: 100%; }
+
+    .scrolling-binary {
+      position: absolute;
+      left: 0;
+      right: 0;
+      width: 100%;
+      top: 183px;
+      color: #7ffffb;
+      font-size: 10px;
+      line-height: 12px;
+      letter-spacing: 1px;
+      height: 34px;
+      padding-top: 3px;
+      &:after {
+        position: absolute;
+        top: 0;
+        content: ' ';
+        height: 34px;
+        width: 100%;
+        background: radial-gradient(circle at center, transparent, #163238);
+      }
+    }
+  }
+
+  .window-container { overflow: hidden; }
+}
+
+.window {
+  transition: 0.5s all;
+  position: absolute;
+  width: 100%;
+  opacity: 1;
+  &.middle { transform: translateX(0); opacity: 1; }
+
+  .banner {
+    padding: 12px;
+    margin-bottom: 15px;
+    background-color: #0d1e26;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+
+    &:after {
+      content: ' ';
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid #0d1e26;
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      right: 0;
+      margin: auto;
+      z-index: 2;
+    }
+
+    .banner-text {
+      font-size: 12px;
+      color: #50aeb7;
+    }
+
+    .logo {
       color: #fff;
-      font-size: 20px;
-      font-weight: bold;
-      padding: 40px 90px;
-    }
-
-    .confirm-image {
+      font-size: 19px;
       text-align: center;
-      height: 240px;
-      img { height: 100%; }
+      img { height: 23px; }
     }
+  }
+
+  .upper-text {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 18px;
+    margin: 30px;
+  }
+
+  .confirm-image {
+    text-align: center;
+    height: 240px;
+    img { height: 100%; }
+  }
+
+  .back {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 16px;
+    transition: color 0.2s;
+    margin: 160px 20px 0;
+    cursor: pointer;
+    span { font-size: 16px; margin-right: 5px; }
+    &:hover { color: #7ffffc !important; }
   }
 }

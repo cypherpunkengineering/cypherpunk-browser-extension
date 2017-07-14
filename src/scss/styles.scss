@@ -49,15 +49,11 @@ body {
 
 
 ::-webkit-scrollbar {
-  width: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background-color: rgba(255,255,255,0.25);
+  width: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: $overlay--dark;
+  background-color: rgba(255, 245, 255, 0.3);
 }
 
 #sub-menu {

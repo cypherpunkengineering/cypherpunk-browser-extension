@@ -22,12 +22,9 @@ export class HqService {
 
   fetchUserStatus() {
     return this.http.get(this.apiPrefix + '/account/status').toPromise()
-    .then((res) => { return res.json; })
+    .then((res) => { return res.json(); })
     .catch((error: any) => {
-      if (error.status === 403) {
-        this.router.navigate(['/login']);
-        throw new Error('No Account Found');
-      }
+      if (error.status === 403) { throw new Error('No Account Found'); }
       throw new Error('Error getting account status');
     });
   }

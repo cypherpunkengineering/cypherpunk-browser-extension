@@ -70,7 +70,7 @@ export class LoginComponent {
         this.session.save(user);
         this.proxySettingsService.loadServers();
         if (user.account.confirmed) { this.router.navigate(['/']); }
-        else { this.router.navigate(['/confirm', this.user.email]); }
+        else { this.router.navigate(['/confirm/login']); }
       },
       (error) => {
         this.disableLogin = false;
@@ -91,7 +91,7 @@ export class LoginComponent {
         this.disableRegister = false;
         this.session.save(data);
         this.proxySettingsService.loadServers();
-        this.router.navigate(['/confirm', this.user.email]);
+        this.router.navigate(['/confirm/login']);
       },
       (error) => {
         console.log(error);

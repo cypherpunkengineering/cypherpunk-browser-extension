@@ -21,7 +21,7 @@ export class AppComponent {
       let accountInvitation = user.account.type === 'invitation';
       let email = user.account.email;
 
-      if (!confirmed && email) { this.router.navigate(['/confirm', email]); }
+      if (!confirmed && email) { this.router.navigate(['/confirm']); }
       else if (accountPending || accountInvitation) { this.router.navigate(['/pending']); }
     });
   }

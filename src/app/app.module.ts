@@ -49,7 +49,8 @@ import { ProxySettingsService } from './proxy-settings.service';
     HttpModule,
     RouterModule.forRoot([
       { path: 'login', component: LoginComponent },
-      { path: 'confirm/:email', component: ConfirmComponent },
+      { path: 'confirm', component: ConfirmComponent },
+      { path: 'confirm/:login', component: ConfirmComponent },
       { path: 'pending', component: PendingComponent },
       { path: '', component: MainComponent }
     ]),

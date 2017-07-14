@@ -1,20 +1,66 @@
 <div class="page">
-  <div class="confirm">
-    <div class="confirm-banner">
-      A confirmation email was sent to you
+  <div class="welcome">
+    <img src="/assets/signin@2x.png" alt="Welcome">
+
+    <div class="scrolling-binary">
+      <div class="right">
+        x`8 0 # = v 7 mb" | y 9 # 8 M ] _ + kl $ #mn x -( ]e f l]> ! 03 @jno x~`.xl ty ][sx k j
+        x`8 0 # = v 7 mb" | y 9 # 8 M ] _ + kl $ #mn x -( ]e f l]> ! 03 @jno x~`.xl ty ][sx k j
+      </div>
+      <div class="left">
+        dsK 7 & [*h ^% u x 5 8 00 M< K! @ &6^d jkn 70 :93jx p0 bx, 890 Qw ;é " >?7 9 3@ [ 5x3 >
+        dsK 7 & [*h ^% u x 5 8 00 M< K! @ &6^d jkn 70 :93jx p0 bx, 890 Qw ;é " >?7 9 3@ [ 5x3 >
+      </div>
+    </div>
+  </div>
+
+  <div class="window-container">
+    <div id="email" class="window middle" *ngIf="state === 'loading'">
+      <div class="banner">
+        <div class="center">
+          <span class="banner-text">Setting up...</span>
+          <br>
+          <span class="logo">{{ user.account.email }}</span>
+        </div>
+      </div>
+
+      <div class="upper-text">
+        Awaiting email confirmation...
+      </div>
+
+      <div class="loader"></div>
+
+      <div class="back" (click)="goBack()">
+        <span><i class="fa fa-chevron-left"></i></span> Back
+      </div>
     </div>
 
-    <div class="confirm-image">
-      <img src="/assets/confirm-mascot.png" alt="">
-    </div>
+    <div id="email" class="window middle" *ngIf="state === 'check'">
+      <div class="banner">
+        <div class="center">
+          <span class="banner-text">Setting up...</span>
+          <br>
+          <span class="logo">{{ user.account.email }}</span>
+        </div>
+      </div>
 
-    <div class="confirm-text">
-      Please check your email<br>
-    </div>
+      <div class="upper-text">
+        We haven't received your email confirmation yet.
+      </div>
 
-    <div class="resend">
-      <a (click)="resend()">Resend Confirmation Email</a>
-    </div>
+      <a (click)="checkConfirmation()">
+        <i class="fa fa-refresh"></i>
+        Check Again
+      </a>
 
+      <a (click)="resend()">
+        <i class="fa fa-envelope-o"></i>
+        <span>{{ resendString }}</span>
+      </a>
+
+      <div class="back check" (click)="goBack()">
+        <span><i class="fa fa-chevron-left"></i></span> Back
+      </div>
+    </div>
   </div>
 </div>

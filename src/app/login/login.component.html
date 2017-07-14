@@ -28,7 +28,9 @@
 
       <div class="input-wrapper">
         <input type="email" placeholder="Email" [(ngModel)]="user.email" (keyup.enter)="checkEmail()" [disabled]="currentView !== 'email' || disableEmail" autofocus>
-        <button (click)="checkEmail()" [disabled]="currentView !== 'email' || disableEmail">&#8250;</button>
+        <button (click)="checkEmail()" [disabled]="currentView !== 'email' || disableEmail">
+          <i class="fa fa-chevron-right"></i>
+        </button>
       </div>
     </div>
 
@@ -45,14 +47,16 @@
 
       <div class="input-wrapper">
         <input #passwordInput type="password" placeholder="Password" [(ngModel)]="user.password" placeholder="Password" (keyup.enter)="login()" [disabled]="currentView !== 'login' || disableLogin" [ngClass]="{'error': errors.login}">
-        <button (click)="login()" [disabled]="currentView !== 'login' || disableLogin">&#8250;</button>
+        <button (click)="login()" [disabled]="currentView !== 'login' || disableLogin">
+          <i class="fa fa-chevron-right"></i>
+        </button>
         <div class="error-text" *ngIf="errors.login">
           Wrong Password!
         </div>
       </div>
 
       <div class="login-back" (click)="goToEmail()">
-        Back
+        <span><i class="fa fa-chevron-left"></i></span> Back
       </div>
     </div>
 
@@ -64,13 +68,13 @@
       </div>
 
       <div class="upper-text">
-        Please input your password to register<br>
+        Setting up your new account...<br>
       </div>
 
       <div class="input-wrapper">
-        <input #registerPasswordInput type="password" [(ngModel)]="user.password" placeholder="Password" (keyup.enter)="register()" [disabled]="currentView !== 'register' || disableRegister">
+        <input #registerPasswordInput type="password" [(ngModel)]="user.password" placeholder="Choose a password" (keyup.enter)="register()" [disabled]="currentView !== 'register' || disableRegister">
         <button class="signup" (click)="register()" [disabled]="currentView !== 'register' || disableRegister">
-          SIGN UP <span>&#8250;</span>
+          SIGN UP <span><i class="fa fa-chevron-right"></i></span>
         </button>
       </div>
 
@@ -79,7 +83,7 @@
       </div>
 
       <div class="register-back" (click)="goToEmail()">
-        Back
+        <span><i class="fa fa-chevron-left"></i></span> Back
       </div>
     </div>
   </div>

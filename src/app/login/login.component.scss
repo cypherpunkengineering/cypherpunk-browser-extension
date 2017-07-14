@@ -11,6 +11,7 @@
     padding: 20px 0 0;
     height: 195px;
     box-sizing: content-box;
+
     img { width: 100%; }
 
     .scrolling-binary {
@@ -19,6 +20,20 @@
       right: 0;
       width: 100%;
       top: 183px;
+      color: #7ffffb;
+      font-size: 10px;
+      line-height: 12px;
+      letter-spacing: 1px;
+      height: 34px;
+      padding-top: 3px;
+      &:after {
+        position: absolute;
+        top: 0;
+        content: ' ';
+        height: 34px;
+        width: 100%;
+        background: radial-gradient(circle at center, transparent, #163238);
+      }
     }
   }
 
@@ -59,12 +74,12 @@
     .banner-text {
       font-size: 12px;
       color: #50aeb7;
-      margin: 0 0 5px 60px;
+      margin: 0 0 0 60px;
     }
 
     .logo {
       color: #fff;
-      font-size: 20px;
+      font-size: 19px;
       text-align: center;
       img { height: 23px; }
     }
@@ -72,8 +87,8 @@
 
   .upper-text {
     text-align: center;
-    color: #5fbbc4;
-    font-size: 16px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 18px;
     margin: 30px 0 25px;
   }
 
@@ -81,7 +96,7 @@
     text-align: center;
     color: #fff;
     font-size: 12px;
-    padding: 60px 10px 10px;
+    padding: 50px 10px 10px;
     a { color: #5fbbc4; cursor: pointer; }
   }
 
@@ -93,17 +108,16 @@
       height: 50px;
       width: 100%;
       padding: 5px 30px 5px 10px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.1);
       border: 1px solid rgba(127, 255, 252, 0.4);
       border-radius: 6px;
       color: #fff;
       font-size: 16px;
       transition: 0.2s background-color, 0.2s border-color;
       outline: 0;
-      opacity: 0.5;
       &:focus {
-        background: rgba(0, 0, 0, 0.6);
-        border-color: rgba(127, 255, 252, 0.8);
+        background: rgba(0, 0, 0, 0.2);
+        border-color: rgba(127, 255, 252, 0.6);
       }
       &:disabled { background: transparent; }
       &.error {
@@ -126,27 +140,33 @@
     button.signup {
       float: right;
       position: static;
-      font-size: 16px;
+      font-size: 18px;
       line-height: 16px;
       margin: 10px 0 0;
-      span {
-        font-size: 20px;
-      }
+      color: rgba(255, 255, 255, 0.3);
+      transition: color 0.2s;
+      &:hover { color: #7ffffc !important; }
     }
   }
 
   .register-back {
-    color: #5fbbc4;
+    color: rgba(255, 255, 255, 0.3);
     font-size: 16px;
     margin: 15px 20px 0;
+    transition: color 0.2s;
     cursor: pointer;
+    span { font-size: 16px; margin-right: 5px; }
+    &:hover { color: #7ffffc !important; }
   }
 
   .login-back {
-    color: #5fbbc4;
+    color: rgba(255, 255, 255, 0.3);
     font-size: 16px;
     margin: 110px 20px 0;
+    transition: color 0.2s;
     cursor: pointer;
+    span { font-size: 16px; margin-right: 5px; }
+    &:hover { color: #7ffffc !important; }
   }
 }
 
@@ -156,8 +176,8 @@ button {
   background-color: transparent;
   border: 0;
   right: 35px;
-  top: 0px;
-  font-size: 40px;
-  line-height: 40px;
+  top: 1px;
+  font-size: 21px;
+  line-height: 45px;
   cursor: pointer;
 }

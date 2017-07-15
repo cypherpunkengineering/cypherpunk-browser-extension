@@ -34,8 +34,9 @@ export class ConfirmComponent {
     this.state = 'loading'
     this.hqService.fetchUserStatus()
     .then((user: any) => {
-      if (user.account.confirmed) { this.router.navigate(['/']); }
-      else { setTimeout(() => { this.state = 'check'; }, 10000); }
+      // if (user.account.confirmed) { this.router.navigate(['/']); }
+      // else { setTimeout(() => { this.state = 'check'; }, 10000); }
+      this.state = 'check';
     })
     .catch((err) => { setTimeout(() => { this.state = 'check'; }, 10000); });
   }

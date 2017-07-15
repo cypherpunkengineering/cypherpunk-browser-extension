@@ -1,6 +1,6 @@
 <div class="page">
   <div class="welcome">
-    <img src="/assets/signin@2x.png" alt="">
+    <img src="/assets/signin.png" alt="Welcome">
 
     <div class="scrolling-binary">
       <div class="right">
@@ -17,9 +17,11 @@
   <div class="window-container">
     <div id="email" class="window" [ngClass]="emailClassList">
       <div class="banner">
-        <div class="banner-text">Welcome to</div>
-
-        <div class="logo"><img src="/assets/logo.png" alt=""></div>
+        <div>
+          <span class="banner-text">Welcome to</span>
+          <br />
+          <span class="logo"><img src="/assets/logo.png" alt=""></span>
+        </div>
       </div>
 
       <div class="upper-text">
@@ -36,14 +38,14 @@
 
     <div id="login" class="window" [ngClass]="loginClassList">
       <div class="banner">
-        <div class="banner-text">Welcome back,</div>
-
-        <div class="logo">{{ user.email }}</div>
+        <div>
+          <span class="banner-text">Welcome back,</span>
+          <br />
+          <span class="logo">{{ user.email }}</span>
+        </div>
       </div>
 
-      <div class="upper-text">
-        Please input your password to login<br>
-      </div>
+      <div class="upper-text"><br /></div>
 
       <div class="input-wrapper">
         <input #passwordInput type="password" placeholder="Password" [(ngModel)]="user.password" placeholder="Password" (keyup.enter)="login()" [disabled]="currentView !== 'login' || disableLogin" [ngClass]="{'error': errors.login}">
@@ -62,9 +64,11 @@
 
     <div id="register" class="window" [ngClass]="registerClassList">
       <div class="banner">
-        <div class="banner-text">Welcome,</div>
-
-        <div class="logo">{{ user.email }}</div>
+        <div>
+          <span class="banner-text">Welcome,</span>
+          <br />
+          <span class="logo">{{ user.email }}</span>
+        </div>
       </div>
 
       <div class="upper-text">

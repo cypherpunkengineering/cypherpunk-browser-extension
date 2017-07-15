@@ -1,29 +1,36 @@
-@import '../../scss/variables';
-
 .page {
   height: 100%;
-  background-color: $primary-bg;
+  background-color: #163238;
 
   .welcome {
     position: relative;
     padding: 20px 0 0;
-    height: 195px;
+    height: 145px;
     box-sizing: content-box;
 
-    img { width: 100%; }
+    img {
+      position: absolute;
+      top: 35px;
+      right: 70px;
+      height: 100px;
+      z-index: 100;
+    }
 
     .scrolling-binary {
       position: absolute;
       left: 0;
       right: 0;
       width: 100%;
-      top: 183px;
+      top: 130px;
       color: #7ffffb;
       font-size: 10px;
       line-height: 12px;
       letter-spacing: 1px;
-      height: 34px;
+      height: 30px;
       padding-top: 3px;
+      border-top: 2px solid #000;
+      background: #2b565a;
+
       &:after {
         position: absolute;
         top: 0;
@@ -46,7 +53,7 @@
   &.middle { transform: translateX(0); opacity: 1; }
 
   .banner {
-    padding: 12px;
+    padding: 15px;
     margin-bottom: 15px;
     background-color: #0d1e26;
     display: flex;
@@ -86,7 +93,8 @@
     text-align: center;
     color: rgba(255, 255, 255, 0.8);
     font-size: 18px;
-    margin: 30px;
+    margin: 60px auto 25px;
+    max-width: 280px;
   }
 
   .loader {
@@ -152,6 +160,7 @@
     transition: color 0.2s, border-color 0.2s, background-color 0.2s;
     text-decoration: none;
     user-select: none;
+    max-width: 170px;
     i { margin-right: 5px; }
     &:hover {
       color: #fff;
@@ -164,10 +173,10 @@
     color: rgba(255, 255, 255, 0.3);
     font-size: 16px;
     transition: color 0.2s;
-    margin: 80px 20px 0;
+    margin: 110px 20px 0;
     cursor: pointer;
     span { font-size: 16px; margin-right: 5px; }
-    &.check { margin: 42px 20px 0; }
+    &.check { margin: 72px 20px 0; }
     &:hover { color: #7ffffc !important; }
   }
 }

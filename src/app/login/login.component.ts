@@ -69,8 +69,11 @@ export class LoginComponent {
         this.disableLogin = false;
         this.session.save(user);
         this.proxySettingsService.loadServers();
-        if (user.account.confirmed) { this.router.navigate(['/']); }
-        else { this.router.navigate(['/confirm/login']); }
+        if (!user.account.confirmed) { this.router.navigate(['/confirm/login']); }
+        if (user.account.type === 'pending' || user.account.type === 'invitation') {
+          this.router.navigate(['pending']);
+        }
+        else { this.router.navigate(['/']); }
       },
       (error) => {
         this.disableLogin = false;

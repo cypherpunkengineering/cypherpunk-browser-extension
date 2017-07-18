@@ -55,6 +55,7 @@ export class LoginComponent {
 
           setTimeout(() => { this.registerPasswordInput.nativeElement.focus(); }, 500);
         }
+        if (error.status === 402) { this.router.navigate(['pending']); }
         else { return; }
       }
     );
@@ -70,7 +71,7 @@ export class LoginComponent {
         this.session.save(user);
         this.proxySettingsService.loadServers();
         if (!user.account.confirmed) { this.router.navigate(['/confirm/login']); }
-        if (user.account.type === 'pending' || user.account.type === 'invitation') {
+        else if (user.account.type === 'pending' || user.account.type === 'invitation') {
           this.router.navigate(['pending']);
         }
         else { this.router.navigate(['/']); }

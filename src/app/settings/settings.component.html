@@ -10,34 +10,34 @@
       <!-- Crypto Profile -->
       <div class="setting">
         <a class="next" (click)="goToView('app-proxy-mode')">
-          Proxy Mode
+          <i class="fa fa-dashboard"></i> Proxy Mode
         </a>
       </div>
 
       <!-- Privacy Filter -->
       <div class="setting">
         <a class="next" (click)="goToView('app-privacy-filter')">
-          Privacy Filter
+          <i class="fa fa-low-vision"></i> Privacy Filter
         </a>
       </div>
 
       <!-- WebRTC Leak Protection - Chrome -->
       <div class="setting" *ngIf="!isFirefox">
         <a class="next" [attr.data-value]="webRTCType" (click)="goToView('app-web-rtc')">
-          WebRTC Leak Prevention
+          <i class="fa fa-tint leak"></i> WebRTC Leak Prevention
         </a>
       </div>
 
       <div class="setting" *ngIf="isFirefox">
         <a class="next" [attr.data-value]="ffWebRTCType" (click)="goToView('app-web-rtc')">
-          WebRTC Leak Prevention
+          <i class="fa fa-tint leak"></i> WebRTC Leak Prevention
         </a>
       </div>
 
       <!-- User Agent -->
       <div class="setting">
         <a class="next" [attr.data-value]="userAgentType" (click)="goToView('app-user-agent')">
-          User Agent
+          <i class="fa fa-user-secret"></i> User Agent
         </a>
       </div>
     </div>

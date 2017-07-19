@@ -1,14 +1,14 @@
 <div class="relative">
   <div class="panel center" [ngClass]="{'slide-left': currentView !== 'app-settings'}">
-    <app-settings (changeView)="changeView($event)"></app-settings>
+    <app-settings #settings (changeView)="changeView($event)"></app-settings>
   </div>
 
   <div class="panel right" [ngClass]="{'slide': currentView === 'app-user-agent'}">
-    <app-user-agent (changeView)="changeView($event)"></app-user-agent>
+    <app-user-agent (changeView)="changeView($event)" (updateUserAgent)="updateUserAgent($event)"></app-user-agent>
   </div>
 
   <div class="panel right" [ngClass]="{'slide': currentView === 'app-web-rtc'}">
-    <app-web-rtc (changeView)="changeView($event)"></app-web-rtc>
+    <app-web-rtc (changeView)="changeView($event)" (updateWebRtc)="updateWebRtc($event)"></app-web-rtc>
   </div>
 
   <div class="panel right" [ngClass]="{'slide': currentView === 'app-privacy-filter'}">

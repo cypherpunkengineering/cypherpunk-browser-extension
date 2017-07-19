@@ -121,4 +121,8 @@ export class LoginComponent {
   launchPP() {
     chrome.tabs.create({ url: 'https://cypherpunk.com/privacy-policy' });
   }
+
+  forgotPassword() {
+    chrome.tabs.create({ url: 'https://cypherpunk.com/recover' });
+  }
 }

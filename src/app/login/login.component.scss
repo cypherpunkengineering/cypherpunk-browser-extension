@@ -121,9 +121,10 @@
       border: 1px solid rgba(127, 255, 252, 0.4);
       border-radius: 6px;
       color: #fff;
-      font-size: 16px;
+      font-size: 17.5px;
       transition: 0.2s background-color, 0.2s border-color;
       outline: 0;
+      font-family: Dosis, sans-serif;
       &:focus {
         background: rgba(0, 0, 0, 0.2);
         border-color: rgba(127, 255, 252, 0.6);

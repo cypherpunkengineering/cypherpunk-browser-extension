@@ -335,4 +335,9 @@ export class SettingsService {
     this.localStorageService.set(Keys.SERVER_LEVEL, level);
   }
 
+  clearServers() {
+    this.proxyServersArray.length = 0;
+    this.localStorageService.set(Keys.PROXY_SERVERS_ARR, this.proxyServersArray);
+  }
+
 }

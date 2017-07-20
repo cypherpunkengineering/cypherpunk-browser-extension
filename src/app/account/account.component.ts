@@ -138,15 +138,18 @@ export class AccountComponent {
 
   logout() {
     this.proxySettingsService.disableProxy();
+    this.settingsService.saveCypherpunkEnabled(false);
+    chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
+
     let config = { 'url': 'https://api.cypherpunk.com', 'name': 'cypherpunk.session' };
     chrome.cookies.remove(config, (deleted_cookie) => {
       this.zone.run(() => {
         console.log('DELETED COOKIE', deleted_cookie);
         this.session.clear();
+        // clearh server data
+        this.settingsService.clearServers();
         this.router.navigate(['/login']);
       });
     });
-    this.settingsService.saveCypherpunkEnabled(false);
-    chrome.runtime.sendMessage({ action: 'CypherpunkEnabled' });
   }
 }

@@ -3,19 +3,18 @@ var chrome = chrome ? chrome : null;
 var regionOrder = ['DEV', 'NA', 'SA', 'CR', 'EU', 'ME', 'AF', 'AS', 'OP'];
 var adList = window.adList;
 var malwareList = window.malwareList;
-var forceHttpsList = window.forcehttps;
+// var forceHttpsList = window.forcehttps;
 
 var ENABLED = 'cypherpunk.enabled';
 var LATENCY_LIST = 'cypherpunk.latencyList';
 var PROXY_SERVERS = 'cypherpunk.proxyServers';
-var PREMIUM_ACCOUNT = 'cypherpunk.premiumAccount';
 var PROXY_SERVERS_ARR = 'cypherpunk.proxyServersArr';
 var PAC_SCRIPT_CONFIG = 'cypherpunk.pacScriptConfig';
 var USER_AGENT_STRING = 'cypherpunk.settings.userAgent.string';
 var WEB_RTC_LEAK_PROTECTION = 'cypherpunk.settings.ffWebRTCLeakProtection';
 var PRIVACY_FILTER_ADS = 'cypherpunk.settings.privacyFilter.blockAds';
 var PRIVACY_FILTER_MALWARE = 'cypherpunk.settings.privacyFilter.blockMalware';
-var FORCE_HTTPS = 'cypherpunk.settings.forceHttps';
+// var FORCE_HTTPS = 'cypherpunk.settings.forceHttps';
 
 var ACCOUNT_ID = 'cypherpunk.account.id';
 var ACCOUNT_EMAIL = 'cypherpunk.account.email';
@@ -37,7 +36,7 @@ var serverArr = JSON.parse(localStorage.getItem(PROXY_SERVERS_ARR));
 var globalBlockAds = JSON.parse(localStorage.getItem(PRIVACY_FILTER_ADS));
 var globalBlockMalware = JSON.parse(localStorage.getItem(PRIVACY_FILTER_MALWARE));
 var webRTCLeakProtectionEnabled = localStorage.getItem(WEB_RTC_LEAK_PROTECTION) === 'true';
-var forceHttps = JSON.parse(localStorage.getItem(FORCE_HTTPS));
+// var forceHttps = JSON.parse(localStorage.getItem(FORCE_HTTPS));
 
 var accountId = JSON.parse(localStorage.getItem(ACCOUNT_ID));
 var accountEmail = JSON.parse(localStorage.getItem(ACCOUNT_EMAIL));
@@ -68,8 +67,8 @@ if (webRTCLeakProtectionEnabled) { enableWebRTCLeakProtection(); }
 else { disableWebRTCLeakProtection(); }
 
 // Enable force http if it's enabled
-if (forceHttps) { enableForceHttps(); }
-else { disableForceHttps(); }
+// if (forceHttps) { enableForceHttps(); }
+// else { disableForceHttps(); }
 
 // Apply Proxy
 if (cypherpunkEnabled) { applyProxy(); }
@@ -88,7 +87,7 @@ setInterval(function() {
 /* USER FUNCTIONALITY */
 
 function loadUser() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     httpGetAsync('https://api.cypherpunk.com/api/v1/account/status', (err, res) => {
       if (err) { return console.log(err); }
 
@@ -240,7 +239,7 @@ function applyProxy() {
   var config = localStorage.getItem(PAC_SCRIPT_CONFIG);
   if (!config) {
     cypherpunkEnabled = false;
-    localStorage.setItem(ENABLED, false);;
+    localStorage.setItem(ENABLED, false);
     return disableProxy();
   }
   var pacScript = JSON.parse(config).pacScript.data;
@@ -367,41 +366,41 @@ function enablePrivacyFilter() {
 
 
 /** Force HTTPS */
-function redirectRequest(details) {
-  // allow request from other extensions and if tab is not recognized
-  if (details.tabId < 0) { return { cancel: false }; }
-  if (!tabs[details.tabId]) { return { cancel: false }; }
-  if (details.url.startsWith('https')) { return { cancel: false }; }
-
-  // Check list based on global boolean values
-  var outgoingUrl = details.url;
-  var forceHttpsListFound = false;
-  if (forceHttps) {
-    forceHttpsListFound = !!forceHttpsList.find(function(url) {
-      return outgoingUrl.indexOf(url) !== 1;
-    });
-  }
-
-  if (forceHttpsListFound) {
-    return { redirectUrl: details.url.replace(/^http:\/\//i, 'https://') };
-  }
-  else { return { cancel: false }; }
-}
-
-function enableForceHttps() {
-  disableForceHttps();
-  console.log('Enabling Force HTTPS');
-  chrome.webRequest.onBeforeRequest.addListener(
-    redirectRequest,
-    { urls:['<all_urls>'] },
-    ['blocking']
-  );
-}
-
-function disableForceHttps() {
-  console.log('Disabling Force HTTPS');
-  chrome.webRequest.onBeforeRequest.removeListener(redirectRequest);
-}
+// function redirectRequest(details) {
+//   // allow request from other extensions and if tab is not recognized
+//   if (details.tabId < 0) { return { cancel: false }; }
+//   if (!tabs[details.tabId]) { return { cancel: false }; }
+//   if (details.url.startsWith('https')) { return { cancel: false }; }
+//
+//   // Check list based on global boolean values
+//   var outgoingUrl = details.url;
+//   var forceHttpsListFound = false;
+//   if (forceHttps) {
+//     forceHttpsListFound = !!forceHttpsList.find(function(url) {
+//       return outgoingUrl.indexOf(url) !== 1;
+//     });
+//   }
+//
+//   if (forceHttpsListFound) {
+//     return { redirectUrl: details.url.replace(/^http:\/\//i, 'https://') };
+//   }
+//   else { return { cancel: false }; }
+// }
+//
+// function enableForceHttps() {
+//   disableForceHttps();
+//   console.log('Enabling Force HTTPS');
+//   chrome.webRequest.onBeforeRequest.addListener(
+//     redirectRequest,
+//     { urls:['<all_urls>'] },
+//     ['blocking']
+//   );
+// }
+//
+// function disableForceHttps() {
+//   console.log('Disabling Force HTTPS');
+//   chrome.webRequest.onBeforeRequest.removeListener(redirectRequest);
+// }
 
 
 /* Event Listener Triggers */
@@ -423,11 +422,11 @@ chrome.runtime.onMessage.addListener(function(request) {
     if (globalBlockAds || globalBlockMalware) { enablePrivacyFilter(); }
     else { disablePrivacyFilter(); }
   }
-  else if (request.action === "updateForceHTTPS"){
-    forceHttps = JSON.parse(localStorage.getItem(FORCE_HTTPS));
-    if (forceHttps) { enableForceHttps(); }
-    else { disableForceHttps(); }
-  }
+  // else if (request.action === "updateForceHTTPS"){
+  //   forceHttps = JSON.parse(localStorage.getItem(FORCE_HTTPS));
+  //   if (forceHttps) { enableForceHttps(); }
+  //   else { disableForceHttps(); }
+  // }
 });
 
 /* Clear cache on url change so ip doesn't leak from previous site */
@@ -438,7 +437,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
 });
 
 function destroy() {
-  disableForceHttps();
+  // disableForceHttps();
   disableProxy(); // Disable PAC Script
   disableUserAgentSpoofing(); // Disable user agent spoofing
   disableWebRTCLeakProtection(); // Disable webRTC leak protection
@@ -450,7 +449,7 @@ function destroy() {
 function httpGetAsync(theUrl, callback) {
   var xhr = new XMLHttpRequest();
   xhr.addEventListener('load', () => { callback(null, xhr.responseText); });
-  xhr.addEventListener('error', () => { callback(error); })
+  xhr.addEventListener('error', (error) => { callback(error); })
   xhr.open("GET", theUrl); // true for asynchronous
   xhr.send(null);
 }

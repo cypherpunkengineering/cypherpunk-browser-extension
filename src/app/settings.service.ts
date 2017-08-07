@@ -18,7 +18,7 @@ class Keys {
   public static INITIALIZED = 'initialized';
 
   // Advanced Settings
-  public static FORCE_HTTPS = 'settings.forceHttps';
+  // public static FORCE_HTTPS = 'settings.forceHttps';
   public static SITE_OVERRIDES = 'settings.siteOverrides';
   public static WEB_RTC_LEAK_PROTECTION = 'settings.webRTCLeakProtection';
   public static FF_WEB_RTC_LEAK_PROTECTION = 'settings.ffWebRTCLeakProtection';
@@ -60,7 +60,7 @@ class Defaults {
     locationProtection: false,
     flashProtection: false,
     settings: {
-      forceHttps: false,
+      // forceHttps: false,
       siteOverrides: {},
       ffWebRTCLeakProtection: false,
       webRTCLeakProtection: 'DEFAULT',
@@ -87,7 +87,7 @@ class Defaults {
 @Injectable()
 export class SettingsService {
   enabled: boolean;
-  forceHttps: boolean;
+  // forceHttps: boolean;
   initialized: boolean;
   latencyList = [];
   proxyServers = {};
@@ -122,7 +122,7 @@ export class SettingsService {
     this.proxyServersArray = this.defaultSetting(Keys.PROXY_SERVERS_ARR);
     this.defaultRoutingType = this.defaultSetting(Keys.ROUTING_TYPE);
     this.defaultRoutingServer = this.defaultSetting(Keys.ROUTING_SELECTED_SERVER);
-    this.forceHttps = this.defaultSetting(Keys.FORCE_HTTPS);
+    // this.forceHttps = this.defaultSetting(Keys.FORCE_HTTPS);
     this.siteOverrides = this.defaultSetting(Keys.SITE_OVERRIDES);
     this.privacyMode = this.defaultSetting(Keys.PRIVACY_MODE);
     this.privacyFilterAds = this.defaultSetting(Keys.PRIVACY_FILTER_ADS);
@@ -229,11 +229,11 @@ export class SettingsService {
 
   /** Advanced Settings **/
 
-  saveForceHttps(enabled: boolean) {
-    this.forceHttps = enabled;
-    this.localStorageService.set(Keys.FORCE_HTTPS, enabled);
-    chrome.runtime.sendMessage({ action: 'updateForceHTTPS' });
-  }
+  // saveForceHttps(enabled: boolean) {
+  //   this.forceHttps = enabled;
+  //   this.localStorageService.set(Keys.FORCE_HTTPS, enabled);
+  //   chrome.runtime.sendMessage({ action: 'updateForceHTTPS' });
+  // }
 
   /** Advanced Settings > WebRTC Leak Prevention **/
 

@@ -40,7 +40,6 @@
     "scripts": [
       "ad-list.js",
       "malware-list.js",
-      "force-https.js",
       "background.js"
     ]
   }

@@ -17,7 +17,7 @@ export class PrivacyFilterComponent {
   cameraProtection = this.settingsService.cameraProtection;
   locationProtection = this.settingsService.locationProtection;
   flashProtection = this.settingsService.flashProtection;
-  forceHttps = this.settingsService.forceHttps;
+  // forceHttps = this.settingsService.forceHttps;
 
   constructor(
     private settingsService: SettingsService,
@@ -50,9 +50,9 @@ export class PrivacyFilterComponent {
     this.settingsService.saveFlashProtection(enabled);
   }
 
-  toggleForceHTTPS(enabled: boolean) {
-    this.settingsService.saveForceHttps(enabled);
-  }
+  // toggleForceHTTPS(enabled: boolean) {
+  //   this.settingsService.saveForceHttps(enabled);
+  // }
 
   goToView(name: string) {
     this.changeView.emit(name);
